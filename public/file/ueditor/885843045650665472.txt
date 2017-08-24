@@ -1,0 +1,17 @@
+Consumer Key (API Key)	T9h3RBOZl0eBNFlLlouvMdQj2
+Consumer Secret (API Secret)	PdogDVtuzoYRRaXMcts90I8KlM1wxRgwTFAtZKyDrePFaya1S5
+
+Access Level	Read and write (modify app permissions)
+Owner	jBz2Q4C9YUOJOrc
+Owner ID	864032812583628800
+Application Actions
+Regenerate Consumer Key and SecretChange App Permissions
+Your Access Token
+This access token can be used to make API requests on your own account's behalf. Do not share your access token secret with anyone.
+
+Access Token	864032812583628800-SU9iaRPLKECGRlIax5kF0C6CLl7h3MN
+Access Token Secret	EsRj98aBU14rV6nZ34EtfAQZi9OvwgmpGnLkZoWqgHdo5
+
+Access Level	Read and write
+Owner	jBz2Q4C9YUOJOrc
+Owner ID	864032812583628800

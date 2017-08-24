@@ -1,0 +1,130 @@
+body {
+  margin: 0 auto;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.body-weidth{/*移动优先100%的宽*/
+  width: 100%;
+}
+@media(min-width:768px){/*媒体查询需放在正常样式的下面，才能起来移动设备和桌面设备各自展现自成己样式*/
+  .body-weidth{
+  width: 70%;
+}
+}
+.footer{
+  width: 100%;
+  position:absolute;
+  bottom: -10%;
+  text-align: center;
+
+}
+@media(min-width:768px){
+  .footer{
+    width: 70%;
+  }
+}
+
+.foo{
+  margin: 5px;
+}
+
+/*解决图片上传自适应div大小*/
+img{
+  max-width: 100%;
+  height:auto;
+}
+
+.topcinav{
+  background-color: #DEB887;
+}
+.nav li a{
+  font-weight: 900;
+}
+.panelBorderNone{
+  border:none;
+}
+
+.sidebar{
+  width:298px;
+}
+a:link{
+  color: black;
+  text-decoration:none;
+}
+
+a:visited{
+  color: #808080;
+  text-decoration:none;
+}
+a:hover{
+ color:#808080;
+}
+.r_btn{
+  margin-top: 5px;
+}
+._reply{
+  margin-top:-5px;
+}
+
+.ReplyContent{
+ padding-top: 10px;
+
+  
+}
+.ReplyContent_p{
+  padding: 10px;
+  border-bottom: 1px solid	#FFEFD5;}
+
+.TopTitile{
+  font-weight: 900;
+  font-size: 24px;
+}
+
+.TopicInfo{
+  color: #838383;
+  margin: 5px;
+}
+
+.navpath{
+  width: 25%;
+}
+.navpath_a:visited{
+  color:black;
+}
+.ReplyTitle{
+  color: #008080;
+}
+.TopicTab{
+  background-color:#e5e5e5;
+  margin: 1px;
+  padding: 2px;
+  color: #999;
+}
+.OtherTopic{
+  background-color: #5cb85c;
+}
+.r_content{
+  margin-top: 0px;
+}
+.reply_btn,.remove_btn{
+  cursor:pointer;
+  opacity: 0.5;
+}
+.nice_btn{
+  opacity: 0.4;
+  cursor:pointer;
+}
+.remove_btn:hover{
+  opacity: 1;
+}
+.nice_btn:hover{
+   opacity: 1;
+}
+.reply_btn:hover{
+   opacity: 1;
+}
+.ReplyReply{
+  margin-top: -1%;
+}
+.reply_hidden{
+  display: none;
+}

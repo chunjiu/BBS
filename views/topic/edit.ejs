@@ -1,0 +1,106 @@
+<%-include('../header')%>
+ <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.min.js">
+
+  </script>
+  <script type="text/javascript" charset="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+    <%if(errors !=''){%>
+    <div class="alert alert-warning alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong><%=errors%></strong>
+    </div>
+    <%}%>
+
+
+        <div class="panel panel-default panelBorderNone">
+            <div class="">
+                <ol class="breadcrumb navpath">
+                    <li><a class="navpath_a" href="/">主页</a></li>
+                    <%if(action=='edit'&&action!=='undefined'){%><!--话题保存和话题编辑共用一个页面，用action来变成一个编辑页面-->
+                        <li class="active">编辑话题</li>
+                    <%}else{%>
+                        <li class="active">发布话题</li>
+                    <%}%>
+                    
+                </ol>
+            </div>
+            <div class="panel-body">
+                <%if(action=='edit'){%>
+                  <form id="create_topic_form" class="form-horizontal" action="/topic/<%=topic_id%>/edit" method="post">
+                <%}else{%>
+                  <form id="create_topic_form" class="form-horizontal" action="/topic/create" method="post">
+                <%}%>
+                    <div class="form-group">
+                        <label id="tab-selector" for="tab-value" class="control-label col-sm-2">发布版块：</label>
+                        <div class="col-sm-4">
+                            <select name="tab" class="form-control" id="tab-value">
+                               <%if(action=='edit'){%>
+                                   <option><%=tab%></option>
+                                    <%tabs.forEach(function (tab) {%>
+                                    <option><%=tab%></option>
+                                     <%});%>
+                               <%}else{%>
+                                    <option>请选择</option>
+                                    <%tabs.forEach(function (tab) {%>
+                                    <option><%=tab%></option>
+                                     <%});%>
+                              <% }%>
+                                   
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <span id="topic_creae_warn"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">标题：</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="title" placeholder="请输入标题（10字以上）" value='<%=typeof(title)!=='undefined'&&title||''%>'>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">正文：</label>
+                        <div class="col-sm-8">
+                            <textarea id="editor" style="height:500px;width:100%" name="t_content" rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <input id="aa" type="submit" class="btn btn-primary" value="提交">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    
+  <%-include('../footer')%>
+     <script>
+
+         var ue = UE.getEditor('editor');
+
+            $('#create_topic_form').submit(function (e) {
+                var tabValue = $('#tab-value').val();
+                if (tabValue ==='请选择') {
+                    alert('请选择一个版块');
+                    // $('#aa').button('reset');
+                    $('#tab-selector').css('color', 'red');
+                    return false;
+                }
+            });
+            $('#tab-value').change(function () {
+                //alert($(this).val());
+                //var $this = $(this);
+                var value = $(this).val();
+                var warnMsg = '';
+                if (value == '问答') {
+                    warnMsg = '<strong>提问时，请遵循<a href="https://gist.github.com/alsotang/f654af8b1fff220e63fcb44846423e6d" target="_blank">《提问的智慧》</a>中的要点，以便收到高质量回复</strong>';
+                } else if (value == '招聘') {
+                    warnMsg = '<strong>为避免管理员删贴，发贴时请仔细阅读<a href="http://cnodejs.org/topic/541ed2d05e28155f24676a12" target="_blank">《招聘帖规范》</a></strong>';
+                }
+                $('#topic_creae_warn').html(warnMsg);
+            });
+        
+    </script>

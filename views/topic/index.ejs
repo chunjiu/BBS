@@ -1,0 +1,276 @@
+<%-include('../header')%>
+  <link href="http://cdn.bootcss.com/at.js/1.5.4/css/jquery.atwho.css" rel="stylesheet">
+
+  <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.min.js">
+
+  </script>
+  <script type="text/javascript" charset="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+  <div class="row">
+    <div id="warn">
+    </div>
+    <div class="col-md-3 col-md-push-9">
+      <div class="panel panel-default">
+        <%if(current_user===topic.username){%>
+          <div class="panel-heading">个人信息</div>
+          <%}else{%>
+            <div class="panel-heading">作者</div>
+            <%}%>
+              <div class="panel-body">
+                <%-include('../sidebar')%>
+              </div>
+      </div>
+      <%-include('../sidebar2')%>
+
+        <div class="panel panel-default">
+          <div style="background-color:#5cb85c" class="panel-heading">
+            <%=current_user===topic.username?'我':topic.username%>的其它话题</div>
+          <div class="panel-body">
+            <% if(othertopics){%>
+              <%othertopics.forEach(function(othertopic,index){%>
+                <p class="othertopic">
+                  <span><%=index+1%>.</span>
+                  <a href="/<%=othertopic.id%>/tid" title="<%=othertopic.title%>">
+                    <%=othertopic.title%>
+                  </a>
+                </p>
+                <%})%>
+                  <% }else{%>
+                    <p>无</p>
+                    <%}%>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div style="background-color:#5cb85c" class="panel-heading">无人回复的话题</div>
+          <div class="panel-body">
+            <% if(noreplytopic){%>
+              <%noreplytopic.forEach(function(noreplytopic,index){%>
+                <p><span><%=index+1%>.</span>
+                  <a href="/<%=noreplytopic.id%>/tid" title="<%=noreplytopic.title%>">
+                    <%=noreplytopic.title%>
+                  </a>
+                </p>
+                <%})%>
+                  <% }else{%>
+                    <p>无</p>
+                    <%}%>
+          </div>
+        </div>
+    </div>
+
+    <div class='col-md-9 col-md-pull-3'>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="TopTitile"><%=topic.title%></span>
+          <%if(current_user){%>
+            <input id="CollectPost" type="submit" class="btn pull-right btn-primary" action='/topic/<%=is_collect?"de_collect":"collect"%>'
+              value="<%=is_collect?'取消收藏':'收藏'%>"></input>
+            <%}%>
+              <div class="TopicInfo">
+                <span>发布于<%=topic.create_at_ago()%></span>
+                <span id="create"></span>
+                <span><a href="/user/<%=topic.username%>">作者<%=topic.username%></a></span>●
+                <span><%=topic.visit_count%>次浏览</span>●
+                <span>来自【<%=topic.tab%>】</span>
+              </div>
+
+              <%if(current_user===topic.username){%>
+                <div>
+                  &nbsp
+                  <a href="/topic/<%=topic.id%>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp
+                  <a id="remove" href="/topic/<%=topic.id%>/remove"><i class="glyphicon glyphicon-trash"></i></a>
+                </div>
+                <%}%>
+
+        </div>
+        <div class="panel-body">
+          <%-topic.content%>
+        </div>
+      </div>
+      <% if(reply!==''){%>
+        <div class="panel panel-default" style="border:none">
+          <div class="panel-heading">
+            <h3 class="reply_count" style="display:inline">
+              <%=reply.length%>
+            </h3>&nbsp;回复
+          </div>
+          <%reply.forEach(function(reply,index){%>
+            <div class='ReplyContent'>
+              <span class="reply_user"><%=reply.username%></span>
+              <span class="ReplyTitle"><%=index+1%>楼 
+                  <%if(reply.username===topic.username){%>
+                   <span class='label label-primary'>作者</span>
+              <%}%>
+                </span>
+                <span class='ReplyTitle'><%=reply.create_at_ago()%></span>
+                <div class='ReplyContent_p' id='<%=reply.id%>'>
+                  <!--这里的id=reply.id用于网页定位,即url里的#reply.id-->
+
+                  <%-reply.content%>
+                    <!--数据库中保存的是html代码，'-%>'则直接让浏览器解析HTML代码-->
+                    <%if(current_user){%>
+                      <div class="pull-right ReplyReply" reply_id='<%=reply.id%>'>
+                        <i class="glyphicon glyphicon-thumbs-up nice_btn" title="不错"></i>
+                        <span class="nice_count"><%=reply.ups.length?reply.ups.length:''%></span>
+                        <i class="glyphicon glyphicon-pencil reply_btn" title="回复"></i>
+                        <%if(reply.username==current_user){%>
+                          <i class="glyphicon glyphicon-trash remove_btn" title="删除"></i>
+                          <%}%>
+                      </div>
+                      <%}%>
+
+                        <!--回复评论(默认隐藏)-->
+                        <%if(current_user){%>
+                          <div class="panel-default panelBorderNone" style="padding-top:20px;">
+                            <form class="_reply reply_hidden" id="" action="/<%=topic.id%>/reply" method="post">
+                              <textarea class="r_content" id="editor<%=index%>" type="text/plain" style="height:100px;width:100%" name='r_content'></textarea>
+                              <!--<textarea id="r_content" style="border:0px;" class="form-control" rows="10" name="r_content"></textarea>-->
+
+                              <button id="aa" type="submit" class="btn btn-primary col-sm-1 r_btn">回复</button>
+                            </form>
+                          </div>
+                          <script>
+                            var ue = UE.getEditor('editor<%=index%>');//实例化多个文本编辑器
+                          </script>
+
+                          <%}%>
+                </div>
+            </div>
+            <%})%>
+        </div>
+        <%}%>
+
+          <!--回复话题-->
+          <%if(current_user&&topic){%>
+            <div class="panel panel-default panelBorderNone" style="padding-top:20px;">
+              <div class="panel-heading">
+                添加回复
+              </div>
+              <form class="_reply" id="" action="/<%=topic.id%>/reply" method="post">
+                <textarea class="r_content" id="inputer" type="text/plain" style="height:200px;width:100%" name='r_content'></textarea>
+                <!--<textarea id="r_content" style="border:0px;" class="form-control" rows="10" name="r_content"></textarea>-->
+
+                <button id="a" type="submit" class="btn btn-primary col-sm-1 r_btn">回复</button>
+              </form>
+            </div>
+
+            <%}%>
+    </div>
+
+    <!--col-sm-9-->
+  </div>
+  <!--row-->
+
+  <%-include('../footer')%>
+
+    <script src='/javascripts/jquery.caret.js'></script>
+    <script type="text/javascript" src='/javascripts/jquery.atwho.min.js'></script>
+
+    <script>
+      $(document).ready(function () {
+        //回复的内容为空时警示
+        /*$('#a,#aa').click(function () {
+          $this = $(this);
+          var reply = $this.closest('.panelBorderNone');
+          var content = reply.find('.r_content').val();
+          alert(content);
+          var warn = ''
+          if (content='') {
+            warn = '<div class="alert alert-warning alert-dismissible" role="alert">' +
+              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+              + ' <strong> 回复内容不能为空</strong > ' + ' </div > '
+            $('#warn').html(warn); 
+            alert('回复内容不能为空');
+            return false;
+          }
+        })*/
+
+        //回复
+
+        //收藏（ajax） 
+        $('#CollectPost').click(function () {
+          var $me = $(this);
+          var action = $me.attr('action');
+          var data = {
+            topic_id: '<%=topic.id %>'
+          };
+          $.post(action, data, function (data) {
+            if (data.status == 'success') {
+              if (action == '/topic/collect') {//因为是ajax请求，请求成功后，整个页不会刷新，故需要手动改变状态（ajax请求成功后）
+                $me.val('取消收藏'); $me.attr('action', '/topic/de_collect');
+              } else {
+                $me.val('收藏'); $me.attr('action', '/topic/collect');
+              }
+              $me.toggleClass('btn-primary');
+            }
+          }, 'json');
+        });
+
+        //删除话题
+        $('#remove').click(function (e) {
+          if (!confirm('确认删除此话题吗？')) {//如果用户选择否，则什么也不做。即不进入删除路由。
+            return false;
+          }
+        });
+
+        //ueditor文本编辑器
+        var ue = UE.getEditor('inputer');
+
+
+        //点赞
+        $('.nice_btn').click(function (e) {
+          var $this = $(this);//$(this)是当前jquery对象，$this表是当前元素（this）加上$则可以使用jquer的方法
+          var action = '/reply/nice';
+          var reply_id = $this.closest('.ReplyReply').attr('reply_id');
+          var data = {
+            reply_id: reply_id
+          };
+          $.post(action, data, function (data) {
+            if (data.success) {
+              var current_count = Number($this.next('.nice_count').text()) || 0;
+              if (data.UpOrDowun === 'up') {
+                $this.next('.nice_count').text(current_count + 1);
+              } else if (data.UpOrDowun === 'down') {
+                $this.next('.nice_count').text(current_count - 1);
+              }
+            } else {
+              alert(data.message);
+            }
+          })
+        });
+
+        //回复单个评论
+        $('.reply_btn').click(function () {
+          //用$this使用当前元素，根据当前元素查找其它元素，这样不至于点击事件时所有的class为‘reply_btn’的都响应
+          $this = $(this);
+          var parent = $this.closest('.ReplyContent_p');
+          var editor_reply = parent.find('.reply_hidden');
+          editor_reply.toggle('fast', function () {
+          });
+        });
+
+        //删除回复
+        $('.remove_btn').click(function(){
+          $this = $(this);
+         var reply_id = $this.closest('.ReplyReply').attr('reply_id');
+         $.post('/reply/'+reply_id+'/delete',function(data){
+           if(data.status==='success'){
+             $this.closest('.ReplyContent').remove();
+             var reply_count = Number($('.reply_count').text());
+             $('.reply_count').text(reply_count-1);
+           }
+         })
+        });
+
+        //回复指定用户,还没找到在ueditor里使用的方法
+        
+        $('#inputer').atwho({
+          at: '@',
+          data: ['Peter', 'Tom', 'Anne']
+        })
+
+
+      })
+    </script>
