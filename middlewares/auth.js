@@ -40,8 +40,8 @@ exports.authUser = function (req, res, next) {
            return next();
         }else { 
             console.log('进入authuer');
-            console.log('auth的req:'+req.session.user);
             return res.locals.current_user = req.session.user = user.username;//全局seeion用户，全局本地用户
+            console.log('auth的req:'+req.session.user);
         }
        
     });

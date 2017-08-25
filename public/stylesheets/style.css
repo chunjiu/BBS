@@ -7,15 +7,8 @@ body {
 }
 @media(min-width:768px){/*媒体查询需放在正常样式的下面，才能起来移动设备和桌面设备各自展现自成己样式*/
   .body-weidth{
-  width: 70%;
+  width: 80%;
 }
-}
-.footer{
-  width: 100%;
-  position:absolute;
-  bottom: -10%;
-  text-align: center;
-
 }
 @media(min-width:768px){
   .footer{
@@ -24,7 +17,7 @@ body {
 }
 
 .foo{
-  margin: 5px;
+  text-align: center;
 }
 
 /*解决图片上传自适应div大小*/
@@ -127,4 +120,5 @@ a:hover{
 }
 .reply_hidden{
   display: none;
+
 }

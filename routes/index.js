@@ -368,8 +368,12 @@ router.post('/login', function (req, res, next) {
       console.log('出错2');
       return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.username })
     }
+    if (password != user.password) { 
+      console.log('出错3');
+      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.username })
+    }
     if (!user.active) {
-      console.log('出错2');
+      console.log('出错4');
       mail.sendActiveMail(user.email, utility.md5(user.email + 'abcde邮箱验证'), user.username);
       return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收' });
     }
@@ -395,7 +399,7 @@ router.get('/create', authMiddleWare.userRequired, function (req, res, next) {
   res.render('topic/edit', {
     tabs: config.tabs,
     action: '',
-    current_user: req.session.user
+    current_user: req.session.user,
   });
 });
 
@@ -417,7 +421,8 @@ router.post('/topic/create', function (req, res, next) {
       title: title,
       content: content,
       errors: errors,
-      tabs: config.tabs
+      tabs: config.tabs,
+      current_user:req.session.user
     });
   }
   Topic.newAndSave(title, tab, content, req.session.user, function (err, topic) {
