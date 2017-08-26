@@ -21,7 +21,21 @@ var EventProxy = require('eventproxy');//异步控制
 /* GET home page. */
 router.get('/',authMiddleWare.authUser, function (req, res, next) {
   //res.status(403).end();
-  Topic.findTopics('', function (err, topics) {
+
+  var page = parseInt(req.query.page, 10) || 1;
+  var tab = req.query.tab || '全部';
+
+  var query = {};
+  if (!tab || tab == '全部') {
+    query.tab = { $nin: ['招聘'] };//db.col.find(tab:{$nin:['招聘']})
+  } else { 
+    query.tab = tab;
+  }
+
+  var limit = 20;
+  var options = {skip:(page-1)*limit,limit:limit,sort:'-last_reply_at'};
+
+  Topic.findByQuery(query,options, function (err, topics) {
     if (err) {
       console.log('err是：' + err);
     } else {
@@ -32,15 +46,22 @@ router.get('/',authMiddleWare.authUser, function (req, res, next) {
         if (err) {
           return next(err);
         }
-        res.render('index', {
-          topic: topics,
-          user: user,
-          current_user: req.session.user
+        Topic.findByQuery(query, function (err, topics_count) {
+          var pages = Math.ceil((topics_count.length) / limit);
+          res.render('index', {
+            topic: topics,
+            user: user,
+            current_user: req.session.user,
+            tabs: config.tabs,
+            current_page: page,
+            tab: tab,
+            pages:pages,
+  
+          });
+          //console.log('user.id是：' + user.id);
+          // res.download('/nodeMy博客/sheng.txt','sheng.txt');用于下载页面
         });
-        //console.log('user.id是：' + user.id);
-        // res.download('/nodeMy博客/sheng.txt','sheng.txt');用于下载页面
       });
-
     }
   });
 });

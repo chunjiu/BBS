@@ -19,12 +19,9 @@
       <div class="panel noborder topcinav" style="border-style:none">
         <div class="panel-heading">
           <ul class="nav nav-pills">
-            <li><a href="#">全部</a></li>
-            <li><a href="#">精华</a></li>
-            <li><a href="#">分享</a></li>
-            <li><a href="#">问答</a></li>
-            <li><a href="#">招聘</a></li>
-            <li><a href="#">客户端测试</a></li>
+            <% [['全部'],['精华']].concat(tabs).forEach(function(value){%>
+              <li><a href="<%=value?'/?tab=' +value : '/'%>"><%=value%></a><li>
+            <%})%>
           </ul>
         </div>
 
@@ -39,11 +36,30 @@
                     <span class="pull-right"><%=topic.create_at_ago()%><span>
                 </a>
                 <% })%>
-                  <%}else{%>
-                    <div class="inner">
-                      <p>无话题</p>
-                    </div>
-                    <%}%>
+
+                <!--分页-->
+                <nav>
+                    <ul class="pagination">
+                      <% var base_url = '/?'+'tab='+(typeof(tab)!== 'undefined'?tab:'')+'&page='%>
+                      <% if(current_page == 1){%>
+                        <li class='disabled'><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
+                      <%}else{%>
+                        <li><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
+                      <%}%>
+                      <% var star_page = current_page - 3 > 0 ? current_page - 3: 1;
+                         var end_page =  star_page + 9 >= pages ? pages:star_page+9;
+                       %>
+                      <% for(var i=star_page;i<=end_page;i++){%>
+                        <li><a href="<%=base_url%><%=i%>"><%=i%></a></li>
+                      <%}%>
+                      <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
+                    </ul>
+                  </nav>
+            <%}else{%>
+              <div class="inner">
+                <p>无话题</p>
+              </div>
+            <%}%>
           </div>
         </div>
       </div>
