@@ -39,7 +39,7 @@
 
                 <!--分页-->
                 <nav>
-                    <ul class="pagination">
+                    <ul class="pagination" cureent_page=<%=current_page%>>
                       <% var base_url = '/?'+'tab='+(typeof(tab)!== 'undefined'?tab:'')+'&page='%>
                       <% if(current_page == 1){%>
                         <li class='disabled'><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
@@ -50,10 +50,15 @@
                          var end_page =  star_page + 9 >= pages ? pages:star_page+9;
                        %>
                       <% for(var i=star_page;i<=end_page;i++){%>
-                        <li><a href="<%=base_url%><%=i%>"><%=i%></a></li>
+                        <li><a class="page" href="<%=base_url%><%=i%>"><%=i%></a></li>
                       <%}%>
-                      <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
+                      <%if(current_page==pages){%>
+                        <li class="disabled"><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
+                      <%}else{%>
+                        <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
+                      <%}%>                     
                     </ul>
+                    <button class="test">测试</button>
                   </nav>
             <%}else{%>
               <div class="inner">
@@ -70,3 +75,17 @@
   </div>
   <!--row-->
   <%-include('footer')%>
+  <script>
+
+      var $nav = $('.pagination');
+      var current_page = $nav.attr('cureent_page');
+      $nav.find('li').each(function(){
+       var $li = $(this);
+       var $a = $li.find('a');
+       if($a.html()==current_page){
+         $li.addClass('active');
+         $a.removeAttr('href');
+       }
+      });
+
+  </script>

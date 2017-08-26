@@ -53,7 +53,7 @@ exports.userRequired = function (req,res,next) {
     console.log('在auth.j中sessionuser是：'+req.session.user);
     if (!req.session.user) {
         console.log('未登录');
-        return res.render('notify/notify',{error:'您还未登录，请先登录',link:''});
+        return res.render('notify/notify',{error:'您还未登录，',link:''});
     } else {
         console.log('属已登录奖态');
         next();
