@@ -37,6 +37,7 @@
                 </a>
                 <% })%>
 
+  
                 <!--分页-->
                 <nav>
                     <ul class="pagination" cureent_page=<%=current_page%>>
@@ -46,7 +47,7 @@
                       <%}else{%>
                         <li><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
                       <%}%>
-                      <% var star_page = current_page - 3 > 0 ? current_page - 3: 1;
+                      <% var star_page = current_page - 5 > 0 ? current_page - 5: 1;
                          var end_page =  star_page + 9 >= pages ? pages:star_page+9;
                        %>
                       <% for(var i=star_page;i<=end_page;i++){%>
@@ -56,10 +57,22 @@
                         <li class="disabled"><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
                       <%}else{%>
                         <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
-                      <%}%>                     
+                      <%}%>
+                      <li style="visibility:hidden;" ><a class="pageJump" url=<%=base_url%>><button id="pp"></button></a> <!--button标签需在a标签里面，可用于a标签的自动触发事件--> <li>
+                      <div class="input-group" style="width:13%;">
+                        <span class="input-group-addon">跳转到</span>
+                        <select class="form-control">
+                            <option><%=current_page%>页</option>
+                          <% for(var i=0;i<=pages;i++){%>
+                            <option><%=i%>页</option>
+                         <% }%>
+                        </select>
+                       </div> 
+                               
                     </ul>
-                 
+      
                   </nav>
+
             <%}else{%>
               <div class="inner">
                 <p>无话题</p>
@@ -87,5 +100,12 @@
          $a.removeAttr('href');
        }
       });
+
+      $('select').change(function(){
+        var page =$(this).val();
+        var url = $('.pageJump').attr('url');
+        $('.pageJump').attr('href',url+page)
+        $('#pp').trigger('click');//自动触发a标签的点击事件，并跳转到href地址,注意需要buttom标签在a标签里面
+      }); 
 
   </script>
