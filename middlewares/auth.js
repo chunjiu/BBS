@@ -40,8 +40,14 @@ exports.authUser = function (req, res, next) {
            return next();
         }else { 
             console.log('进入authuer');
-            return res.locals.current_user = req.session.user = user.username;//全局seeion用户，全局本地用户
-            console.log('auth的req:'+req.session.user);
+            res.locals.current_user = req.session.user =JSON.parse(JSON.stringify(user));//转化为JSON对象，因为JSON对象可以随意添加属性，并能被渲染
+            if (config.admins.hasOwnProperty(user.username)) {
+                req.session.user.is_admin = true;
+                console.log('admin是'+req.session.user.is_admin);
+            }
+            console.log('auth的req:' + req.session.user);
+            
+            return;
         }
        
     });
@@ -53,7 +59,8 @@ exports.userRequired = function (req,res,next) {
     console.log('在auth.j中sessionuser是：'+req.session.user);
     if (!req.session.user) {
         console.log('未登录');
-        return res.render('notify/notify',{error:'您还未登录，',link:''});
+        var msg ='<p>您还未登录，<span>请先<a href="/signin" style="color:red">登录</a></span></p>'
+        return res.render('notify/notify',{error:msg,link:''});
     } else {
         console.log('属已登录奖态');
         next();

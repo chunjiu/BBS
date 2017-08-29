@@ -92,6 +92,12 @@ a:hover{
   padding: 2px;
   color: #999;
 }
+.TopicGood{
+  background-color:#91CE13;;
+  margin: 1px;
+  padding: 2px;
+  color:white;
+}
 .OtherTopic{
   background-color: #5cb85c;
 }

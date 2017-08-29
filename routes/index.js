@@ -28,12 +28,14 @@ router.get('/',authMiddleWare.authUser, function (req, res, next) {
   var query = {};
   if (!tab || tab == '全部') {
     query.tab = { $nin: ['招聘'] };//db.col.find(tab:{$nin:['招聘']})
-  } else { 
+  } else if (tab == '精华') { 
+    query.good = true;
+  } else{ 
     query.tab = tab;
   }
 
   var limit = 20;
-  var options = {skip:(page-1)*limit,limit:limit,sort:'-last_reply_at'};
+  var options = {skip:(page-1)*limit,limit:limit,sort:'-top -last_reply_at'};
 
   Topic.findByQuery(query,options, function (err, topics) {
     if (err) {
@@ -41,7 +43,7 @@ router.get('/',authMiddleWare.authUser, function (req, res, next) {
     } else {
       console.log('req.cookies是：' + req.signedCookies[config.auth_cookie_name]);
       console.log('req.session.uer是：' + req.session.user);
-      var ReqUser = req.session.user;
+      var ReqUser = req.session.user?req.session.user.username:'';
       User.getUserByUserName(ReqUser, function (err, user) {
         if (err) {
           return next(err);
@@ -55,10 +57,8 @@ router.get('/',authMiddleWare.authUser, function (req, res, next) {
             tabs: config.tabs,
             current_page: page,
             tab: tab,
-            pages:pages,
-  
+            pages: pages,   
           });
-          //console.log('user.id是：' + user.id);
           // res.download('/nodeMy博客/sheng.txt','sheng.txt');用于下载页面
         });
       });
@@ -177,6 +177,51 @@ router.post('/topic/de_collect', function (req, res, next) {
       topic.save();
     });
   });
+});
+
+//加精该话题
+router.get('/topic/:id/good', function (req, res, next) { 
+  var topic_id = req.params.id;
+  Topic.findById(topic_id, function (err, topic) {
+    if (err) { 
+      return next(err);
+    }
+    if (!topic) { 
+      return next(err);
+      console.log('该话题不存在');
+    }
+    topic.good = !topic.good;
+    topic.save(function (err) { 
+      if (err) { 
+        return next(err);
+      }
+      var msg = topic.good ? '该话题加精华成功' : '该话题精华已被取消';
+      res.render('notify/notify', {error:msg});
+    });
+
+   })
+});
+
+//置顶该话题
+router.get('/topic/:id/top', function (req, res, next) { 
+  var topic_id = req.params.id;
+  Topic.findById(topic_id, function (err, topic) { 
+    if (err) { 
+      return next(err);
+    }
+    if (!topic) { 
+      return next(err);
+    }
+    topic.top = !topic.top;
+    topic.good = true;
+    topic.save(function (err) { 
+      if (err) { 
+        return next(err);
+      }
+      var msg = topic.top ? '该话题置顶成功' : '该话题已被取消置顶';
+      res.render('notify/notify', {error:msg});      
+    });
+  })
 });
 
 //进入该话题用户主页

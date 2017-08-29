@@ -27,13 +27,21 @@ var TopicSchema = new Schema({
     collect_count: { type: Number, default: 0 },//话题被收藏数
     
     updated_at: { type: Date, default: Date()},//最近的更新时间
-    deleted: {type:Boolean,default:false}
+    deleted: { type: Boolean, default: false },
+
+    good: { type: Boolean, default: false },//精华贴
+    top: {type:Boolean,default:false},//置顶贴
+    
     
     
 });
 
 TopicSchema.methods.create_at_ago = function () {//methods添加方法必须在mongoose.model之前，前台页面调用须用<%=topic.create_at_ago()%>,topic为查询数据库的结果集合
     var date = moment(this.create_at);
+    return date.fromNow();
+}
+TopicSchema.methods.last_reply_at_ago = function () { 
+    var date = moment(this.last_reply_at);
     return date.fromNow();
 }
 

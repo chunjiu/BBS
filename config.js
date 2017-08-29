@@ -7,7 +7,10 @@ var config = {
     db_db: 'mongodb://127.0.0.1:27017/UserSession',
     
     session_secret:'wenser7',
-    auth_cookie_name: 'wenser7'
+    auth_cookie_name: 'wenser7',
+
+    admins: { wenser7: true },//管理员帐户
+    
 }
 
 module.exports = config;

@@ -66,6 +66,10 @@
           <%if(current_user){%>
             <input id="CollectPost" type="submit" class="btn pull-right btn-primary" action='/topic/<%=is_collect?"de_collect":"collect"%>'
               value="<%=is_collect?'取消收藏':'收藏'%>"></input>
+               <% if(current_user.is_admin){%>
+                <a class="btn pull-right btn-info" style="margin-right:5px;" href="/topic/<%=topic.id%>/good"><%=topic.good?'取消加精':'加精'%></a>
+                <a class="btn pull-right btn-info" style="margin-right:5px;" href="/topic/<%=topic.id%>/top"><%=topic.top?'取消置顶':'置顶'%></a>
+               <% }%>
             <%}%>
               <div class="TopicInfo">
                 <span>发布于<%=topic.create_at_ago()%></span>
@@ -75,7 +79,7 @@
                 <span>来自【<%=topic.tab%>】</span>
               </div>
 
-              <%if(current_user===topic.username){%>
+              <%if(current_user.username===topic.username){%>
                 <div>
                   &nbsp
                   <a href="/topic/<%=topic.id%>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp

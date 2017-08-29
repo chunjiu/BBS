@@ -31,13 +31,21 @@
               <%topic.forEach(function(topic){%>
                 <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
                     <span title="回复数"><%=topic.reply_count%></span>/<span title="点击数"><%=topic.visit_count%></span>
-                    <span class="TopicTab"><%=topic.tab%></span>
+                    <%if(topic.top){%>
+                      <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
+                    <%}else if(topic.good){%>
+                      <span class="TopicGood">精华</span>
+                    <%}else{%>
+                      <span class="TopicTab"><%=topic.tab%></span>
+                    <%}%>
                     <span><%=topic.title%></span>
-                    <span class="pull-right"><%=topic.create_at_ago()%><span>
+                    <%if(!topic.reply_count){%>
+                      <span class="pull-right"><%=topic.create_at_ago()%><span>
+                    <%}else{%>
+                      <span class="pull-right"><%=topic.last_reply_at_ago()%><span>                   
+                    <%}%>
                 </a>
                 <% })%>
-
-  
                 <!--分页-->
                 <nav>
                     <ul class="pagination" cureent_page=<%=current_page%>>

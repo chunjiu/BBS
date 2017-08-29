@@ -22,7 +22,7 @@ var UserSchema = new Schema({
 
     score: { type: Number, default: 0 },
     topic_count: { type: Number, default: 0 },
-    collect_topic_count: {type:Number,default:0}//被收藏的话题数
+    collect_topic_count: { type: Number, default: 0 },//被收藏的话题数
 })
 var User = mongoose.model('User', UserSchema);
 /*User.prototype.findOne = function (username,callback) {
@@ -34,7 +34,7 @@ exports.addsave = function (name, password, email,active,callback) {
     user.username = name;
     user.password = password;
     user.email = email;
-    user.active = active || true;
+    user.active = active;
     user.save(callback);
 }
  
