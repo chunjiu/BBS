@@ -75,16 +75,20 @@ router.get('/:id/tid', function (req, res, next) {
       if (err) {
         return next(err);
       }
-      topics.save();
-      console.log('res.session.user是：' + req.session.user);
+      console.log('topic,user是'+topics.username);
       User.getUserByUserName(topics.username, function (err, user) {
         if (err) {
           console.log('出错');
           return next(err);
         }
+        if (!user) { 
+          console.log('没有user');
+        }
         console.log('运行到这里');
         Topic.findByQuery({ 'username': topics.username, 'deleted': false }, { limit: 5 }, function (err, OtherTopics) {//注意：topic.id只有唯一的一个。多个topic里存储了同一个用户名,故用user.getUserByUserName（topic.username）来查找
-
+          if (err) { 
+            return next(err);
+          }
           Topic.findNoReply_topic({ 'username': topics.username, 'reply_count': 0, 'deleted': false }, { limit: 5 }, function (err, noreplytopic) {
             if (err) {
               console.log('无人回复的话题查找错误');
@@ -94,11 +98,13 @@ router.get('/:id/tid', function (req, res, next) {
               if (err) {
                 return next(err);
               }
+              topics.save();
+              console.log('current是'+req.session.user);
               res.render('topic/index', {
                 topic: topics,
                 reply: replies,
                 user: user,
-                current_user: req.session.user,
+                current_user:req.session.user,
                 othertopics: OtherTopics,
                 noreplytopic: noreplytopic,
                 is_collect: collect
@@ -248,7 +254,7 @@ router.post('/:id/reply', function (req, res, next) {
     topic.last_reply_at = new Date();
     topic.reply_count += 1;//话题回复数+1
     topic.save();
-    Reply.newAndSave(content, topic_id, req.session.user, function (err, reply) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
+    Reply.newAndSave(content, topic_id, req.session.user.username, function (err, reply) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
       if (err) {
         return next(err);
       }
@@ -289,7 +295,7 @@ router.post('/reply/:reply_id/delete', function (req, res, next) {
 router.post('/reply/nice', function (req, res, next) {
   console.log('进入nice');
   var reply_id = req.body.reply_id;
-  var user = req.session.user;
+  var user = req.session.user.username;
   console.log('user是：' + user);
   Reply.getRepliesByid(reply_id, function (err, reply) {
     if (err) {
@@ -328,7 +334,7 @@ router.post('/reply/nice', function (req, res, next) {
 
 //注册页面
 router.get('/signup', function (req, res) {
-  res.render('sign/signup', { title: '注册', current_user: req.session.user });
+  res.render('sign/signup', { title: '注册', current_user:req.session.user?req.session.user.username:'' });
 })
 router.get('/test', function (req, res) {
   res.render('sign/test', {});
@@ -407,7 +413,7 @@ router.get('/active_account', function (req, res, next) {
 
 //登录界面
 router.get('/signin', function (req, res) {
-  res.render('sign/signin', { current_user: req.session.user });
+  res.render('sign/signin', { current_user: req.session.user?req.session.user.username:'',});
 })
 //登录
 router.post('/login', function (req, res, next) {
@@ -417,7 +423,7 @@ router.post('/login', function (req, res, next) {
   if (!username || !password) {
     /* req.flash('error', '信息不完整');
      res.redirect('/signin');*/
-    return res.render('sign/signin', { errors: '信息不完整', current_user: req.session.user });//可以不用req.flash且好于用req.flash
+    return res.render('sign/signin', { errors: '信息不完整', current_user: req.session.user?req.session.user.username:'', });//可以不用req.flash且好于用req.flash
   }
   var getUser;
   if (username.indexOf('@') !== -1) {
@@ -432,11 +438,11 @@ router.post('/login', function (req, res, next) {
     }
     if (!user) {
       console.log('出错2');
-      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.username })
+      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user?req.session.user.username:'',})
     }
     if (password != user.password) { 
       console.log('出错3');
-      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.username })
+      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user?req.session.user.username:'',})
     }
     if (!user.active) {
       console.log('出错4');
@@ -465,7 +471,7 @@ router.get('/create', authMiddleWare.userRequired, function (req, res, next) {
   res.render('topic/edit', {
     tabs: config.tabs,
     action: '',
-    current_user: req.session.user,
+    current_user: req.session.user?req.session.user.username:'',
   });
 });
 
@@ -488,15 +494,15 @@ router.post('/topic/create', function (req, res, next) {
       content: content,
       errors: errors,
       tabs: config.tabs,
-      current_user:req.session.user
+      current_user:req.session.user?req.session.user.username:'',
     });
   }
-  Topic.newAndSave(title, tab, content, req.session.user, function (err, topic) {
+  Topic.newAndSave(title, tab, content, req.session.user.username, function (err, topic) {
     if (err) {
       return next(err);
     }
     console.log('保存成功');
-    User.getUserByUserName(req.session.user, function (err, user) { //req.session.user是中间件中的，全局可调用
+    User.getUserByUserName(req.session.user.username, function (err, user) { //req.session.user是中间件中的，全局可调用
       if (err) {
         return next(err);
       }
@@ -527,7 +533,7 @@ router.get('/topic/:id/edit', function (req, res, next) {
       title: topic.title,
       content: topic.content,
       topic_id: topic.id,
-      current_user: req.session.user,
+      current_user: req.session.user?req.session.user.username:'',
       tab: topic.tab,
       topic:topic
     });
@@ -565,7 +571,7 @@ router.post('/topic/:id/edit', function (req, res, next) {
         errors: errors,
         tabs: config.tabs,
         topic_id: topic_id,
-        current_user: req.session.user,
+        current_user: req.session.user?req.session.user.username:'',
         tab:tab
       });
     }

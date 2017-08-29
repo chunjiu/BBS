@@ -78,14 +78,16 @@
                 <span><%=topic.visit_count%>次浏览</span>●
                 <span>来自【<%=topic.tab%>】</span>
               </div>
-
-              <%if(current_user.username===topic.username){%>
-                <div>
-                  &nbsp
-                  <a href="/topic/<%=topic.id%>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp
-                  <a id="remove" href="/topic/<%=topic.id%>/remove"><i class="glyphicon glyphicon-trash"></i></a>
-                </div>
-                <%}%>
+              <%if(current_user){%>
+                <%if(current_user.username===topic.username){%>
+                  <div>
+                    &nbsp
+                    <a href="/topic/<%=topic.id%>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp
+                    <a id="remove" href="/topic/<%=topic.id%>/remove"><i class="glyphicon glyphicon-trash"></i></a>
+                  </div>
+                  <%}%>
+              <%}%>
+             
 
         </div>
         <div class="panel-body">
