@@ -8,8 +8,8 @@ var ReplySchema = new Schema({
     content: { type: String },
     author_id: { type: ObjectId },
     reply_id: { type: ObjectId },
-    create_at: { type: Date, default: Date.now },
-    upate_at: { type: Date, default: Date.now },
+    create_at: { type: Date, default: Date.now() },
+    upate_at: { type: Date, default: Date.now() },
     content_is_html: { type: Boolean },
     ups: {type:Array},
     deleted: { type: Boolean, default: false },
@@ -43,4 +43,8 @@ exports.getRepliesByQuery = function (query,opt, callback) {
 
 exports.getRepliesByid = function (id,callback) {
     Reply.findById({'_id':id},callback);
+}
+
+exports.getRepliesByUsername = function (username, callback) {
+    Reply.find({'username':username},callback)
  }

@@ -1,0 +1,78 @@
+<%-include('../header')%>
+
+    <div class='panel'>
+        <ul class='breadcrumb'>
+            <li><a href='/' style="font-size: 18px;font-weight: bold;">主页</a><span class='divider'></span></li>
+            <li><a></a></li>
+        </ul>
+        <div>
+            <%-include('../sidebar')%>
+        </div>
+        <p style="color:#EEB422;margin-top:10px;">注册时间
+            <%=user.create_at_ago()%>
+        </p>
+    </div>
+    <div class="panel panel-default" style="margin-bottom:0">
+        <div class="panel-heading panle_title">最近创建的话题</div>
+        <div class="list-group">
+            <%if(topic.length){%>
+                <%topic.forEach(function(topic){%>
+                    <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
+                    <span title="回复数"><%=topic.reply_count%></span>/<span title="点击数"><%=topic.visit_count%></span>
+                    <%if(topic.top){%>
+                        <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
+                      <%}else if(topic.good){%>
+                        <span class="TopicGood">精华</span>
+                      <%}else{%>
+                        <span class="TopicTab"><%=topic.tab%></span>
+                      <%}%>
+                    <span><%=topic.title%></span>
+                    <%if(!topic.reply_count){%>
+                        <span class="pull-right"><%=topic.create_at_ago()%><span>
+                    <%}else{%>
+                        <span class="pull-right"><%=topic.last_reply_at_ago()%><span>                   
+                    <%}%>
+                   </a>
+                <% })%>
+            <%}%>
+        </div>
+    </div>
+   <!--后面再开发这个页面 <a style="margin-top:0px;font-size: 18px;font-weight: bold; text-decoration:none;cursor:pointer">查看更多<span>&raquo;</span></a>-->
+
+    <div class="panel panel-default" style="margin-top:20px;">
+            <div class="panel-heading panle_title">最近参与的话题</div>
+            <div class="list-group">
+                <%if(replyTopic.length){%>
+                    <%replyTopic.forEach(function(replyTopic){%>
+                        <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=replyTopic.id%>/tid">
+                        <span title="回复数"><%=replyTopic.reply_count%></span>/<span title="点击数"><%=replyTopic.visit_count%></span>
+                        <%if(replyTopic.top){%>
+                            <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
+                          <%}else if(replyTopic.good){%>
+                            <span class="TopicGood">精华</span>
+                          <%}else{%>
+                            <span class="TopicTab"><%=topic.tab%></span>
+                          <%}%>
+                        <span><%=replyTopic.title%></span>
+                        <%if(!replyTopic.reply_count){%>
+                            <span class="pull-right"><%=replyTopic.create_at_ago()%><span>
+                        <%}else{%>
+                            <span class="pull-right"><%=replyTopic.last_reply_at_ago()%><span>                   
+                        <%}%>
+                       </a>
+                    <% })%>
+                <%}%>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+    <%-include('../footer')%>

@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var moment = require('moment');//时期日期处理库
+moment.locale('zh-cn');//加载中文模块
 
 mongoose.Promise = global.Promise;//加入数据库异步操作
 mongoose.createConnection('mongodb://127.0.0.1:27017', { server: {poolSize:20} }, function (err) { 
@@ -17,6 +19,7 @@ var UserSchema = new Schema({
     password: { type: String },
     email: { type: String },
     active: { type: Boolean, default: false },
+    create_at: {type:Date,default:Date.now()},//注册时间
 
     topic_id: {type:ObjectId},//用户数据、话题数据、回复数据互查ID
 
@@ -24,7 +27,13 @@ var UserSchema = new Schema({
     topic_count: { type: Number, default: 0 },
     collect_topic_count: { type: Number, default: 0 },//被收藏的话题数
 })
+
+UserSchema.methods.create_at_ago = function () { 
+    var date = moment(this.create_at);
+    return date.fromNow();
+}
 var User = mongoose.model('User', UserSchema);
+
 /*User.prototype.findOne = function (username,callback) {
     User.find(username, callback);
  }*/

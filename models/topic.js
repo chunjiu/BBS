@@ -19,20 +19,18 @@ var TopicSchema = new Schema({
     content: { type: String },
     reply_count: { type: Number, default: 0 },//回复数
     last_reply: { type: ObjectId },
-    last_reply_at: { type: Date, default: Date.now },//最后一次回复
+    last_reply_at: { type: Date, default: Date.now() },//最后一次回复
     
     username: { type: String },//方便查找用户的所有话题
     visit_count: { type: Number, default: 0 },//浏览次数
-    create_at: { type: Date, default: Date()},
+    create_at: { type: Date, default: Date.now()},
     collect_count: { type: Number, default: 0 },//话题被收藏数
     
-    updated_at: { type: Date, default: Date()},//最近的更新时间
+    updated_at: { type: Date, default: Date.now()},//最近的更新时间
     deleted: { type: Boolean, default: false },
 
     good: { type: Boolean, default: false },//精华贴
     top: {type:Boolean,default:false},//置顶贴
-    
-    
     
 });
 

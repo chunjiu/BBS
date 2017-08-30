@@ -19,7 +19,7 @@ var EventProxy = require('eventproxy');//异步控制
 
 
 /* GET home page. */
-router.get('/',authMiddleWare.authUser, function (req, res, next) {
+router.get('/', authMiddleWare.authUser, function (req, res, next) {
   //res.status(403).end();
 
   var page = parseInt(req.query.page, 10) || 1;
@@ -28,22 +28,22 @@ router.get('/',authMiddleWare.authUser, function (req, res, next) {
   var query = {};
   if (!tab || tab == '全部') {
     query.tab = { $nin: ['招聘'] };//db.col.find(tab:{$nin:['招聘']})
-  } else if (tab == '精华') { 
+  } else if (tab == '精华') {
     query.good = true;
-  } else{ 
+  } else {
     query.tab = tab;
   }
 
   var limit = 20;
-  var options = {skip:(page-1)*limit,limit:limit,sort:'-top -last_reply_at'};
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at' };
 
-  Topic.findByQuery(query,options, function (err, topics) {
+  Topic.findByQuery(query, options, function (err, topics) {
     if (err) {
       console.log('err是：' + err);
     } else {
       console.log('req.cookies是：' + req.signedCookies[config.auth_cookie_name]);
       console.log('req.session.uer是：' + req.session.user);
-      var ReqUser = req.session.user?req.session.user.username:'';
+      var ReqUser = req.session.user ? req.session.user.username : '';
       User.getUserByUserName(ReqUser, function (err, user) {
         if (err) {
           return next(err);
@@ -57,7 +57,7 @@ router.get('/',authMiddleWare.authUser, function (req, res, next) {
             tabs: config.tabs,
             current_page: page,
             tab: tab,
-            pages: pages,   
+            pages: pages,
           });
           // res.download('/nodeMy博客/sheng.txt','sheng.txt');用于下载页面
         });
@@ -71,22 +71,22 @@ router.get('/:id/tid', function (req, res, next) {
   var topic_id = req.params.id;
   Topic.findById(req.params.id, function (err, topics) {
     topics.visit_count += 1;//浏览量
-    Reply.getRepliesByQuery({ 'topic_id': topic_id,'deleted':false }, {}, function (err, replies) {
+    Reply.getRepliesByQuery({ 'topic_id': topic_id, 'deleted': false }, {}, function (err, replies) {
       if (err) {
         return next(err);
       }
-      console.log('topic,user是'+topics.username);
+      console.log('topic,user是' + topics.username);
       User.getUserByUserName(topics.username, function (err, user) {
         if (err) {
           console.log('出错');
           return next(err);
         }
-        if (!user) { 
+        if (!user) {
           console.log('没有user');
         }
         console.log('运行到这里');
         Topic.findByQuery({ 'username': topics.username, 'deleted': false }, { limit: 5 }, function (err, OtherTopics) {//注意：topic.id只有唯一的一个。多个topic里存储了同一个用户名,故用user.getUserByUserName（topic.username）来查找
-          if (err) { 
+          if (err) {
             return next(err);
           }
           Topic.findNoReply_topic({ 'username': topics.username, 'reply_count': 0, 'deleted': false }, { limit: 5 }, function (err, noreplytopic) {
@@ -99,12 +99,12 @@ router.get('/:id/tid', function (req, res, next) {
                 return next(err);
               }
               topics.save();
-              console.log('current是'+req.session.user);
+              console.log('current是' + req.session.user);
               res.render('topic/index', {
                 topic: topics,
                 reply: replies,
                 user: user,
-                current_user:req.session.user,
+                current_user: req.session.user,
                 othertopics: OtherTopics,
                 noreplytopic: noreplytopic,
                 is_collect: collect
@@ -186,53 +186,90 @@ router.post('/topic/de_collect', function (req, res, next) {
 });
 
 //加精该话题
-router.get('/topic/:id/good', function (req, res, next) { 
+router.get('/topic/:id/good', function (req, res, next) {
   var topic_id = req.params.id;
   Topic.findById(topic_id, function (err, topic) {
-    if (err) { 
+    if (err) {
       return next(err);
     }
-    if (!topic) { 
+    if (!topic) {
       return next(err);
       console.log('该话题不存在');
     }
     topic.good = !topic.good;
-    topic.save(function (err) { 
-      if (err) { 
+    topic.save(function (err) {
+      if (err) {
         return next(err);
       }
       var msg = topic.good ? '该话题加精华成功' : '该话题精华已被取消';
-      res.render('notify/notify', {error:msg});
+      res.render('notify/notify', { error: msg });
     });
 
-   })
+  })
 });
 
 //置顶该话题
-router.get('/topic/:id/top', function (req, res, next) { 
+router.get('/topic/:id/top', function (req, res, next) {
   var topic_id = req.params.id;
-  Topic.findById(topic_id, function (err, topic) { 
-    if (err) { 
+  Topic.findById(topic_id, function (err, topic) {
+    if (err) {
       return next(err);
     }
-    if (!topic) { 
+    if (!topic) {
       return next(err);
     }
     topic.top = !topic.top;
     topic.good = true;
-    topic.save(function (err) { 
-      if (err) { 
+    topic.save(function (err) {
+      if (err) {
         return next(err);
       }
       var msg = topic.top ? '该话题置顶成功' : '该话题已被取消置顶';
-      res.render('notify/notify', {error:msg});      
+      res.render('notify/notify', { error: msg });
     });
   })
 });
 
 //进入该话题用户主页
 router.get('/user/:username', function (req, res, next) {
-
+  var user_name = req.params.username;
+  console.log('进入用户主页');
+  User.getUserByUserName(user_name, function (err, user) {
+    if (err) {
+      console.log('出错');
+      return next(err);
+    }
+    var query = { 'username': user_name };
+    var opt = { sort: '-create_at',limit:5 }
+    Topic.findByQuery(query, opt, function (err, topic) {
+      if (err) {
+        return next(err);
+      }
+      Reply.getRepliesByUsername(user_name, function (err, reply) { 
+        if (err) { 
+          return next(err);
+        }
+        //查找多个id时,需先将每个id转化为字符串
+        var reply_topic_id = reply.map(function (reply) {
+         return reply.topic_id.toString()
+        })    
+        var queryTopic = { '_id': { '$in': reply_topic_id} }
+        var optTopic = {sort:'-last_reply_at',limit:5}
+        Topic.findByQuery(queryTopic, optTopic, function (err, replyTopic) {
+          if (err) { 
+            return next(err);
+          }
+          console.log('reply_topic_id是：'+reply_topic_id);
+          res.render('user/index', {
+            current_user: req.session.user ? req.session.user.username : '',
+            user: user,
+            topic: topic,
+            replyTopic:replyTopic,
+          });
+         })
+      })
+    })
+  })
 });
 
 //保存回复
@@ -242,9 +279,9 @@ router.post('/:id/reply', function (req, res, next) {
   var topic_id = req.params.id;
   console.log('content是' + content);
 
-  if (content ==='') { //这里其实用ajax更好，整个回复都用ajax
+  if (content === '') { //这里其实用ajax更好，整个回复都用ajax
     return res.render('notify/notify', {
-      error:'回复内容不能为空'
+      error: '回复内容不能为空'
     });
   }
   Topic.findById(topic_id, function (err, topic) {
@@ -261,7 +298,7 @@ router.post('/:id/reply', function (req, res, next) {
       console.log('保存成功');
 
       //Topic.updateLastReply(topic_id);
-      res.redirect('/' + topic_id + '/tid/'+'#'+reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
+      res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
     });
   });
 
@@ -270,26 +307,26 @@ router.post('/:id/reply', function (req, res, next) {
 //删除回复
 router.post('/reply/:reply_id/delete', function (req, res, next) {
   var reply_id = req.params.reply_id;
-  console.log('删除回复里的reply_id'+reply_id);
+  console.log('删除回复里的reply_id' + reply_id);
   Reply.getRepliesByid(reply_id, function (err, reply) {
-    if (err) { 
-      
+    if (err) {
+
       return next(err);
     }
     reply.deleted = true;
     reply.save();
     Topic.findById(reply.topic_id, function (err, topic) {
-      if (err) { 
+      if (err) {
         console.log('出错2');
         return next(err);
       }
       topic.reply_count -= 1;
-      topic.save(function () { 
-        res.json({status:'success'})
+      topic.save(function () {
+        res.json({ status: 'success' })
       });
     });
-   });
- });
+  });
+});
 
 //回复点赞
 router.post('/reply/nice', function (req, res, next) {
@@ -334,7 +371,7 @@ router.post('/reply/nice', function (req, res, next) {
 
 //注册页面
 router.get('/signup', function (req, res) {
-  res.render('sign/signup', { title: '注册', current_user:req.session.user?req.session.user.username:'' });
+  res.render('sign/signup', { title: '注册', current_user: req.session.user ? req.session.user.username : '' });
 })
 router.get('/test', function (req, res) {
   res.render('sign/test', {});
@@ -366,10 +403,10 @@ router.post('/sign', function (req, res) {
       console.log(link);
       User.addsave(username, password, email, false, function (err) {
         if (!err) {
-         // req.flash('info', '注册成功，只差邮箱验证了');
+          // req.flash('info', '注册成功，只差邮箱验证了');
           console.log('邮箱是：' + email);
           mail.sendActiveMail(email, utility.md5(email + 'abcde邮箱验证'), username)//注册成功则发送邮件
-          res.render('notify/notify', {success:'注册成功',link:link});
+          res.render('notify/notify', { success: '注册成功', link: link });
         } else {
           res.redirect('/signup');
           console.log('保存不成功');
@@ -395,17 +432,17 @@ router.get('/active_account', function (req, res, next) {
     }
     if (!user || utility.md5(user.email + 'abcde邮箱验证') !== key) {
       console.log('key是：' + key);
-      return res.render('notify/notify', { error: '信息有误，账号无法登录',link:'' });
+      return res.render('notify/notify', { error: '信息有误，账号无法登录', link: '' });
     }
     if (user.active) {
-      return res.render('notify/notify', { success: '账号已经是激活状态',link:'' });
+      return res.render('notify/notify', { success: '账号已经是激活状态', link: '' });
     }
     user.active = true;
     user.save(function (err) {
       if (err) {
         return next(err);
       }
-      res.render('notify/notify', { success: '账号已经激活，请登录',link:'' });
+      res.render('notify/notify', { success: '账号已经激活，请登录', link: '' });
 
     })
   })
@@ -413,7 +450,7 @@ router.get('/active_account', function (req, res, next) {
 
 //登录界面
 router.get('/signin', function (req, res) {
-  res.render('sign/signin', { current_user: req.session.user?req.session.user.username:'',});
+  res.render('sign/signin', { current_user: req.session.user ? req.session.user.username : '', });
 })
 //登录
 router.post('/login', function (req, res, next) {
@@ -423,7 +460,7 @@ router.post('/login', function (req, res, next) {
   if (!username || !password) {
     /* req.flash('error', '信息不完整');
      res.redirect('/signin');*/
-    return res.render('sign/signin', { errors: '信息不完整', current_user: req.session.user?req.session.user.username:'', });//可以不用req.flash且好于用req.flash
+    return res.render('sign/signin', { errors: '信息不完整', current_user: req.session.user ? req.session.user.username : '', });//可以不用req.flash且好于用req.flash
   }
   var getUser;
   if (username.indexOf('@') !== -1) {
@@ -438,11 +475,11 @@ router.post('/login', function (req, res, next) {
     }
     if (!user) {
       console.log('出错2');
-      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user?req.session.user.username:'',})
+      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user ? req.session.user.username : '', })
     }
-    if (password != user.password) { 
+    if (password != user.password) {
       console.log('出错3');
-      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user?req.session.user.username:'',})
+      return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user ? req.session.user.username : '', })
     }
     if (!user.active) {
       console.log('出错4');
@@ -471,7 +508,7 @@ router.get('/create', authMiddleWare.userRequired, function (req, res, next) {
   res.render('topic/edit', {
     tabs: config.tabs,
     action: '',
-    current_user: req.session.user?req.session.user.username:'',
+    current_user: req.session.user ? req.session.user.username : '',
   });
 });
 
@@ -494,7 +531,7 @@ router.post('/topic/create', function (req, res, next) {
       content: content,
       errors: errors,
       tabs: config.tabs,
-      current_user:req.session.user?req.session.user.username:'',
+      current_user: req.session.user ? req.session.user.username : '',
     });
   }
   Topic.newAndSave(title, tab, content, req.session.user.username, function (err, topic) {
@@ -533,9 +570,9 @@ router.get('/topic/:id/edit', function (req, res, next) {
       title: topic.title,
       content: topic.content,
       topic_id: topic.id,
-      current_user: req.session.user?req.session.user.username:'',
+      current_user: req.session.user ? req.session.user.username : '',
       tab: topic.tab,
-      topic:topic
+      topic: topic
     });
   });
 });
@@ -546,7 +583,7 @@ router.post('/topic/:id/edit', function (req, res, next) {
   var title = req.body.title;
   var tab = req.body.tab;
   var content = req.body.t_content;
-  console.log('tab是：'+tab);
+  console.log('tab是：' + tab);
 
   Topic.findById(topic_id, function (err, topic) {
     if (err) {
@@ -571,8 +608,8 @@ router.post('/topic/:id/edit', function (req, res, next) {
         errors: errors,
         tabs: config.tabs,
         topic_id: topic_id,
-        current_user: req.session.user?req.session.user.username:'',
-        tab:tab
+        current_user: req.session.user ? req.session.user.username : '',
+        tab: tab
       });
     }
     //更新话题
@@ -620,7 +657,7 @@ router.get('/topic/:id/remove', function (req, res, next) {
   });
 })
 
-router.get('/email', function (req,res,next) { 
+router.get('/email', function (req, res, next) {
   var email = 'eee@qq.com';
   var link = EmailLink.EmailLink(email);
   console.log(link);
