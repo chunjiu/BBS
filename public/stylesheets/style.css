@@ -41,6 +41,14 @@ img{
 .panelBorderNone{
   border:none;
 }
+.page_jump{
+  width: 38%;
+}
+@media(min-width:768px){
+  .page_jump{
+    width: 20%;
+  }
+}
 
 .sidebar{
   width:298px;
@@ -71,6 +79,7 @@ a:hover{
 }
 .ReplyContent_p{
   padding: 10px;
+  padding-left: 35px;
   border-bottom: 1px solid	#FFEFD5;}
 
 .TopTitile{

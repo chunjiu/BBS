@@ -24,12 +24,12 @@
             <%})%>
           </ul>
         </div>
-
         <div style="background-color:white">
           <div class="list-group">
             <%if(topic.length){%>
               <%topic.forEach(function(topic){%>
                 <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
+                    <span><img src="<%=user.avatars%>" style="width:30px;height:30px;border-radius:25%"></span>
                     <span title="回复数"><%=topic.reply_count%></span>/<span title="点击数"><%=topic.visit_count%></span>
                     <%if(topic.top){%>
                       <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
@@ -42,7 +42,10 @@
                     <%if(!topic.reply_count){%>
                       <span class="pull-right"><%=topic.create_at_ago()%><span>
                     <%}else{%>
-                      <span class="pull-right"><%=topic.last_reply_at_ago()%><span>                   
+                      <span class="pull-right">
+                        <span><img src="<%=topic.last_reply_user_avatars?topic.last_reply_user_avatars:'/images/123.jpg'%>" style="width:30px;height:30px;border-radius:25%"></span>
+                        <span><%=topic.last_reply_at_ago()%><span> 
+                      </span>                  
                     <%}%>
                 </a>
                 <% })%>
@@ -55,8 +58,8 @@
                       <%}else{%>
                         <li><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
                       <%}%>
-                      <% var star_page = current_page - 4 > 0 ? current_page - 4: 1;
-                         var end_page =  star_page + 7 >= pages ? pages:star_page+7;
+                      <% var star_page = current_page - 2 > 0 ? current_page - 2: 1;
+                         var end_page =  star_page + 3 >= pages ? pages:star_page+3;
                        %>
                       <% for(var i=star_page;i<=end_page;i++){%>
                         <li><a class="page" href="<%=base_url%><%=i%>"><%=i%></a></li>
@@ -66,16 +69,18 @@
                       <%}else{%>
                         <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
                       <%}%>
-                      <li style="visibility:hidden;" ><a class="pageJump" url=<%=base_url%>><button id="pp"></button></a> <!--button标签需在a标签里面，可用于a标签的自动触发事件--> <li>
-                      <div class="input-group" style="width:20%;">
-                        <span class="input-group-addon">跳转到</span>
+                      <li class="li_hidden" style="display:none"><a class="pageJump" url=<%=base_url%>><button id="pp"></button></a> <!--button标签需在a标签里面，可用于a标签的自动触发事件--> <li>
+                      <li>
+                        <div class="input-group page_jump">
+                        <span class="input-group-addon">转到</span>
                         <select class="form-control">
                             <option><%=current_page%>页</option>
-                          <% for(var i=0;i<=pages;i++){%>
+                          <% for(var i=1;i<=pages;i++){%>
                             <option><%=i%>页</option>
                          <% }%>
                         </select>
-                       </div> 
+                      </div>
+                      </li> 
                                
                     </ul>
       

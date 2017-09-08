@@ -18,6 +18,7 @@ var UserSchema = new Schema({
     username: { type: String },
     password: { type: String },
     email: { type: String },
+    avatars: {type:String}, //用户头像   
     active: { type: Boolean, default: false },
     create_at: {type:Date,default:Date.now()},//注册时间
 

@@ -8,12 +8,15 @@ var ReplySchema = new Schema({
     content: { type: String },
     author_id: { type: ObjectId },
     reply_id: { type: ObjectId },
+    reply_avatars: { type: String },//回复用户头像
+    
     create_at: { type: Date, default: Date.now() },
     upate_at: { type: Date, default: Date.now() },
     content_is_html: { type: Boolean },
     ups: {type:Array},
     deleted: { type: Boolean, default: false },
 
+    
     topic_id: { type: ObjectId },//方便查找回复的话题
     username: { type: String }//方便查找用户的回复
 });
@@ -25,11 +28,12 @@ ReplySchema.methods.create_at_ago = function () {//给ReplySchema数据库添加
 
 var Reply = mongoose.model('Reply', ReplySchema);
 
-exports.newAndSave = function (content, topic_id,username,callback) {
+exports.newAndSave = function (content, topic_id,username,reply_avatars,callback) {
     var reply = new Reply();
     reply.content = content;
     reply.username = username;
     reply.topic_id = topic_id;
+    reply.reply_avatars = reply_avatars;
 
 
     reply.save(function (err) {

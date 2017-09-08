@@ -2,8 +2,8 @@
 <%if(user||current_user){%>
     <div class="media">
         <div class="media-left">
-            <a style="display:block; width:50px;" href="/user/<%=user.username%>"><!--因为在css里设置了img自适应大小，此处的img的父元素a为行内元素，要改为块元素并给出宽度，这里的图片才会显示-->
-                <img src="/images/123.jpg" title='<%=user.username%>'></img>
+            <a  href ='/user/<%=user.username%>' class="setAvatars" style="display:block; width:50px;"><!--因为在css里设置了img自适应大小，此处的img的父元素a为行内元素，要改为块元素并给出宽度，这里的图片才会显示-->
+                <img src="<%=user.avatars?user.avatars:'images/123.jpg'%>" title='<%=user.username%>' style="height:45px;border-radius:25%"></img>
             </a>
         </div>
         <div class="media-body">

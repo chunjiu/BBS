@@ -117,9 +117,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-
-
-
 app.listen(3000, function () {//上线要改成80
   console.log('服务器已在80端口运行');
 })

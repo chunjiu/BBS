@@ -1,11 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var path = require('path');
 
 var crypto = require('crypto');
 var utility = require('utility');
 
 var mail = require('../common/mail');//发送邮件模块
-var EmailLink = require('../common/emaillink');//登录邮箱链接
+var EmailLink = require('../common/emaillink');//生成登录邮箱链接
+var multer = require('../common/multerUtil');//文件上传模块
+
 
 var User = require('../models/user');
 var Topic = require('../models/topic');
@@ -17,6 +20,56 @@ var authMiddleWare = require('../middlewares/auth');
 
 var EventProxy = require('eventproxy');//异步控制
 
+//接口
+router.get('/api', function (req, res, next) {
+  //res.status(403).end();
+
+  var page = parseInt(req.query.page, 10) || 1;
+  var tab = req.query.tab || '全部';
+
+  var query = {};
+  if (!tab || tab == '全部') {
+    query.tab = { $nin: ['招聘'] };//db.col.find(tab:{$nin:['招聘']})
+  } else if (tab == '精华') {
+    query.good = true;
+  } else {
+    query.tab = tab;
+  }
+
+  var limit = 20;
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at' };
+
+  Topic.findByQuery(query, options, function (err, topics) {
+    if (err) {
+      console.log('err是：' + err);
+    } else {
+      console.log('req.cookies是：' + req.signedCookies[config.auth_cookie_name]);
+      console.log('req.session.uer是：' + req.session.user);
+      var ReqUser = req.session.user ? req.session.user.username : '';
+      User.getUserByUserName(ReqUser, function (err, user) {
+        if (err) {
+          return next(err);
+        }
+        Topic.findByQuery(query, function (err, topics_count) {
+          var pages = Math.ceil((topics_count.length) / limit);
+
+          var data = {
+            topic: topics,
+            user: user,
+            current_user: req.session.user,
+            tabs: config.tabs,
+            current_page: page,
+            tab: tab,
+            pages: pages,
+          };
+          res.json(data);
+          // res.download('/nodeMy博客/sheng.txt','sheng.txt');用于下载页面
+        });
+      });
+    }
+  });
+});
+//接口结束
 
 /* GET home page. */
 router.get('/', authMiddleWare.authUser, function (req, res, next) {
@@ -51,15 +104,15 @@ router.get('/', authMiddleWare.authUser, function (req, res, next) {
         Topic.findByQuery(query, function (err, topics_count) {
           var pages = Math.ceil((topics_count.length) / limit);
           res.render('index', {
-            topic: topics,
-            user: user,
-            current_user: req.session.user,
-            tabs: config.tabs,
-            current_page: page,
-            tab: tab,
-            pages: pages,
+              topic: topics,
+              user: user,
+              current_user: req.session.user,
+              tabs: config.tabs,
+              current_page: page,
+              tab: tab,
+              pages: pages,
           });
-          // res.download('/nodeMy博客/sheng.txt','sheng.txt');用于下载页面
+
         });
       });
     }
@@ -240,33 +293,33 @@ router.get('/user/:username', function (req, res, next) {
       return next(err);
     }
     var query = { 'username': user_name };
-    var opt = { sort: '-create_at',limit:5 }
+    var opt = { sort: '-create_at', limit: 5 }
     Topic.findByQuery(query, opt, function (err, topic) {
       if (err) {
         return next(err);
       }
-      Reply.getRepliesByUsername(user_name, function (err, reply) { 
-        if (err) { 
+      Reply.getRepliesByUsername(user_name, function (err, reply) {
+        if (err) {
           return next(err);
         }
         //查找多个id时,需先将每个id转化为字符串
         var reply_topic_id = reply.map(function (reply) {
-         return reply.topic_id.toString()
-        })    
-        var queryTopic = { '_id': { '$in': reply_topic_id} }
-        var optTopic = {sort:'-last_reply_at',limit:5}
+          return reply.topic_id.toString()
+        })
+        var queryTopic = { '_id': { '$in': reply_topic_id } }
+        var optTopic = { sort: '-last_reply_at', limit: 5 }
         Topic.findByQuery(queryTopic, optTopic, function (err, replyTopic) {
-          if (err) { 
+          if (err) {
             return next(err);
           }
-          console.log('reply_topic_id是：'+reply_topic_id);
+          console.log('reply_topic_id是：' + reply_topic_id);
           res.render('user/index', {
             current_user: req.session.user ? req.session.user.username : '',
             user: user,
             topic: topic,
-            replyTopic:replyTopic,
+            replyTopic: replyTopic,
           });
-         })
+        })
       })
     })
   })
@@ -288,18 +341,26 @@ router.post('/:id/reply', function (req, res, next) {
     if (err) {
       return next(err);
     }
-    topic.last_reply_at = new Date();
-    topic.reply_count += 1;//话题回复数+1
-    topic.save();
-    Reply.newAndSave(content, topic_id, req.session.user.username, function (err, reply) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
-      if (err) {
+    User.getUserByUserName(req.session.user.username, function (err, user) { 
+      if (err) { 
         return next(err);
       }
-      console.log('保存成功');
+      topic.last_reply_at = new Date();
+      topic.last_reply_user_avatars = user.avatars;
+      topic.reply_count += 1;//话题回复数+1
+      topic.save();
+      Reply.newAndSave(content, topic_id, req.session.user.username,user.avatars, function (err, reply) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
+        if (err) {
+          return next(err);
+        }
+        console.log('保存成功');
+  
+        //Topic.updateLastReply(topic_id);
+        console.log('avtars是：'+reply.reply_avatars);
+        res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
+      });
 
-      //Topic.updateLastReply(topic_id);
-      res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
-    });
+    })
   });
 
 });
@@ -376,8 +437,64 @@ router.get('/signup', function (req, res) {
 router.get('/test', function (req, res) {
   res.render('sign/test', {});
 })
+
+ /*文件上传
+router.post('/upload', function (req, res, next) {
+ 
+  //var fields = [{ name: 'up', maxCount: 1 }, {name:'up1',maxCount:8}];
+  //var upload = multer.fields(fields);多个input上传
+
+   
+  //var upload = multer.array('up', 5) 一个input 上传多个
+  var username = req.session.user ? req.session.user.username : ''; 
+  var upload = multer.single('up');
+
+  upload(req, res, function (err) {
+    if (err) {
+      return console.log(err);
+    }
+    User.getUserByUserName(username, function (err, user) {
+      if (err) { 
+        return next(err);
+      }
+      if (!user) { 
+        console.log('没有用户');
+      }
+      var newpath = req.file.path;
+      console.log('原路径是：'+req.file.path);
+      newpath = newpath.slice(6);//引入路径时要去掉public,因为中间件已经默认加入了public
+      console.log('新路径是'+newpath);
+      user.avatars = newpath;
+      user.save(function (err) {
+        res.redirect('/');
+       });
+    })
+    //console.log('上传文件的全路径是：' + req.file.path)
+
+  });
+})
+*/
+//头像裁剪上传
+router.post('/upload', function (req, res, next) { 
+  console.log('进入upload');
+  var username = req.session.user ? req.session.user.username : ''; 
+  var imgURL = req.body.imgURL;
+  User.getUserByUserName(username, function (err, user) {
+    if (err) { 
+      return next(err);
+    }
+    user.avatars = imgURL;
+    user.save(function (err) {
+      res.send({
+        success: true,
+      });
+     });
+   });
+});
+
 //注册提交
 router.post('/sign', function (req, res) {
+
   var username = req.body.username;
   var password = req.body.password;
   var email = req.body.email;
@@ -393,12 +510,13 @@ router.post('/sign', function (req, res) {
       console.log('出错');
       return next(err);
     }
-    if ((docs.length) >= 1) {
+    if (docs.length > 1) {
       req.flash('error', '用户名或邮箱已存在')
       console.log('docs是' + docs);
       res.redirect('/signup');//注意，这里不要用'/sign/signup',redirect与get\post差不多
       //return;
     } else {
+      console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
       User.addsave(username, password, email, false, function (err) {
@@ -495,6 +613,21 @@ router.post('/login', function (req, res, next) {
   })
 
 })
+
+//账号设置
+router.get('/setting', function (req, res) {
+  var current_user = req.session.user ? req.session.user.username : '';
+  User.getUserByUserName(current_user, function (err, user) {
+    if (err) { 
+      return next(err);
+    }
+
+    res.render('user/setting', {
+      current_user: current_user,
+      user:user,
+    });
+   })
+ });
 
 //账号退出
 router.get('/singout', function (req, res, next) {
@@ -663,4 +796,6 @@ router.get('/email', function (req, res, next) {
   console.log(link);
   res.send(link);
 });
+
+
 module.exports = router;

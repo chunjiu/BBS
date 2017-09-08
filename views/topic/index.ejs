@@ -102,7 +102,8 @@
             </h3>&nbsp;回复
           </div>
           <%reply.forEach(function(reply,index){%>
-            <div class='ReplyContent'>
+            <div class='ReplyContent' style="font-size: 18px;font-weight: bold;">
+              <span><img src="<%=reply.reply_avatars?reply.reply_avatars:'/images/123.jpg'%>" style="width:30px;height:30px;border-radius:25%"></span>
               <span class="reply_user"><%=reply.username%></span>
               <span class="ReplyTitle"><%=index+1%>楼 
                   <%if(reply.username===topic.username){%>

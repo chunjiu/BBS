@@ -1,0 +1,143 @@
+<%-include('../header')%>
+    <link rel="stylesheet" href="/jcrop/css/jquery.Jcrop.css">
+    <script src="/javascripts/jquery-3.2.1.min.js"></script>
+
+    <!--重点注意，模版内引入js文件需在前面加'/'才能引入成功-->
+    <script src="/javascripts/bootstrap.js"></script>
+    <!--重点注意，模版内引入js文件需在前面加'/'才能引入成功-->
+    <script src="/jcrop/js/jquery.Jcrop.js"></script>
+
+    <div class='panel'>
+        <ol class='breadcrumb'>
+            <li><a href='/' style="font-size: 18px;font-weight: bold;">主页</a><span class='divider'></span></li>
+            <li class="active" style="font-size: 18px;">设置</li>
+        </ol>
+        <div class="msg"></div>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="username">用户名</label>
+                <div class="col-sm-5">
+                    <input disabled type="text" class="form-control" id="username" name="username" placeholder="<%=current_user%>" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="email">Email</label>
+                <div class="col-sm-5">
+                    <input disabled type="text" class="form-control" id="email" name="email" placeholder="<%=user.email%>" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label"></label>
+                <div class="col-sm-7">
+                    <span id='canavas_img'></span>
+                    <div style="width:50px;height:50px;position:absolute;left:50%;top:0%">
+                        <canvas id="myCanvas" style='width:50px;height:50px;'></canvas>
+                        <span id="preview"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!--文件上传用这段代码，图片裁剪上传上下面一段代码
+            <form method="post" action="upload" class="form-horizontal" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="email">设置头像</label>
+                    <div class="col-sm-5">
+                        <input type="file" name="up" style='display:none' id="input_img" onchange="get_img()" />
+                        <span class="btn btn-default" id="choose_img">选择图片</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-9 col-sm-offset-4">
+                        <button type="submit" class="btn btn-primary">保存设置</button>
+                    </div>
+                </div>
+            <form>
+           -->
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="email">设置头像</label>
+                <div class="col-sm-5">
+                    <input type="file" name="up" style='display:none' id="input_img" onchange="get_img()" />
+                    <span class="btn btn-default" id="choose_img">选择图片</span>
+                    <button id="up" type="submit" class="btn btn-primary">头像上传</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+
+    <script>
+        $('#choose_img').click(function () {
+            $('#input_img').click();
+        });
+
+        function get_img() {
+            var canavas_img = $('#canavas_img');
+            var img = $('#input_img').get(0).files[0];
+            var fileName = img.name;
+            var fileType = fileName.substring(fileName.indexOf('.'),fileName.length).toLowerCase();
+            console.log(fileType);
+            if(fileType!='.jpg'&&fileType!='.jpeg'&&fileType!='.gif'&&fileType != '.png' && fileType != '.bmp'){
+                alert('请选择jpg,png,fig,bmp格式的图片');
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.readAsDataURL(img);
+            reader.onload = function () {
+                var img_element = "<img id='jcrop' src='" + this.result + "'/>"
+                canavas_img.html(img_element);
+                initJcrop();
+            }
+        }
+
+        function initJcrop() {
+            $('#jcrop').Jcrop({
+                onChange: updateCoords,
+                //onSelect:updateCoords,
+            }, function () {
+                this.setSelect([100, 100, 40, 40])
+                var $preview = $('#preview');
+                $preview.text('预览')
+            });
+        }
+
+        function updateCoords(e) {
+            var img = document.getElementById('jcrop');
+            var ctx = document.getElementById('myCanvas');
+            var ctx_img = ctx.getContext('2d');
+
+            var $preview = $('.preview');
+           
+
+            ctx_img.drawImage(img, e.x, e.y, e.w, e.h, 0, 0, 300, 200);
+        }
+
+        $('#up').click(function () {
+
+            var action = '/upload';
+            var imgURL = document.getElementById('myCanvas').toDataURL('image/png');
+            var data = {
+                imgURL: imgURL,
+            }
+            $.post(action, data, function (data) {
+                if (data.success) {
+                    var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
+                              +"<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                              +"<span aria-hidden='true'>&times;</span>"
+                              +"</button>"
+                              + "<strong>头像设置成功</strong>"
+                              +"</div>"
+                    var $prompt = $('.msg');
+                    $prompt.html(msg);
+                }
+                else {
+                    alert('头像设置失败');
+                }
+            });
+        });
+    </script>
+
+    </html>
