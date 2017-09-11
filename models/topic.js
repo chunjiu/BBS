@@ -20,6 +20,8 @@ var TopicSchema = new Schema({
     reply_count: { type: Number, default: 0 },//回复数
     last_reply: { type: ObjectId },
     last_reply_at: { type: Date, default: Date.now() },//最后一次回复
+
+    topic_avatars: {type:String},
     last_reply_user_avatars: {type:String},
     
     username: { type: String },//方便查找用户的所有话题
@@ -46,12 +48,13 @@ TopicSchema.methods.last_reply_at_ago = function () {
 
 var Topic = mongoose.model('Topic', TopicSchema);
 
-exports.newAndSave = function (title,tab,content,username,callback) {
+exports.newAndSave = function (title,tab,content,username,topic_avatars,callback) {
     var topic = new Topic();
     topic.title = title;
     topic.tab = tab;
     topic.content = content;
     topic.username = username;
+    topic.topic_avatars = topic_avatars;
     topic.save(function (err) { 
         callback(err, topic);
     });

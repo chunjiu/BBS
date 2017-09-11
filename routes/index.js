@@ -104,13 +104,13 @@ router.get('/', authMiddleWare.authUser, function (req, res, next) {
         Topic.findByQuery(query, function (err, topics_count) {
           var pages = Math.ceil((topics_count.length) / limit);
           res.render('index', {
-              topic: topics,
-              user: user,
-              current_user: req.session.user,
-              tabs: config.tabs,
-              current_page: page,
-              tab: tab,
-              pages: pages,
+            topic: topics,
+            user: user,
+            current_user: req.session.user,
+            tabs: config.tabs,
+            current_page: page,
+            tab: tab,
+            pages: pages,
           });
 
         });
@@ -341,22 +341,22 @@ router.post('/:id/reply', function (req, res, next) {
     if (err) {
       return next(err);
     }
-    User.getUserByUserName(req.session.user.username, function (err, user) { 
-      if (err) { 
+    User.getUserByUserName(req.session.user.username, function (err, user) {
+      if (err) {
         return next(err);
       }
       topic.last_reply_at = new Date();
       topic.last_reply_user_avatars = user.avatars;
       topic.reply_count += 1;//话题回复数+1
       topic.save();
-      Reply.newAndSave(content, topic_id, req.session.user.username,user.avatars, function (err, reply) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
+      Reply.newAndSave(content, topic_id, req.session.user.username, user.avatars, function (err, reply) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
         if (err) {
           return next(err);
         }
         console.log('保存成功');
-  
+
         //Topic.updateLastReply(topic_id);
-        console.log('avtars是：'+reply.reply_avatars);
+        console.log('avtars是：' + reply.reply_avatars);
         res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
       });
 
@@ -438,49 +438,49 @@ router.get('/test', function (req, res) {
   res.render('sign/test', {});
 })
 
- /*文件上传
+/*文件上传
 router.post('/upload', function (req, res, next) {
  
-  //var fields = [{ name: 'up', maxCount: 1 }, {name:'up1',maxCount:8}];
-  //var upload = multer.fields(fields);多个input上传
+ //var fields = [{ name: 'up', maxCount: 1 }, {name:'up1',maxCount:8}];
+ //var upload = multer.fields(fields);多个input上传
 
-   
-  //var upload = multer.array('up', 5) 一个input 上传多个
-  var username = req.session.user ? req.session.user.username : ''; 
-  var upload = multer.single('up');
+  
+ //var upload = multer.array('up', 5) 一个input 上传多个
+ var username = req.session.user ? req.session.user.username : ''; 
+ var upload = multer.single('up');
 
-  upload(req, res, function (err) {
-    if (err) {
-      return console.log(err);
-    }
-    User.getUserByUserName(username, function (err, user) {
-      if (err) { 
-        return next(err);
-      }
-      if (!user) { 
-        console.log('没有用户');
-      }
-      var newpath = req.file.path;
-      console.log('原路径是：'+req.file.path);
-      newpath = newpath.slice(6);//引入路径时要去掉public,因为中间件已经默认加入了public
-      console.log('新路径是'+newpath);
-      user.avatars = newpath;
-      user.save(function (err) {
-        res.redirect('/');
-       });
-    })
-    //console.log('上传文件的全路径是：' + req.file.path)
+ upload(req, res, function (err) {
+   if (err) {
+     return console.log(err);
+   }
+   User.getUserByUserName(username, function (err, user) {
+     if (err) { 
+       return next(err);
+     }
+     if (!user) { 
+       console.log('没有用户');
+     }
+     var newpath = req.file.path;
+     console.log('原路径是：'+req.file.path);
+     newpath = newpath.slice(6);//引入路径时要去掉public,因为中间件已经默认加入了public
+     console.log('新路径是'+newpath);
+     user.avatars = newpath;
+     user.save(function (err) {
+       res.redirect('/');
+      });
+   })
+   //console.log('上传文件的全路径是：' + req.file.path)
 
-  });
+ });
 })
 */
 //头像裁剪上传
-router.post('/upload', function (req, res, next) { 
+router.post('/upload', function (req, res, next) {
   console.log('进入upload');
-  var username = req.session.user ? req.session.user.username : ''; 
+  var username = req.session.user ? req.session.user.username : '';
   var imgURL = req.body.imgURL;
   User.getUserByUserName(username, function (err, user) {
-    if (err) { 
+    if (err) {
       return next(err);
     }
     user.avatars = imgURL;
@@ -488,8 +488,8 @@ router.post('/upload', function (req, res, next) {
       res.send({
         success: true,
       });
-     });
-   });
+    });
+  });
 });
 
 //注册提交
@@ -618,16 +618,16 @@ router.post('/login', function (req, res, next) {
 router.get('/setting', function (req, res) {
   var current_user = req.session.user ? req.session.user.username : '';
   User.getUserByUserName(current_user, function (err, user) {
-    if (err) { 
+    if (err) {
       return next(err);
     }
 
     res.render('user/setting', {
       current_user: current_user,
-      user:user,
+      user: user,
     });
-   })
- });
+  })
+});
 
 //账号退出
 router.get('/singout', function (req, res, next) {
@@ -667,12 +667,11 @@ router.post('/topic/create', function (req, res, next) {
       current_user: req.session.user ? req.session.user.username : '',
     });
   }
-  Topic.newAndSave(title, tab, content, req.session.user.username, function (err, topic) {
+  User.getUserByUserName(req.session.user.username, function (err, user) { //req.session.user是中间件中的，全局可调用
     if (err) {
       return next(err);
     }
-    console.log('保存成功');
-    User.getUserByUserName(req.session.user.username, function (err, user) { //req.session.user是中间件中的，全局可调用
+    Topic.newAndSave(title, tab, content, req.session.user.username, user.avatars, function (err, topic) {
       if (err) {
         return next(err);
       }
@@ -680,11 +679,12 @@ router.post('/topic/create', function (req, res, next) {
       user.score += 5;
       user.topic_count += 1;
       user.save();
-
+      console.log('保存成功');
       res.redirect('/');
-    })
-  })
+    });
+  });
 });
+
 
 //修改话题页面
 router.get('/topic/:id/edit', function (req, res, next) {

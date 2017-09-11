@@ -29,7 +29,7 @@
             <%if(topic.length){%>
               <%topic.forEach(function(topic){%>
                 <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
-                    <span><img src="<%=user.avatars%>" style="width:30px;height:30px;border-radius:25%"></span>
+                    <span><img src="<%=topic.topic_avatars?topic.topic_avatars:'/images/123.jpg'%>" style="width:30px;height:30px;border-radius:25%"></span>
                     <span title="回复数"><%=topic.reply_count%></span>/<span title="点击数"><%=topic.visit_count%></span>
                     <%if(topic.top){%>
                       <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
