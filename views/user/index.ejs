@@ -28,9 +28,9 @@
                       <%}%>
                     <span><%=topic.title%></span>
                     <%if(!topic.reply_count){%>
-                        <span class="pull-right"><%=topic.create_at_ago()%><span>
+                        <span class="pull-right time_ago"><%=topic.create_at_ago()%><span>
                     <%}else{%>
-                        <span class="pull-right"><%=topic.last_reply_at_ago()%><span>                   
+                        <span class="pull-right time_ago"><%=topic.last_reply_at_ago()%><span>                   
                     <%}%>
                    </a>
                 <% })%>
@@ -55,9 +55,9 @@
                           <%}%>
                         <span><%=replyTopic.title%></span>
                         <%if(!replyTopic.reply_count){%>
-                            <span class="pull-right"><%=replyTopic.create_at_ago()%><span>
+                            <span class="pull-right time_ago"><%=replyTopic.create_at_ago()%><span>
                         <%}else{%>
-                            <span class="pull-right"><%=replyTopic.last_reply_at_ago()%><span>                   
+                            <span class="pull-right time_ago"><%=replyTopic.last_reply_at_ago()%><span>                   
                         <%}%>
                        </a>
                     <% })%>
