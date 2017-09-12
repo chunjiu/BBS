@@ -89,9 +89,10 @@ app.use("/ueditor/ue", ueditor(path.join(__dirname, 'public'), function(req, res
   }
 }));
 
+app.use(auth.authUser);
 app.use('/', index);
 app.use('/users', users);
-app.use(auth.authUser);//authUser中间件要放在路由后面,因为authUser里的req.session.user退出时会清空，放在路由前面，authUser会再次执行报user错误
+
 
 
 
@@ -117,7 +118,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.listen(80, function () {//上线要改成80
+app.listen(3000, function () {//上线要改成80
   console.log('服务器已在80端口运行');
 })
 

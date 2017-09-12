@@ -110,15 +110,18 @@
             var ctx_img = ctx.getContext('2d');
 
             var $preview = $('.preview');
-           
-
             ctx_img.drawImage(img, e.x, e.y, e.w, e.h, 0, 0, 300, 200);
         }
 
         $('#up').click(function () {
 
             var action = '/upload';
-            var imgURL = document.getElementById('myCanvas').toDataURL('image/png');
+
+            var imgURL = document.getElementById('myCanvas');
+         
+            imgURL=imgURL.toDataURL('image/png');
+            console.log('base64是：'+imgURL);
+             
             var data = {
                 imgURL: imgURL,
             }

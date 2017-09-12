@@ -5,7 +5,8 @@
             <a  href ='/user/<%=user.username%>' class="setAvatars" style="display:block; width:50px;"><!--因为在css里设置了img自适应大小，此处的img的父元素a为行内元素，要改为块元素并给出宽度，这里的图片才会显示-->
                 <img src="<%=user.avatars?user.avatars:'images/123.jpg'%>" title='<%=user.username%>' style="height:45px;border-radius:25%"></img>
             </a>
-        </div>
+        </div>  
+
         <div class="media-body">
             <h4 class="media-heading">
                 <a href="/user/<%=user.username%>">
@@ -13,6 +14,7 @@
                 </a>
             </h4>
             <a href="/user/<%=user.username%>"><span>积分：<%=user.score%></span></a>
+          
         </div>
     </div>
 <%}%>

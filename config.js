@@ -4,7 +4,7 @@ var config = {
     db_host: '127.0.0.1',
     db_port: 27017,
     db_password: '',
-    db_db: 'mongodb://127.0.0.1:27017/UserSession',
+    db_db: 'mongodb://127.0.0.1:27017/NEW2',
     
     session_secret:'wenser7',
     auth_cookie_name: 'wenser7',

@@ -6,11 +6,12 @@
           <div class="panel-heading">个人信息</div>
           <%-include('sidebar')%>
         </div>
-        <div>
-          <a href="/create">
-             <span class="btn btn-success">发布话题</span>
-          </a>
-        </div>
+       
+      <div style="margin-bottom:15px;">
+        <a href="/create">
+          <span class="btn btn-success">发布话题</span>
+        </a>
+      </div>
         <%}else{%>
           <%-include('sidebar2')%>
             <%}%>
@@ -29,7 +30,7 @@
             <%if(topic.length){%>
               <%topic.forEach(function(topic){%>
                 <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
-                    <span><img src="<%=topic.topic_avatars?topic.topic_avatars:'/images/123.jpg'%>" style="width:30px;height:30px;border-radius:25%"></span>
+                    <span><img src="<%=topic.topic_avatars?topic.topic_avatars:'/images/123.jpg'%>" style="height:30px;width:30px;border-radius:25%"></span>
                     <span title="回复数"><%=topic.reply_count%></span>/<span title="点击数"><%=topic.visit_count%></span>
                     <%if(topic.top){%>
                       <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
@@ -40,10 +41,10 @@
                     <%}%>
                     <span><%=topic.title%></span>
                     <%if(!topic.reply_count){%>
-                      <span class="pull-right"><%=topic.create_at_ago()%><span>
+                      <span class="pull-right time_ago"><%=topic.create_at_ago()%><span>
                     <%}else{%>
-                      <span class="pull-right">
-                        <span><img src="<%=topic.last_reply_user_avatars?topic.last_reply_user_avatars:'/images/123.jpg'%>" style="width:30px;height:30px;border-radius:25%"></span>
+                      <span class="pull-right time_ago">
+                        <span><img src="<%=topic.last_reply_user_avatars?topic.last_reply_user_avatars:'/images/123.jpg'%>" class="img_avatars"></span>
                         <span><%=topic.last_reply_at_ago()%><span> 
                       </span>                  
                     <%}%>
@@ -69,16 +70,16 @@
                       <%}else{%>
                         <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
                       <%}%>
-                      <li class="li_hidden" style="display:none"><a class="pageJump" url=<%=base_url%>><button id="pp"></button></a> <!--button标签需在a标签里面，可用于a标签的自动触发事件--> <li>
+                      <li class="li_hidden"><a class="pageJump" url=<%=base_url%>><button id="pp"></button></a> <!--button标签需在a标签里面，可用于a标签的自动触发事件--> <li>
                       <li>
-                        <div class="input-group page_jump">
-                        <span class="input-group-addon">转到</span>
-                        <select class="form-control">
+                        <div class="input-group page_li">
+                          <span class="input-group-addon">转到</span>
+                          <select class="form-control">
                             <option><%=current_page%>页</option>
-                          <% for(var i=1;i<=pages;i++){%>
+                              <% for(var i=1;i<=pages;i++){%>
                             <option><%=i%>页</option>
-                         <% }%>
-                        </select>
+                              <% }%>
+                          </select>
                       </div>
                       </li> 
                                

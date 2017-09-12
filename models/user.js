@@ -3,7 +3,7 @@ var moment = require('moment');//时期日期处理库
 moment.locale('zh-cn');//加载中文模块
 
 mongoose.Promise = global.Promise;//加入数据库异步操作
-mongoose.createConnection('mongodb://127.0.0.1:27017', { server: {poolSize:20} }, function (err) { 
+mongoose.createConnection('mongodb://127.0.0.1:27017/NEW2', { server: {poolSize:20} }, function (err) { 
     if (!err) {
         console.log('connected to MongoDB');
     } else { 

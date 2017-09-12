@@ -22,7 +22,7 @@
       </div>
       <%-include('../sidebar2')%>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default side">
           <div style="background-color:#5cb85c" class="panel-heading">
             <%=current_user===topic.username?'我':topic.username%>的其它话题</div>
           <div class="panel-body">
@@ -41,7 +41,7 @@
           </div>
         </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default side">
           <div style="background-color:#5cb85c" class="panel-heading">无人回复的话题</div>
           <div class="panel-body">
             <% if(noreplytopic){%>

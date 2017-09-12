@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
+var fs = require('fs');
 
 var crypto = require('crypto');
 var utility = require('utility');
@@ -72,7 +73,7 @@ router.get('/api', function (req, res, next) {
 //接口结束
 
 /* GET home page. */
-router.get('/', authMiddleWare.authUser, function (req, res, next) {
+router.get('/', function (req, res, next) {
   //res.status(403).end();
 
   var page = parseInt(req.query.page, 10) || 1;
@@ -102,6 +103,8 @@ router.get('/', authMiddleWare.authUser, function (req, res, next) {
           return next(err);
         }
         Topic.findByQuery(query, function (err, topics_count) {
+          if (err) { 
+          }
           var pages = Math.ceil((topics_count.length) / limit);
           res.render('index', {
             topic: topics,
@@ -478,18 +481,31 @@ router.post('/upload', function (req, res, next) {
 router.post('/upload', function (req, res, next) {
   console.log('进入upload');
   var username = req.session.user ? req.session.user.username : '';
-  var imgURL = req.body.imgURL;
-  User.getUserByUserName(username, function (err, user) {
-    if (err) {
-      return next(err);
+  var img = req.body.imgURL.slice(22);//去掉base64的前22位字符
+  var imgBuffer = Buffer.from(img, 'base64');//转化为bufer字符
+
+  console.log('imgBuffer是否是一个对象：' + Buffer.isBuffer(imgBuffer));
+  var imgPath = 'public/uploads/' + Date.now() + '.jpg';//写入文件时必须要有public,路径+文件名
+  fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
+    if (err) { 
+      throw err;
     }
-    user.avatars = imgURL;
-    user.save(function (err) {
-      res.send({
-        success: true,
+    User.getUserByUserName(username, function (err, user) {
+      if (err) {
+        throw err;
+      }
+      user.avatars = imgPath.slice(6);//去掉public
+      user.save(function (err) { 
+        if (err) { 
+          console.log('保存出错');
+        }
+        res.send({
+          success: true,
+        });
       });
-    });
-  });
+     });
+    console.log('the file has been saved');
+   })
 });
 
 //注册提交
@@ -582,31 +598,27 @@ router.post('/login', function (req, res, next) {
   }
   var getUser;
   if (username.indexOf('@') !== -1) {
-    getUser = User.getUserByMail;//将涵数赋给getUser变量
+    getUser = User.getUserByMail;
   } else {
     getUser = User.getUserByUserName;
   }
   getUser(username, function (err, user) {
     if (err) {
-      console.log('出错1');
       return next(err);
     }
     if (!user) {
-      console.log('出错2');
       return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user ? req.session.user.username : '', })
     }
     if (password != user.password) {
-      console.log('出错3');
       return res.render('sign/signin', { errors: '用户名或密码错误', current_user: req.session.user ? req.session.user.username : '', })
     }
     if (!user.active) {
-      console.log('出错4');
       mail.sendActiveMail(user.email, utility.md5(user.email + 'abcde邮箱验证'), user.username);
       return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收' });
     }
     console.log('user是' + user);
     authMiddleWare.gen_seesion(user, res);//登录信息保存进cookies,用数据库
-    //req.session.user = user;//将session保存在内存中，则不需要auth里面的auth中间件了
+    //req.session.user = user;//将session保存在内存中
     console.log('登录成功');
     console.log('user.id是：' + user.id);
     res.redirect('/');
@@ -652,8 +664,8 @@ router.post('/topic/create', function (req, res, next) {
   var content = req.body.t_content;
 
   var errors;
-  if (title.length < 5) {
-    errors = '标题字数少于5个字符';
+  if (title.length < 5||title.length>10) {
+    errors = '标题需在5到10字符之间';
   } else if (content === '') {
     errors = '内容不可为空';
   }

@@ -5,16 +5,49 @@ body {
 .body-weidth{/*移动优先100%的宽*/
   width: 100%;
 }
+.img_avatars{
+  -moz-border-radius:25px;	/* Firefox */
+  -webkit-border-radius:25px; /* Safari 和 Chrome */
+  -o-border-radius:25px;
+  width:30px;height:30px;border-radius:25%;
+  display: none;
+}
+.li_hidden{
+  visibility: hidden;
+}
+.side{
+  display: none;
+}
+.time_ago{
+  display: none;
+}
+
 @media(min-width:768px){/*媒体查询需放在正常样式的下面，才能起来移动设备和桌面设备各自展现自成己样式*/
   .body-weidth{
-  width: 80%;
-}
-}
-@media(min-width:768px){
+    width: 80%;
+  }
+  .img_avatars{
+    width:30px;height:30px;border-radius:25%;
+    display:inline-block;
+  }
+  .page_li{
+    width: 18%;
+  }
+  .side{
+    display: block;
+  }
+  .time_ago{
+   display: inline-block;
+  }
   .footer{
     width: 70%;
   }
+  .page_jump{
+    width: 20%;
+  }
+
 }
+
 
 .foo{
   text-align: center;
@@ -41,14 +74,8 @@ img{
 .panelBorderNone{
   border:none;
 }
-.page_jump{
-  width: 38%;
-}
-@media(min-width:768px){
-  .page_jump{
-    width: 20%;
-  }
-}
+
+
 
 .sidebar{
   width:298px;
