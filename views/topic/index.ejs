@@ -98,12 +98,12 @@
           <%-topic.content%>
         </div>
       </div>
-      <% if(reply!==''){%>
+      <% if(reply!==''&&reply.length!=0){%>
         <div class="panel panel-default" style="border:none">
           <div class="panel-heading">
             <h3 class="reply_count" style="display:inline">
-              <%=reply.length%>
-            </h3>&nbsp;回复
+              <%=topic.reply_count%>
+            </h3>回复
           </div>
           <%-include('../includes/comment')%><!--引入模块时注意异步-->
         </div>
@@ -230,9 +230,10 @@
           var reply_id = $this.closest('.ReplyReply').attr('reply_id');
           $.post('/reply/' + reply_id + '/delete', function (data) {
             if (data.status === 'success') {
-              $this.closest('.ReplyContent').remove();
-              var reply_count = Number($('.reply_count').text());
-              $('.reply_count').text(reply_count - 1);
+              $this.parents('.media-list:first').remove();
+              var reply_count = $('.reply_count').text();
+              alert(reply_count);
+              $('.reply_count').text(reply_count-1);
             }
           })
         });

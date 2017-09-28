@@ -129,13 +129,17 @@ router.get('/:id/tid', function (req, res, next) {
   var ep = new EventProxy();
   var topic_id = req.params.id;
   var current_user = req.session.user ? req.session.user.username : '';
+  console.log("curretn_user是："+current_user);
   Topic.findById(req.params.id, function (err, topics) {
     topics.visit_count += 1;//浏览量
-    Reply.getRepliesByQuery({ 'topic_id': topic_id, 'deleted': false }, {}, function (err, replies) {
+    Reply.getRepliesByQuery({ 'topic_id': req.params.id, 'deleted': false }, {}, function (err, replies) {
       if (err) {
         return next(err);
       }
-      console.log('topic,user是' + topics.username);
+      if (!replies) { 
+        console.log('没有找到replies');
+      }
+      console.log('replies有：' +replies.length);
       User.getUserByUserName(topics.username, function (err, user) {
         if (err) {
           console.log('出错');
@@ -165,10 +169,22 @@ router.get('/:id/tid', function (req, res, next) {
                 if (err) { 
                   return next(err);
                 }
-                if (!reply_comment) { 
-                  console.log('没有对单个评论的回复');
-                }
-                User.getUserByUserName(current_user, function (err, reply_user) { 
+                var reply_comment_user = reply_comment.map(function (replyComment) {
+                  console.log('replyComent是：'+replyComment);
+                  return replyComment.username;
+                })
+                console.log('reply_comment_user是：'+reply_comment_user);
+                var queryUser = { 'username': { '$in': reply_comment_user } }
+                
+                User.getUserByQuery(queryUser, {}, function (err, reply_user) { 
+                  if (err) { 
+                    console.log('出错');
+                    return next(err);
+                  }
+                  if (!reply_user) { 
+                    console.log('没有reply_user');
+                  }
+                  console.log('reply_comment是：' + reply_comment); 
                   res.render('topic/index', {
                     topic: topics,
                     reply: replies,
@@ -178,13 +194,14 @@ router.get('/:id/tid', function (req, res, next) {
                     noreplytopic: noreplytopic,
                     is_collect: collect,
                     reply_comment: reply_comment,
-                    reply_user:reply_user
+                    replyUser: reply_user,//这个不用，以后看看一查多吧
                     //errors:errors
                   });
-                  //console.log('查看话题的作者是：' + OtherTopics);
-                  console.log('reply_comment是：'+reply_comment);
-
-                })               
+                  //console.log('查看话题的作者是：' + OtherTopics);  
+                  console.log('...............................');
+                  console.log('reply_user是：' + reply_user);
+                  console.log('................................');
+                })       
               })
             });
           });
@@ -326,15 +343,15 @@ router.get('/user/:username', function (req, res, next) {
         }
         //查找多个id时,需先将每个id转化为字符串
         var reply_topic_id = reply.map(function (reply) {
-          return reply.topic_id.toString()
+          return reply.topic_id
         })
+        console.log('reply_topic_id是：'+reply_topic_id);
         var queryTopic = { '_id': { '$in': reply_topic_id } }
         var optTopic = { sort: '-last_reply_at', limit: 5 }
         Topic.findByQuery(queryTopic, optTopic, function (err, replyTopic) {
           if (err) {
             return next(err);
           }
-          console.log('reply_topic_id是：' + reply_topic_id);
           res.render('user/index', {
             current_user: req.session.user ? req.session.user.username : '',
             user: user,
@@ -393,6 +410,8 @@ router.post('/:id/:reply_id/comment', function (req, res, next) {
   var content = req.body.r_content;
   var topic_id = req.params.id;
   var reply_id = req.params.reply_id;
+  var replyuser = req.session.user ? req.session.user.username : '';
+  console.log('replyuser是：'+replyuser);
   console.log('content是' + content);
 
   if (content === '') { //这里其实用ajax更好，整个回复都用ajax
@@ -412,7 +431,7 @@ router.post('/:id/:reply_id/comment', function (req, res, next) {
       topic.last_reply_user_avatars = user.avatars;
       topic.reply_count += 1;//话题回复数+1
       topic.save();
-      Reply_comment.newAndSave(content, reply_id,topic_id, function (err, reply_comment) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
+      Reply_comment.newAndSave(content, reply_id,replyuser,user.avatars,topic_id, function (err, reply_comment) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
         if (err) {
           return next(err);
         }
@@ -422,7 +441,8 @@ router.post('/:id/:reply_id/comment', function (req, res, next) {
           }
           reply.reply_comment_count += 1;
           reply.save();
-          console.log('回复的评论的ID是：'+reply_comment.reply_id);
+          console.log('回复的评论的ID是：' + reply_comment.reply_id);
+          console.log('保存的回复用户是：'+reply_comment.username);
           console.log('保存成功');
           //Topic.updateLastReply(topic_id);
           res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
@@ -550,7 +570,12 @@ router.post('/upload', function (req, res, next) {
   var imgBuffer = Buffer.from(img, 'base64');//转化为bufer字符
 
   console.log('imgBuffer是否是一个对象：' + Buffer.isBuffer(imgBuffer));
-  var imgPath = 'public/uploads/' + Date.now() + '.jpg';//写入文件时必须要有public,路径+文件名
+  
+  /**
+   *写入文件时必须要有public,路径+文件名
+   * @param 另：直接以用户名存储则会替换该用户所有之前的图像
+   */
+  var imgPath = 'public/uploads/' + username + '.jpg';
   fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
     if (err) { 
       throw err;
@@ -560,6 +585,7 @@ router.post('/upload', function (req, res, next) {
         throw err;
       }
       user.avatars = imgPath.slice(6);//去掉public
+      console.log('user.avatars是：'+user.avatars);
       user.save(function (err) { 
         if (err) { 
           console.log('保存出错');
@@ -568,7 +594,7 @@ router.post('/upload', function (req, res, next) {
           success: true,
         });
       });
-     });
+    });
     console.log('the file has been saved');
    })
 });

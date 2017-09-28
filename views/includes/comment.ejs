@@ -5,12 +5,12 @@
         <li class="media">
           <div class="media-left">
             <div style="width:50px;height:50px;">
-                <img class="media-object" src="<%=reply.reply_avatars?reply.reply_avatars:'/images/123.jpg'%>" alt="图片加载中" style="width:50px;height:50px;border-radius:25%">
+                <img class="media-object" src="<%=reply.reply_avatars?reply.reply_avatars:'/images/123.jpg'%>" alt='' style="width:50px;height:50px;border-radius:25%">
             </div>
           </div>
           <div class="media-body">
             <div class="media-heading reply_head">
-              <span class="reply_user"><%=reply.username%></span>
+              <span class="reply_user"><%=reply.username%>用户</span>
               <span class="ReplyTitle"><%=index+1%>楼 
                 <%if(reply.username===topic.username){%>
                   <span class='label label-primary'>作者</span>
@@ -52,62 +52,65 @@
             </div>
           
            <%if(reply.reply_comment_count>0){%>           
-             <%reply_comment.forEach(function(reply_comment,ind){%>
-              
+             <%reply_comment.forEach(function(reply_comment,ind){%>            
                <%if(reply_comment.reply_id==reply.id){%>
-                <ul class="media-list">
-                    <li class="media">
-                      <div class="media-left">
-                        <div style="width:50px;height:50px;">
-                            <img class="media-object" src="<%=reply_user.avatars?reply_user.avatars:'/images/123.jpg'%>" alt="图片加载中" style="width:50px;height:50px;border-radius:25%">
+               
+                 
+                  <ul class="media-list">
+                      <li class="media">
+                        <div class="media-left">
+                          <div style="width:50px;height:50px;">
+                              <img class="media-object" src="<%=reply_comment.avatars?reply_comment.avatars:'/images/123.jpg'%>" alt="图片加载中" style="width:50px;height:50px;border-radius:25%">
+                          </div>
                         </div>
-                      </div>
-                      <div class="media-body">
-                        <div class="media-heading reply_head">
-                          <span class="reply_user"><%=reply_user.username%></span>
-                            <%if(current_user===topic.username){%>
-                              <span class='label label-primary'>作者</span>
-                           <%}%>
-                          </span>
+                        <div class="media-body">
+                          <div class="media-heading reply_head">
+                            <span class="reply_user"><%=reply_comment.username%> replyUser</span>
+                              <%if(current_user===topic.username){%>
+                                <span class='label label-primary'>作者</span>
+                             <%}%>
+                            </span>
+                          </div>
+                          <div class='ReplyContent_p' id='<%=reply.id%>' style="font-size:18px;">
+                          <!--这里的id=reply.id用于网页定位,即url里的#reply.id-->
+      
+                            <%-reply_comment.content%>
+                              <!--数据库中保存的是html代码，'-%>'则直接让浏览器解析HTML代码-->
+                            <%if(current_user){%>
+                              <div class="pull-right ReplyReply" reply_id='<%=reply.id%>'>
+                                <i class="glyphicon glyphicon-thumbs-up nice_btn" title="不错"></i>
+                                <span class="nice_count"><%=reply.ups.length?reply.ups.length:''%></span>
+                                <i class="glyphicon glyphicon-pencil reply_btn" title="回复"></i>
+                                <%if(reply_comment.username==current_user){%>
+                                <i class="glyphicon glyphicon-trash remove_btn" title="删除"></i>
+                                <%}%>
+                               </div>
+                            <%}%>
+      
+                            <!--回复评论(默认隐藏)-->
+                             <%if(current_user){%>
+                              <div class="panel-default panelBorderNone" style="padding-top:20px;">
+                                <form class="_reply reply_hidden" id="" action="/<%=topic.id%>/<%=reply.id%>/comment" method="post">
+                                 <textarea class="r_content" id="editor<%=index%>" type="text/plain" style="height:100px;width:100%" name='r_content'>
+                                 </textarea>
+                                 <!--<textarea id="r_content" style="border:0px;" class="form-control" rows="10" name="r_content"></textarea>-->
+      
+                                 <button id="aa" type="submit" class="btn btn-primary col-sm-1 r_btn">回复</button>
+                               </form>
+                              </div>
+                              <script>
+                                var ue = UE.getEditor('editor<%=index%>');//实例化多个文本编辑器
+                              </script>
+                            <%}%>
+                          </div>
                         </div>
-                        <div class='ReplyContent_p' id='<%=reply.id%>' style="font-size:18px;">
-                        <!--这里的id=reply.id用于网页定位,即url里的#reply.id-->
-    
-                          <%-reply_comment.content%>
-                            <!--数据库中保存的是html代码，'-%>'则直接让浏览器解析HTML代码-->
-                          <%if(current_user){%>
-                            <div class="pull-right ReplyReply" reply_id='<%=reply.id%>'>
-                              <i class="glyphicon glyphicon-thumbs-up nice_btn" title="不错"></i>
-                              <span class="nice_count"><%=reply.ups.length?reply.ups.length:''%></span>
-                              <i class="glyphicon glyphicon-pencil reply_btn" title="回复"></i>
-                              <%if(reply.username==current_user){%>
-                              <i class="glyphicon glyphicon-trash remove_btn" title="删除"></i>
-                              <%}%>
-                             </div>
-                          <%}%>
-    
-                          <!--回复评论(默认隐藏)-->
-                           <%if(current_user){%>
-                            <div class="panel-default panelBorderNone" style="padding-top:20px;">
-                              <form class="_reply reply_hidden" id="" action="/<%=topic.id%>/<%=reply.id%>/comment" method="post">
-                               <textarea class="r_content" id="editor<%=index%>" type="text/plain" style="height:100px;width:100%" name='r_content'>
-                               </textarea>
-                               <!--<textarea id="r_content" style="border:0px;" class="form-control" rows="10" name="r_content"></textarea>-->
-    
-                               <button id="aa" type="submit" class="btn btn-primary col-sm-1 r_btn">回复</button>
-                             </form>
-                            </div>
-                            <script>
-                              var ue = UE.getEditor('editor<%=index%>');//实例化多个文本编辑器
-                            </script>
-                          <%}%>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
+                      </li>
+                    </ul>
+                
+                 
 
                <% }%>
-
+               
              <% }) %>                
           <%}%>
           </div>
