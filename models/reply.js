@@ -15,10 +15,11 @@ var ReplySchema = new Schema({
     content_is_html: { type: Boolean },
     ups: {type:Array},
     deleted: { type: Boolean, default: false },
-
     
     topic_id: { type: ObjectId },//方便查找回复的话题
-    username: { type: String }//方便查找用户的回复
+    username: { type: String },//方便查找用户的回复
+
+    reply_comment_count: {type:Number,default:0}//回复单个评论的数量
 });
 
 ReplySchema.methods.create_at_ago = function () {//给ReplySchema数据库添加create_at_ago方法
@@ -40,7 +41,8 @@ exports.newAndSave = function (content, topic_id,username,reply_avatars,callback
         callback(err,reply);//保存并返回reply数据，方便路由调用reply.id，让评论提交刷新后定位到评论的地方
      });
 }
- 
+
+
 exports.getRepliesByQuery = function (query,opt, callback) {
     Reply.find(query, {},opt,callback);
 }

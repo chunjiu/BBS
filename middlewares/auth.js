@@ -6,7 +6,7 @@ var User = require('../models/user');
 
 
  
-function gen_seesion (user, res) {
+function gen_seesion (user, res,callback) {
     var auth_token = user.id + '$$';
     var opts = {
         path: '/',
@@ -15,7 +15,8 @@ function gen_seesion (user, res) {
         httpOnly: true
 
     };
-    res.cookie(config.auth_cookie_name, auth_token,opts);//参数为字符串或JSON数据
+    res.cookie(config.auth_cookie_name, auth_token, opts);//参数为字符串或JSON数据
+    callback(true);
 }
 exports.gen_seesion = gen_seesion;
 
@@ -46,9 +47,7 @@ exports.authUser = function (req, res, next) {
                     console.log('admin是' + req.session.user.is_admin);
                 }
             } 
-            return;
-        }
-       
+        }    
     });
    return next();
 }

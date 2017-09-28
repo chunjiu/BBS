@@ -37,6 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 //设置会话
 app.use(cookieParser(config.session_secret));//使用签名
 mongoose.connect(config.db_db);
@@ -118,6 +119,9 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.listen(443, function () { 
+  console.log('服务器已在3000端口运行');
+});
 app.listen(3000, function () {//上线要改成80
   console.log('服务器已在80端口运行');
 })

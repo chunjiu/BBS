@@ -98,16 +98,15 @@ a:hover{
 ._reply{
   margin-top:-5px;
 }
-
+.reply_head{
+  font-size: 18px;font-weight: bold;
+}
 .ReplyContent{
  padding-top: 10px;
 
   
 }
-.ReplyContent_p{
-  padding: 10px;
-  padding-left: 35px;
-  border-bottom: 1px solid	#FFEFD5;}
+
 
 .TopTitile{
   font-weight: 900;

@@ -10,16 +10,17 @@ var mail = require('../common/mail');//发送邮件模块
 var EmailLink = require('../common/emaillink');//生成登录邮箱链接
 var multer = require('../common/multerUtil');//文件上传模块
 
-
 var User = require('../models/user');
 var Topic = require('../models/topic');
 var Reply = require('../models/reply');
 var Collect = require('../models/collect');
+var Reply_comment = require('../models/reply_comment');
 
 var config = require('../config');
 var authMiddleWare = require('../middlewares/auth');
 
 var EventProxy = require('eventproxy');//异步控制
+
 
 //接口
 router.get('/api', function (req, res, next) {
@@ -27,6 +28,7 @@ router.get('/api', function (req, res, next) {
 
   var page = parseInt(req.query.page, 10) || 1;
   var tab = req.query.tab || '全部';
+  var limit = parseInt(req.query.limit,10)||1;
 
   var query = {};
   if (!tab || tab == '全部') {
@@ -37,7 +39,7 @@ router.get('/api', function (req, res, next) {
     query.tab = tab;
   }
 
-  var limit = 20;
+  var limit = limit;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at' };
 
   Topic.findByQuery(query, options, function (err, topics) {
@@ -121,10 +123,12 @@ router.get('/', function (req, res, next) {
     }
   });
 });
+
 //进入单个话题
 router.get('/:id/tid', function (req, res, next) {
   var ep = new EventProxy();
   var topic_id = req.params.id;
+  var current_user = req.session.user ? req.session.user.username : '';
   Topic.findById(req.params.id, function (err, topics) {
     topics.visit_count += 1;//浏览量
     Reply.getRepliesByQuery({ 'topic_id': topic_id, 'deleted': false }, {}, function (err, replies) {
@@ -140,7 +144,7 @@ router.get('/:id/tid', function (req, res, next) {
         if (!user) {
           console.log('没有user');
         }
-        console.log('运行到这里');
+        console.log('user是：'+user);
         Topic.findByQuery({ 'username': topics.username, 'deleted': false }, { limit: 5 }, function (err, OtherTopics) {//注意：topic.id只有唯一的一个。多个topic里存储了同一个用户名,故用user.getUserByUserName（topic.username）来查找
           if (err) {
             return next(err);
@@ -156,17 +160,32 @@ router.get('/:id/tid', function (req, res, next) {
               }
               topics.save();
               console.log('current是' + req.session.user);
-              res.render('topic/index', {
-                topic: topics,
-                reply: replies,
-                user: user,
-                current_user: req.session.user,
-                othertopics: OtherTopics,
-                noreplytopic: noreplytopic,
-                is_collect: collect
-                //errors:errors
-              });
-              //console.log('查看话题的作者是：' + OtherTopics);
+              console.log('replies是'+replies.id);
+              Reply_comment.getReplyCommentByTopicID(topic_id, function (err, reply_comment) {
+                if (err) { 
+                  return next(err);
+                }
+                if (!reply_comment) { 
+                  console.log('没有对单个评论的回复');
+                }
+                User.getUserByUserName(current_user, function (err, reply_user) { 
+                  res.render('topic/index', {
+                    topic: topics,
+                    reply: replies,
+                    user: user,
+                    current_user: current_user,
+                    othertopics: OtherTopics,
+                    noreplytopic: noreplytopic,
+                    is_collect: collect,
+                    reply_comment: reply_comment,
+                    reply_user:reply_user
+                    //errors:errors
+                  });
+                  //console.log('查看话题的作者是：' + OtherTopics);
+                  console.log('reply_comment是：'+reply_comment);
+
+                })               
+              })
             });
           });
         });
@@ -368,6 +387,52 @@ router.post('/:id/reply', function (req, res, next) {
 
 });
 
+//回复并保存某个评论
+router.post('/:id/:reply_id/comment', function (req, res, next) {
+  console.log('进入reply/comment');
+  var content = req.body.r_content;
+  var topic_id = req.params.id;
+  var reply_id = req.params.reply_id;
+  console.log('content是' + content);
+
+  if (content === '') { //这里其实用ajax更好，整个回复都用ajax
+    return res.render('notify/notify', {
+      error: '回复内容不能为空'
+    });
+  }
+  Topic.findById(topic_id, function (err, topic) {
+    if (err) {
+      return next(err);
+    }
+    User.getUserByUserName(req.session.user.username, function (err, user) {
+      if (err) {
+        return next(err);
+      }
+      topic.last_reply_at = new Date();
+      topic.last_reply_user_avatars = user.avatars;
+      topic.reply_count += 1;//话题回复数+1
+      topic.save();
+      Reply_comment.newAndSave(content, reply_id,topic_id, function (err, reply_comment) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
+        if (err) {
+          return next(err);
+        }
+        Reply.getRepliesByid(reply_id, function (err, reply) {
+          if (err) { 
+            return next(err);
+          }
+          reply.reply_comment_count += 1;
+          reply.save();
+          console.log('回复的评论的ID是：'+reply_comment.reply_id);
+          console.log('保存成功');
+          //Topic.updateLastReply(topic_id);
+          res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
+         }) 
+      });
+    })
+  });
+
+});
+
 //删除回复
 router.post('/reply/:reply_id/delete', function (req, res, next) {
   var reply_id = req.params.reply_id;
@@ -535,11 +600,11 @@ router.post('/sign', function (req, res) {
       console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
-      User.addsave(username, password, email, false, function (err) {
+      User.addsave(username, password, email, true, function (err) {
         if (!err) {
           // req.flash('info', '注册成功，只差邮箱验证了');
           console.log('邮箱是：' + email);
-          mail.sendActiveMail(email, utility.md5(email + 'abcde邮箱验证'), username)//注册成功则发送邮件
+          //mail.sendActiveMail(email, utility.md5(email + 'abcde邮箱验证'), username)//注册成功则发送邮件
           res.render('notify/notify', { success: '注册成功', link: link });
         } else {
           res.redirect('/signup');
@@ -617,11 +682,15 @@ router.post('/login', function (req, res, next) {
       return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收' });
     }
     console.log('user是' + user);
-    authMiddleWare.gen_seesion(user, res);//登录信息保存进cookies,用数据库
-    //req.session.user = user;//将session保存在内存中
-    console.log('登录成功');
-    console.log('user.id是：' + user.id);
-    res.redirect('/');
+    authMiddleWare.gen_seesion(user, res, function (cb) { //登录信息保存进cookies,用数据库//req.session.user = user;//将session保存在内存中
+      if (cb) { 
+        console.log('登录成功');
+        console.log('user.id是：' + user.id);
+        res.redirect('/');
+      }
+      
+    });
+   
   })
 
 })
@@ -659,6 +728,7 @@ router.get('/create', authMiddleWare.userRequired, function (req, res, next) {
 
 //保存话题页面
 router.post('/topic/create', function (req, res, next) {
+  console.log('进入保存页页');
   var title = req.body.title;
   var tab = req.body.tab;
   var content = req.body.t_content;
@@ -809,5 +879,18 @@ router.get('/email', function (req, res, next) {
   res.send(link);
 });
 
-
+router.get('/download', function (req, res, next) {
+  console.log('进入');
+  console.log(__dirname);
+  console.log(__filename);
+  console.log(process.cwd());
+  console.log(path.resolve('./'));
+  res.download('E:/BBS/招聘简章.docx','下载的文件', function (err) { 
+    if (err) {
+      console.log(err);
+    } else { 
+      console.log('下载成功');
+    }
+  });
+ });
 module.exports = router;
