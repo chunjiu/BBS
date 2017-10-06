@@ -35,7 +35,7 @@ exports.authUser = function (req, res, next) {
         if (err) { 
             return next(err);
         }
-        console.log('auth里的usr:'+user);
+        console.log('auth里的user:'+user);
         if (!user) {
             return next();
         } else {

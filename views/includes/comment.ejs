@@ -28,7 +28,7 @@
                   <i class="glyphicon glyphicon-thumbs-up nice_btn" title="不错"></i>
                   <span class="nice_count"><%=reply.ups.length?reply.ups.length:''%></span>
                   <i class="glyphicon glyphicon-pencil reply_btn" title="回复"></i>
-                  <%if(reply.username==current_user){%>
+                  <%if(reply.username==current_user.username){%>
                   <i class="glyphicon glyphicon-trash remove_btn" title="删除"></i>
                   <%}%>
                  </div>
@@ -81,7 +81,7 @@
                                 <i class="glyphicon glyphicon-thumbs-up nice_btn" title="不错"></i>
                                 <span class="nice_count"><%=reply.ups.length?reply.ups.length:''%></span>
                                 <i class="glyphicon glyphicon-pencil reply_btn" title="回复"></i>
-                                <%if(reply_comment.username==current_user){%>
+                                <%if(reply_comment.username==current_user.username){%>
                                 <i class="glyphicon glyphicon-trash remove_btn" title="删除"></i>
                                 <%}%>
                                </div>

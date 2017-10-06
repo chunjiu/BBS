@@ -77,7 +77,7 @@ router.get('/api', function (req, res, next) {
 /* GET home page. */
 router.get('/', function (req, res, next) {
   //res.status(403).end();
-
+  console.log('进入首页');
   var page = parseInt(req.query.page, 10) || 1;
   var tab = req.query.tab || '全部';
 
@@ -89,17 +89,19 @@ router.get('/', function (req, res, next) {
   } else {
     query.tab = tab;
   }
-
   var limit = 20;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at' };
 
   Topic.findByQuery(query, options, function (err, topics) {
+    console.log('运行到这里');
     if (err) {
       console.log('err是：' + err);
-    } else {
+    } 
+    else {
       console.log('req.cookies是：' + req.signedCookies[config.auth_cookie_name]);
       console.log('req.session.uer是：' + req.session.user);
       var ReqUser = req.session.user ? req.session.user.username : '';
+      console.log('ReqUser是：'+ReqUser);
       User.getUserByUserName(ReqUser, function (err, user) {
         if (err) {
           return next(err);
@@ -128,8 +130,8 @@ router.get('/', function (req, res, next) {
 router.get('/:id/tid', function (req, res, next) {
   var ep = new EventProxy();
   var topic_id = req.params.id;
-  var current_user = req.session.user ? req.session.user.username : '';
-  console.log("curretn_user是："+current_user);
+  var current_user = req.session.user ? req.session.user : '';
+  console.log("curretn_user是："+current_user.is_admin);
   Topic.findById(req.params.id, function (err, topics) {
     topics.visit_count += 1;//浏览量
     Reply.getRepliesByQuery({ 'topic_id': req.params.id, 'deleted': false }, {}, function (err, replies) {
@@ -457,6 +459,8 @@ router.post('/:id/:reply_id/comment', function (req, res, next) {
 router.post('/reply/:reply_id/delete', function (req, res, next) {
   var reply_id = req.params.reply_id;
   console.log('删除回复里的reply_id' + reply_id);
+  var delete_count = req.body.delete_count;
+  console.log('delete_count是：'+delete_count);
   Reply.getRepliesByid(reply_id, function (err, reply) {
     if (err) {
 
@@ -469,7 +473,11 @@ router.post('/reply/:reply_id/delete', function (req, res, next) {
         console.log('出错2');
         return next(err);
       }
-      topic.reply_count -= 1;
+      if (delete_count > 0) {
+        topic.reply_count -= delete_count;
+      } else { 
+        topic.reply_count -= 1;
+      }
       topic.save(function () {
         res.json({ status: 'success' })
       });
@@ -573,7 +581,7 @@ router.post('/upload', function (req, res, next) {
   
   /**
    *写入文件时必须要有public,路径+文件名
-   * @param 另：直接以用户名存储则会替换该用户所有之前的图像
+   * @param 另：直接以用户名存储则会替换该用户所有之前的头像
    */
   var imgPath = 'public/uploads/' + username + '.jpg';
   fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
@@ -710,6 +718,7 @@ router.post('/login', function (req, res, next) {
     console.log('user是' + user);
     authMiddleWare.gen_seesion(user, res, function (cb) { //登录信息保存进cookies,用数据库//req.session.user = user;//将session保存在内存中
       if (cb) { 
+        //authMiddleWare.authUser();
         console.log('登录成功');
         console.log('user.id是：' + user.id);
         res.redirect('/');

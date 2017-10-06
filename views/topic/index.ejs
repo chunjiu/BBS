@@ -228,12 +228,21 @@
         $('.remove_btn').click(function () {
           $this = $(this);
           var reply_id = $this.closest('.ReplyReply').attr('reply_id');
-          $.post('/reply/' + reply_id + '/delete', function (data) {
-            if (data.status === 'success') {
-              $this.parents('.media-list:first').remove();
+          var parent = $this.parents('.media-list:first');
+          var childElmentCount = parent.find('.media-list').length;
+          var data = {
+            delete_count:childElmentCount+1,//含父元素
+          }
+          console.log(childElmentCount);
+          $.post('/reply/' + reply_id + '/delete', data,function (data) {
+            if (data.status === 'success') { 
+              parent.remove();
               var reply_count = $('.reply_count').text();
-              alert(reply_count);
-              $('.reply_count').text(reply_count-1);
+              if(childElmentCount>0){
+                $('.reply_count').text(reply_count-childElmentCount-1);
+              }else{
+                $('.reply_count').text(reply_count-1);
+              }             
             }
           })
         });

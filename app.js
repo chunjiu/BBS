@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var session = require('express-session');
 
-var MongoStore = require('connect-mongo')(session);
+var RedisStore = require('connect-redis')(session);
 var mongoose = require('mongoose');
 
 var index = require('./routes/index');
@@ -37,14 +37,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+mongoose.connect(config.mongodb);
 
 //设置会话
 app.use(cookieParser(config.session_secret));//使用签名
-mongoose.connect(config.db_db);
+//使用redis存储session
 app.use(session({
   secret: config.session_secret,
-  store: new MongoStore({
-    url: config.db_db,
+  store: new RedisStore({
+    //url: config.db_db,
+    port: config.db_host,
+    host: config.db_host,
+    db: config.db_db,
+    pass:config.db_password,
   }),
 	/*Key: 'es5eiqm6akdb',
 	cookie: {
@@ -122,7 +127,7 @@ app.use(bodyParser.json());
 app.listen(443, function () { 
   console.log('服务器已在3000端口运行');
 });
-app.listen(80, function () {//上线要改成80
+app.listen(3000, function () {//上线要改成80
   console.log('服务器已在80端口运行');
 })
 

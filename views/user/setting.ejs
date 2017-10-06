@@ -27,9 +27,12 @@
                 <label class="col-sm-4 control-label"></label>
                 <div class="col-sm-7">
                     <span id='canavas_img'></span>
-                    <div style="width:50px;height:50px;position:absolute;left:50%;top:0%">
-                        <canvas id="myCanvas" style='width:50px;height:50px;'></canvas>
+                    <div class="canvasPreview" style="width:50px;height:50px;position:absolute;left:50%;top:0%">
+                        <div class="myCanvasContainer">
+                          <canvas id="myCanvas" style='width:50px;height:50px;'></canvas>
+                        </div>
                         <span id="preview"></span>
+                        <p id="clientXY"><p>
                     </div>
                 </div>
             </div>
@@ -73,9 +76,18 @@
             $('#input_img').click();
         });
 
+        var jcrop_api,boundx,boundy,
+        $canvasPreview = $('.canvasPreview'),
+        $pcnt = $('.myCanvasContainer'),
+        $myCanvas = $('#myCanvas'),
+        xsize = $pcnt.width();
+        ysize = $pcnt.height();
+        console.log('init',[xsize,ysize]);
+
         function get_img() {
             var canavas_img = $('#canavas_img');
             var img = $('#input_img').get(0).files[0];
+            console.log(img);
             var fileName = img.name;
             var fileType = fileName.substring(fileName.indexOf('.'),fileName.length).toLowerCase();
             console.log(fileType);
@@ -87,30 +99,59 @@
             var reader = new FileReader();
             reader.readAsDataURL(img);
             reader.onload = function () {
-                var img_element = "<img id='jcrop' src='" + this.result + "'/>"
-                canavas_img.html(img_element);
+                var img_element = "<img id='jcrop' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应，否图片裁剪的x和y值不正确
+                canavas_img.html(img_element);  
+                if(canavas_img.width()>300||canavas_img.height()>400){
+                    alert('请上传宽不大于300，高不大于400的图片');
+                    canavas_img.html('');
+                    return;
+                }else{             
                 initJcrop();
+                }
             }
         }
 
         function initJcrop() {
             $('#jcrop').Jcrop({
                 onChange: updateCoords,
+                aspectRatio:xsize / ysize
                 //onSelect:updateCoords,
             }, function () {
-                this.setSelect([200, 200, 80, 80])
+                var bounds = this.getBounds();
+                boundx = bounds[0];
+                boundy = bounds[1];
+                console.log('boundx,boundy',[boundx,boundy]);
+                this.setSelect([150, 150, 50, 50]);
+
+                jcrop_api =this;
                 var $preview = $('#preview');
                 $preview.text('预览')
             });
         }
+
+
 
         function updateCoords(e) {
             var img = document.getElementById('jcrop');
             var ctx = document.getElementById('myCanvas');
             var ctx_img = ctx.getContext('2d');
 
+            var rx = xsize/e.w;
+            var ry = ysize/e.h;
+            //console.log('rx和ry分别是',[rx,ry])
+            //console.log('裁剪图片的宽和高',[e.w,e.h]);
+
             var $preview = $('.preview');
             ctx_img.drawImage(img, e.x, e.y, e.w, e.h, 0, 0, 300, 200);
+            console.log('e.x和e.y是',[e.x,e.y])
+
+            //选择局部放大，类似淘宝网的商品图片放大
+           $myCanvas.css({
+                width:Math.round(rx*boundx)+'px',
+                height:Math.round(ry*boundy)+'px',
+                //marginLeft:'-'+Math.round(rx*e.x)+'px',
+                //marginTop:'-'+Math.round(ry*boundy)+'px'
+            });
         }
 
         $('#up').click(function () {
@@ -141,6 +182,8 @@
                 }
             });
         });
+
+    
     </script>
 
     </html>
