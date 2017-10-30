@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>福运临</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="keywords" content="高档车辆维修,奔驰,宝马,疑难车辆,服务唯修厂">
+
+    <link rel="stylesheet" href="/stylesheets/bootstrap.css">
+    <link rel='stylesheet/less' type="text/css" href='/stylesheets/styles.less' />
+    <!--自定义样式应放在bootstrap后面引入-->
+    <script src="/javascripts/pdf/pdf.js"></script>
+
+</head>
+
+<body onload="showPDF();">
+    <h1>PDF.js Hello PDF.js 我来了</h1>
+    <canvas id="the-canvas"></canvas>
+
+
+</body>
+
+<script>
+   function showPDF() {
+        console.log('进入');
+        var url = '//www.wangdong123.com/js.pdf';
+        PDFJS.workerSrc = '/javascripts/pdf/pdf.worker.js';
+
+
+        var loadingTask = PDFJS.getDocument(url);
+        loadingTask.promise.then(function (pdf) {
+            console.log('PDF loaded');
+
+            var page = 1;
+            pdf.getPage(page).then(function (page) {
+                console.log('page loaded');
+
+                var scale = 1.5;
+                var viewport = page.getViewport(scale);
+
+                var canvas = document.getElementById('the-canvas');
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+
+                var renderTask = page.render(renderContext);
+                renderTask.then(function () {
+                    console.log('page rendered');
+                });
+            }), function (reason) {
+                console.error(reason);
+            }
+        })
+
+    }
+
+</script>
+
+
+<script src="/javascripts/jquery-3.2.1.min.js"></script>
+<!--重点注意，模版内引入js文件需在前面加'/'才能引入成功-->
+<script src="/javascripts/bootstrap.js"></script>
+<!--重点注意，模版内引入js文件需在前面加'/'才能引入成功-->
+
+
+
+
+</html>

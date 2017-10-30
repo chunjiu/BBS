@@ -1,122 +1,247 @@
-<%-include('header')%>
-  <div class="row">
-    <div class="col-md-3 col-md-push-9">
-      <%if(current_user){%>
-        <div class="panel panel-default panelBorderNone">
-          <div class="panel-heading">个人信息</div>
-          <%-include('sidebar')%>
+<%-include('./includes/header')%>
+
+    <!--轮播-->
+    <div id="introduce_carousel" class="carousel slide" data-ride='carousel'>
+        <ol class="carousel-indicators">
+            <li data-target='#introduce_carousel' data-slide-to='0' class="active"></li>
+            <li data-target='#introduce_carousel' data-slide-to='1'></li>
+            <li data-target='#introduce_carousel' data-slide-to='2'></li>
+        </ol>
+        <div class="carousel-inner" role='listbox'>
+            <div class="item active">
+                <img src="images/img5.jpg">
+            </div>
+            <div class="item">
+                <img src="images/img2.jpg">
+            </div>
+            <div class="item">
+                <img src="images/img3.jpg">
+            </div>
+            <div class="item">
+                <img src="images/img4.jpg">
+            </div>
         </div>
-       
-      <div style="margin-bottom:15px;">
-        <a href="/create">
-          <span class="btn btn-success">发布话题</span>
+
+        <a class="left carousel-control" href="#introduce_carousel" role="button" data-slide='prev'>
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
         </a>
-      </div>
-        <%}else{%>
-          <%-include('sidebar2')%>
-            <%}%>
+        <a class="right carousel-control" href="#introduce_carousel" role="button" data-slide='next'>
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">next</span>
+        </a>
     </div>
-    <div class='col-md-9 col-md-pull-3'>
-      <div class="panel noborder topcinav" style="border-style:none">
-        <div class="panel-heading">
-          <ul class="nav nav-pills">
-            <% [['全部'],['精华']].concat(tabs).forEach(function(value){%>
-              <li><a href="<%=value?'/?tab=' +value : '/'%>"><%=value%></a><li>
-            <%})%>
-          </ul>
+
+    <!--案例标题-->
+    <div class="container body-weidth" style="margin-top:50px;">
+
+
+        <p style="margin-top:15px;">
+            <span style="color:#70A7CE;font-size:25px;font-weight: bold;">Maintenance</span> &ensp;
+            <span style="color:black;font-size:25px;font-weight: bold;"> Case</span>
+        </p>
+        <p style="font-size:25px;">维修案例</p>
+        <p style="font-size:15px;font-weight:bolder">全面检测爱车车况 &ensp;专享爱车家庭医生</p>
+        <p style="background-color:#70A7CE;width:150px;height:2px;"></p>
+
+        <a class="pull-right mainPageFont " href="#">更多</a>
+
+
+        <div id="introduce_carousel-2" class="carousel slide" style="margin-top:50px;">
+            <ol class="carousel-indicators">
+                <li data-target='#introduce_carousel-2' data-slide-to='0' class="active"></li>
+                <li data-target='#introduce_carousel-2' data-slide-to='1'></li>
+                <li data-target='#introduce_carousel-2' data-slide-to='2'></li>
+            </ol>
+            <div class="carousel-inner" role='listbox'>
+                <div class="item active">
+
+                    <!--案例-->
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img class="max-width-no" src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img class="max-width-no" src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img class="max-width-no" src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3" style="padding-right:0px;">
+                        <div class="thumbnail">
+                            <img class="max-width-no" src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+
+                    <!--案例-->
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            <img src="images/img4.jpg">
+                            <div class="caption">
+                                <h3>宝马发动机维修</h3>
+                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="up" style="top:-30px;left:20px;" href="#introduce_carousel-2" role="button" data-slide='next'>
+                <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                <span class="sr-only">next</span>
+             </a>
+            <a class="up" style="top:-30px;left:0px;" href="#introduce_carousel-2" role="button" data-slide='prev'>
+                <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
         </div>
-        <div style="background-color:white">
-          <div class="list-group">
-            <%if(topic.length){%>
-              <%topic.forEach(function(topic){%>
-                <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
-                    <span><img src="<%=topic.topic_avatars?topic.topic_avatars:'/images/123.jpg'%>" style="height:30px;width:30px;border-radius:25%"></span>
-                    <span title="回复数"><%=topic.reply_count%></span>/<span title="点击数"><%=topic.visit_count%></span>
-                    <%if(topic.top){%>
-                      <span class="TopicGood">置项</span><!--置顶贴优先，因为置顶贴也是精华贴-->
-                    <%}else if(topic.good){%>
-                      <span class="TopicGood">精华</span>
-                    <%}else{%>
-                      <span class="TopicTab"><%=topic.tab%></span>
-                    <%}%>
-                    <span><%=topic.title%></span>
-                    <%if(!topic.reply_count){%>
-                      <span class="pull-right time_ago"><%=topic.create_at_ago()%><span>
-                    <%}else{%>
-                      <span class="pull-right time_ago">
-                        <span><img src="<%=topic.last_reply_user_avatars?topic.last_reply_user_avatars:'/images/123.jpg'%>" class="img_avatars"></span>
-                        <span><%=topic.last_reply_at_ago()%><span> 
-                      </span>                  
-                    <%}%>
-                </a>
-                <% })%>
-                <!--分页-->
-                <nav>
-                    <ul class="pagination" cureent_page=<%=current_page%>>
-                      <% var base_url = '/?'+'tab='+(typeof(tab)!== 'undefined'?tab:'')+'&page='%>
-                      <% if(current_page == 1){%>
-                        <li class='disabled'><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
-                      <%}else{%>
-                        <li><a href="<%=base_url%>1"><span>&laquo;</span></a></li>
-                      <%}%>
-                      <% var star_page = current_page - 2 > 0 ? current_page - 2: 1;
-                         var end_page =  star_page + 3 >= pages ? pages:star_page+3;
-                       %>
-                      <% for(var i=star_page;i<=end_page;i++){%>
-                        <li><a class="page" href="<%=base_url%><%=i%>"><%=i%></a></li>
-                      <%}%>
-                      <%if(current_page==pages){%>
-                        <li class="disabled"><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
-                      <%}else{%>
-                        <li><a href="<%=base_url%><%=pages%>"><span>&raquo;</span></a></li>
-                      <%}%>
-                      <li class="li_hidden"><a class="pageJump" url=<%=base_url%>><button id="pp"></button></a> <!--button标签需在a标签里面，可用于a标签的自动触发事件--> <li>
-                      <li>
-                        <div class="input-group page_li">
-                          <span class="input-group-addon">转到</span>
-                          <select class="form-control">
-                            <option><%=current_page%>页</option>
-                              <% for(var i=1;i<=pages;i++){%>
-                            <option><%=i%>页</option>
-                              <% }%>
-                          </select>
-                      </div>
-                      </li>                               
-                    </ul>    
-                  </nav>
-            <%}else{%>
-              <div class="inner">
-                <p>无话题</p>
-              </div>
-            <%}%>
-          </div>
+
+        <!--Look for help-->
+
+        <p style="margin-top:50px;">
+            <span style="color:black;font-size:25px;font-weight: bold;">Looking For</span> &ensp;
+            <span style="color:#70A7CE;font-size:25px;font-weight: bold;">Help</span>
+        </p>
+        <p style="font-size:25px;">找帮助</p>
+        <p style="font-size:15px;font-weight:bolder">省钱、省心、省力、省时间</p>
+        <p style="background-color:#70A7CE;width:150px;height:2px;"></p>
+        <a class="pull-right mainPageFont1 " href="#">更多</a>
+
+        <div class="row" style="margin-top:20px;">
+            <div class="col-xs-8 col-sm-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="请输入问题零部件，如：宝马发动机">
+                    <a href="#" class="input-group-addon" style='background-color:antiquewhite;'>搜索</a>
+                </div>
+            </div>
+            <a href="create" class="btn btn-warning">提问</a>
         </div>
-      </div>
+        <a class="pull-right mainPageFont " href="/case">更多</a>
+        <div class="row ask" style="margin-top:15px;">
+            
+            <p class="col-md-4"><a href="#">大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a href="#">大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a href="#">大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+        </div>
+
+        <!--Looking for information-->
+        <p style="margin-top:50px;">
+            <span style="color:#70A7CE;font-size:25px;font-weight: bold;">Looking For</span> &ensp;
+            <span style="color:black;font-size:25px;font-weight: bold;"> Information</span>
+        </p>
+        <p style="font-size:25px;">找资料</p>
+        <p style="font-size:15px;font-weight:bolder">行业领先，知识全面</p>
+        <p style="background-color:#70A7CE;width:150px;height:2px;"></p>
+
+        <div class="carousel-inner">
+            <div class="">
+                <img src="images/img5.jpg">
+                <div class="carousel-caption">
+                    <a href="/information" class="btn btn-warning">进入资料库</a>
+                </div>
+            </div>
+        </div>
+
+        <!--About Us-->
+        <p style="margin-top:50px;">
+            <span style="color:#70A7CE;font-size:25px;font-weight: bold;">About</span> &ensp;
+            <span style="color:black;font-size:25px;font-weight: bold;">Us</span>
+        </p>
+        <p style="font-size:25px;">关于我们</p>
+        <p style="font-size:15px;font-weight:bolder">至善尽美、永续经营</p>
+        <p style="background-color:#70A7CE;width:150px;height:2px;"></p>
+
+        <div class="row culture" style="margin-top:30px;">
+            <div class="col-md-4">
+                <p style="font-size:20px;font-weight:bolder">公司介绍</p>
+                <p style="background-color:#B6D8D2;width:100px;height:2px;"></p>
+                <p>湖南福运临汽车服务有限公司（以下简称福运临汽车电子）由刘浪波先生创立于2006年，多年来以“专注于技术的钻研、热心的为客户解决问题”为宗旨，以汽车维修企业及汽车维修技师为服务对象，得到了国内众多汽车3S店、4S店，及一类、二类汽修厂的认可，也是多个大中专院校汽车专业的实习实践基地</p>
+            </div>
+
+            <div class="col-md-4 culture">
+                <p style="font-size:20px;font-weight:bolder">企业文化</p>
+                <p style="background-color:#B6D8D2;width:100px;height:2px;"></p>
+                <p>公司愿景：让汽车维修企业及维修技师没有修不好的车和排除不</p>
+                <p>了的汽车故障</p>
+                <p>公司使命：专注汽车故障诊断及排除，培养高素质高技能的汽车</p>
+                <p>故障诊断技师 </p>
+                <p>公司主旨：为客户创造价值、为员工谋求福利、为社会做出贡献</p>
+                <p> 公司价值观：利他、诚信、敬业、创新、高效、分享</p>
+                </p>
+            </div>
+
+            <div class="col-md-4 culture">
+                <p style="font-size:20px;font-weight:bolder">为什么选择福运临</p>
+                <p style="background-color:#B6D8D2;width:100px;height:2px;"></p>
+                <p>福运临汽车电子主要的服务项目：汽车疑难故障的诊断与排除、汽车电脑板的维修与编程匹配、音响仪表维修、动力程序升级（刷ECU）、防盗钥匙匹配、诊断设备工具销售与维护、汽车电器配件的销售等，另外还进行汽车维修诊断技师的培养。</p>
+            </div>
+        </div>
     </div>
-  </div>
-  </div>
-  <!--col-sm-8-->
-  </div>
-  <!--row-->
-  <%-include('footer')%>
-  <script>
 
-      var $nav = $('.pagination');
-      var current_page = $nav.attr('cureent_page');
-      $nav.find('li').each(function(){
-       var $li = $(this);
-       var $a = $li.find('a');
-       if($a.html()==current_page){
-         $li.addClass('active');
-         $a.removeAttr('href');
-       }
-      });
+    <%-include('./includes/footer')%>
 
-      $('select').change(function(){
-        var page =$(this).val();
-        var url = $('.pageJump').attr('url');
-        $('.pageJump').attr('href',url+page)
-        $('#pp').trigger('click');//自动触发a标签的点击事件，并跳转到href地址,注意需要buttom标签在a标签里面
-      }); 
+    <script>
+        $('#introduce_carousel').carousel({
+            interval: 3000
 
-  </script>
+        })
+        $('#introduce_carousel-2').carousel({
+            wrap:false,
+            
+        })
+    </script>

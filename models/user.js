@@ -13,6 +13,7 @@ mongoose.createConnection('mongodb://127.0.0.1:27017/NEW2', { server: {poolSize:
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId
+var indexOf = -1;
 
 var UserSchema = new Schema({
     username: { type: String },
@@ -27,6 +28,7 @@ var UserSchema = new Schema({
     score: { type: Number, default: 0 },
     topic_count: { type: Number, default: 0 },
     collect_topic_count: { type: Number, default: 0 },//被收藏的话题数
+    attr: {type:Array}
 })
 
 UserSchema.methods.create_at_ago = function () { 
@@ -45,7 +47,10 @@ exports.addsave = function (name, password, email,active,callback) {
     user.password = password;
     user.email = email;
     user.active = active;
-    user.save(callback);
+    user.indexOf = indexOf +=1;
+    user.save(function (err) { 
+        callback(err, user);
+    });
 }
  
 exports.getUserByQuery = function (query, opt, callback) { 

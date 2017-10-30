@@ -1,4 +1,105 @@
-<%-include('../header')%>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>福运临</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="keywords" content="高档车辆维修,奔驰,宝马,疑难车辆,服务唯修厂">
+
+
+    <link rel="stylesheet" href="/stylesheets/bootstrap.css">
+    <link rel="stylesheet" href='/stylesheets/style.css'>
+    <!--自定义样式应放在bootstrap后面引入-->
+
+</head>
+
+<body onload="getCar();">
+    <!--onload时运行其它涵数，暂没有引用模块-->
+
+    <div class="head">
+        <img class="logo headImg" src="/images/fuyunlin_logo.jpg">
+        <sapn class="headFont">专为解决汽修厂疑难杂症</sapn>
+        <span class="headLeft">
+            <span style='color:red;font-size:30px;top:10px;' class="glyphicon glyphicon-earphone"></span>
+            <!--此处要去掉图片的自适应-->
+            <span class="headFont">全天候服务热线 0731-86452020</span>
+        </span>
+    </div>
+
+    <!--导航条-->
+    <nav class="navbar navbar-default" style="margin-bottom:0px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle='collapse' data-target='#navhead-1'>
+                    <span class="sr-only">navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">福运临</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navhead-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/">
+                            <span class="glyphicon glyphicon-home"></span>首页</a>
+                    </li>
+                    <li>
+                        <a href="/information">
+                            <span class="glyphicon glyphicon-file"></span>找资料</a>
+                    </li>
+                    <li>
+                        <a href="/MaintenanceCase">维修案例</a>
+                    </li>
+                    <li>
+                        <a href="/case">问诊</a>
+                    </li>
+                    <li>
+                        <a href="#">求贤纳才</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-shopping-cart"></span>商城</a>
+                    </li>
+                    <li class="headHidden">
+                        <a href="#">查询维修进度</a>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <labe for='query' class="mainPageFont">查询维修进度</labe>
+                        <input id="query" type="text" class="form-control" placeholder="输入车牌号">
+                    </div>
+                    <button type="submit" class="btn btn-default">查询</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <% if(current_user){%>
+                        <li>
+                            <a href="/setting">
+                                <span class="glyphicon glyphicon-cog"></span>设置</a>
+                        </li>
+                        <li>
+                            <a href="/singout">
+                                <span class="glyphicon glyphicon-off"></span>退出</a>
+                        </li>
+                        <%}else{%>
+                            <li>
+                                <a href="/signin">
+                                    <span class="glyphicon glyphicon-user"></span>登录</a>
+                            </li>
+                            <li>
+                                <a href="/signup">
+                                    <span class="glyphicon glyphicon-registration-mark"></span>注册</a>
+                            </li>
+                            <% }%>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
   <link href="http://cdn.bootcss.com/at.js/1.5.4/css/jquery.atwho.css" rel="stylesheet">
 
   <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
@@ -9,21 +110,21 @@
 
   <div class="row">
     <div id="warn"></div>
-    <div class="col-md-3 col-md-push-9">
+    <div class="col-md-2 col-md-push-10">
       <div class="panel panel-default">
         <%if(current_user===topic.username){%>
-          <div class="panel-heading">个人信息</div>
+          <div style="background-color:#EBE6E6" class="panel-heading">个人信息</div>
           <%}else{%>
-            <div class="panel-heading">作者</div>
+            <div style="background-color:#EBE6E6" class="panel-heading">作者</div>
             <%}%>
               <div class="panel-body">
-                <%-include('../sidebar')%>
+                <%-include('../includes/sidebar')%>
               </div>
       </div>
-      <%-include('../sidebar2')%>
+      <%-include('../includes/sidebar2')%>
 
         <div class="panel panel-default side">
-          <div style="background-color:#5cb85c" class="panel-heading">
+          <div style="background-color:#EBE6E6" class="panel-heading">
             <%=current_user===topic.username?'我':topic.username%>的其它话题</div>
           <div class="panel-body">
             <% if(othertopics){%>
@@ -42,7 +143,7 @@
         </div>
 
         <div class="panel panel-default side">
-          <div style="background-color:#5cb85c" class="panel-heading">无人回复的话题</div>
+          <div style="background-color:#EBE6E6" class="panel-heading">无人回复的话题</div>
           <div class="panel-body">
             <% if(noreplytopic){%>
               <%noreplytopic.forEach(function(noreplytopic,index){%>
@@ -59,7 +160,7 @@
         </div>
     </div>
 
-    <div class='col-md-9 col-md-pull-3'>
+    <div class='col-md-10 col-md-pull-2' style="padding-left:18px;">
       <div class="panel panel-default">
         <div class="panel-heading">
           <span class="TopTitile"><%=topic.title%></span>
@@ -83,14 +184,14 @@
                     <span>来自【<%=topic.tab%>】</span>
                   </div>
                   <%if(current_user){%>
-                    <%if(current_user.username===topic.username){%>
+                    <%if(current_user.username===topic.username||current_user.is_admin){%>
                       <div>
                         &nbsp
                         <a href="/topic/<%=topic.id%>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp
                         <a id="remove" href="/topic/<%=topic.id%>/remove"><i class="glyphicon glyphicon-trash"></i></a>
                       </div>
-                      <%}%>
-                        <%}%>
+                   <%}%>
+                  <%}%>
 
 
         </div>
@@ -136,13 +237,14 @@
   </div>
   <!--row-->
 
-  <%-include('../footer')%>
+  <%-include('../includes/footer')%>
 
     <script src='/javascripts/jquery.caret.js'></script>
     <script type="text/javascript" src='/javascripts/jquery.atwho.min.js'></script>
 
     <script>
       $(document).ready(function () {
+      
         //回复的内容为空时警示
         /*$('#a,#aa').click(function () {
           $this = $(this);
@@ -256,4 +358,6 @@
 
 
       })
+
+ 
     </script>

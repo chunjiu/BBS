@@ -1,0 +1,59 @@
+
+<div  class="col-md-2 tree " style="padding-left:18px;overflow-y:scroll;height:700px;">
+    <div class="row" >
+        <div class="col-xs-3" id="myScrollspy">
+            <ul class="nav nav-pills nav-stacked navscroll" ><!---->
+                <li style='width:80px;height:40px;line-height:40px;font-size:18px;font-weight:bold;background-color:#f7f7f7;
+                color:#333;'>按字母</li>
+                <% for(var i=0;i<26;i++){%>
+                     <% var alphabet =String.fromCharCode(65+i) %>
+                    <li><a style='font-weight:900;padding:2px 20px;' href="#a-<%=i%>"><%=alphabet%></a></li>
+                 <% }%>
+            </ul>
+            <p class="test"></p>
+            <p class="test2"></p>
+            <p class="test3"></p>
+        </div>
+        <div class="col-xs-9">
+           <%  for(var i = 0;i<26;i++){%>
+                <% var alphabet =String.fromCharCode(65+i) %>
+                <div id="a-<%=i%>" class="treeNavFont treeFisrtWord" style='text-align:center;cursor:pointer;margin-bottom:5px;'><%=alphabet%>
+                </div>
+                <ul>
+                   <% car.forEach(function(car){%> 
+                   <% if(car.carFisrtWord==alphabet){%>
+                    <div class=" carBrand" style='cursor: pointer;'>
+                      <span class="carTrademark"><img style='width:35px;height:35px;' src='<%=car.carAvatars%>'></img><span>
+                      <span class="treeNavFont"><%=car.carBrand%>(<%=car.carModel.length%>)</span>
+                    </div>
+                    <ul class="carModel">
+                       <% car.carModel.map(function(carModel){%>
+                            <li style="cursor:pointer;margin-bottom:5px;">
+                               <% if(ChooseModel){%>
+                                    <a class="chooseModel" href='#'><%=carModel%></a>
+                               <% }else{%>
+                                    <a class="chooseModel" href='/case?carModel=<%=carModel%>'><%=carModel%></a>
+                               <% }%>
+                             </li>
+                           <!-- 显示年份
+                               <%  car.carYear.map(function(carYear){%>
+                                <%  if(carYear.carModel==carModel){%>
+                                      <li><%=carYear.carYear%></li>
+                                <%  }%>
+                             <% })%>
+                            -->
+                      <%  })%>
+                    </ul>
+                  <%  } %>                                               
+                   <% })%>
+                </ul>
+         <% } %>              
+     </div>
+  </div>
+  
+</div>
+
+
+<script>
+          
+</script>

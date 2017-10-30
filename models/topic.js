@@ -16,6 +16,8 @@ var TopicSchema = new Schema({
 
     title: { type: String },
     tab: { type: String },//话题模块
+    carBrand: { type: String },//汽车品牌
+    carModel: {type:String},//品牌型号
     content: { type: String },
     reply_count: { type: Number, default: 0 },//回复数
     last_reply: { type: ObjectId },
@@ -48,10 +50,12 @@ TopicSchema.methods.last_reply_at_ago = function () {
 
 var Topic = mongoose.model('Topic', TopicSchema);
 
-exports.newAndSave = function (title,tab,content,username,topic_avatars,callback) {
+exports.newAndSave = function (title,tab,carBrand,carModel,content,username,topic_avatars,callback) {
     var topic = new Topic();
     topic.title = title;
     topic.tab = tab;
+    topic.carBrand = carBrand;
+    topic.carModel = carModel;    
     topic.content = content;
     topic.username = username;
     topic.topic_avatars = topic_avatars;

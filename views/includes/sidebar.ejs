@@ -1,0 +1,39 @@
+
+<%if(user||current_user){%>
+    <div class="media">
+        <div class="media-left">
+            <a  href ='/user/<%=user.username%>' class="setAvatars" style="display:block; width:50px;"><!--因为在css里设置了img自适应大小，此处的img的父元素a为行内元素，要改为块元素并给出宽度，这里的图片才会显示-->
+                <img src="<%=user.avatars?user.avatars:'/images/123.jpg'%>" title='<%=user.username%>' style="height:45px;border-radius:25%"></img>
+            </a>
+        </div>  
+
+        <div class="media-body">
+            <h4 class="media-heading">
+                <a href="/user/<%=user.username%>">
+                    <%=user.username%>
+                </a>
+            </h4>
+            <a href="/user/<%=user.username%>"><span>积分：<%=user.score%></span></a>
+
+            <%if(user.attr[0]){%>
+             
+             <%  var attr = JSON.stringify(user.attr) ;   <!--先将数据库的数组转换成JSON字符串-->        
+               attr = attr.slice(1, attr.length - 1) ;    <!--将字符串的[]去掉-->
+               attr = JSON.parse(attr);                   <!--将去掉了[]的字符串转换成JSON对象-->
+               console.log('新json数据是：'+attr.sex);     <!--获取键对值-->    
+             %>                                           <!--重点注意，代码块需用<%%>包裹起来-->
+               <p>sex:<%=attr.school.hightScool%></p>
+           <% }%>
+
+
+
+            
+
+
+
+        
+                       
+        </div>
+    </div>
+<%}%>
+    

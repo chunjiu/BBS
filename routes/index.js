@@ -15,11 +15,14 @@ var Topic = require('../models/topic');
 var Reply = require('../models/reply');
 var Collect = require('../models/collect');
 var Reply_comment = require('../models/reply_comment');
+var Car = require('../models/car');
 
 var config = require('../config');
 var authMiddleWare = require('../middlewares/auth');
 
 var EventProxy = require('eventproxy');//异步控制
+
+
 
 
 //接口
@@ -28,7 +31,7 @@ router.get('/api', function (req, res, next) {
 
   var page = parseInt(req.query.page, 10) || 1;
   var tab = req.query.tab || '全部';
-  var limit = parseInt(req.query.limit,10)||1;
+  var limit = parseInt(req.query.limit, 10) || 1;
 
   var query = {};
   if (!tab || tab == '全部') {
@@ -74,14 +77,70 @@ router.get('/api', function (req, res, next) {
 });
 //接口结束
 
-/* GET home page. */
+/*get MaintenanceCase Page*/
+router.get('/MaintenanceCase', function (req, res, next) {
+  var ReqUser = req.session.user ? req.session.user.username : ''
+  User.getUserByUserName(ReqUser, function (err,user) { 
+    if (err) { 
+      return next(err)
+    }
+    res.render('MaintenanceCase', {
+      current_user: ReqUser,
+      user:user
+    });
+  })
+})
+
+/*get information page*/
+
+router.get('/information', function (req, res, next) {
+  var carBrand = req.query.carBrand;
+  console.log('carBrand是：' + carBrand);
+
+    Car.getCarByQuery('', function (err, car) { 
+      if (err) {
+        console.log('出错');
+        return next(err);
+      }
+      if (!car) {
+        console.log('没有找到车');
+        return next(err);
+      }
+      res.render('Document', {
+        current_user: req.session.user ? req.session.user.username : '',
+        car: car,
+        ChooseModel: true,
+      })
+    })
+})
+
+//get home page
+
 router.get('/', function (req, res, next) {
+  console.log('进入主页');
+  var ReqUser = req.session.user ? req.session.user.username : '';
+  console.log('reqUser是：' + ReqUser);
+  res.render('index', {
+    current_user: req.session.user,
+  });
+});
+
+/* GET case page. */
+router.get('/case', function (req, res, next) {
   //res.status(403).end();
   console.log('进入首页');
+
   var page = parseInt(req.query.page, 10) || 1;
   var tab = req.query.tab || '全部';
+  var carModel = req.query.carModel;
+  console.log('carModel是：' + carModel);
 
   var query = {};
+  
+  if (carModel) { 
+    query.carModel = carModel;
+  }
+  
   if (!tab || tab == '全部') {
     query.tab = { $nin: ['招聘'] };//db.col.find(tab:{$nin:['招聘']})
   } else if (tab == '精华') {
@@ -89,6 +148,10 @@ router.get('/', function (req, res, next) {
   } else {
     query.tab = tab;
   }
+
+   // query.carModel = carModel;
+  console.log('query是：' + query.tab)
+
   var limit = 20;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at' };
 
@@ -96,30 +159,45 @@ router.get('/', function (req, res, next) {
     console.log('运行到这里');
     if (err) {
       console.log('err是：' + err);
-    } 
+    }
     else {
       console.log('req.cookies是：' + req.signedCookies[config.auth_cookie_name]);
       console.log('req.session.uer是：' + req.session.user);
       var ReqUser = req.session.user ? req.session.user.username : '';
-      console.log('ReqUser是：'+ReqUser);
+      console.log('ReqUser是：' + ReqUser);
       User.getUserByUserName(ReqUser, function (err, user) {
         if (err) {
           return next(err);
         }
         Topic.findByQuery(query, function (err, topics_count) {
-          if (err) { 
+          if (err) {
           }
-          var pages = Math.ceil((topics_count.length) / limit);
-          res.render('index', {
-            topic: topics,
-            user: user,
-            current_user: req.session.user,
-            tabs: config.tabs,
-            current_page: page,
-            tab: tab,
-            pages: pages,
-          });
+          Car.getCarByQuery({}, function (err, car) {
+            if (err) {
+              return next(err)
+            }
+            if (!car) {
+              console.log('没有找到车');
+            }
+            //console.log('car是：' + car.length)
 
+            var pages = Math.ceil((topics_count.length) / limit);
+            console.log('运行到这里2');
+
+            res.render('case/index', {
+              topic: topics,
+              user: user,
+              current_user: req.session.user,
+              tabs: config.tabs,
+              current_page: page,
+              tab: tab,
+              pages: pages,
+              car: car,
+              carModelURL: carModel,
+              ChooseModel:false
+            });
+
+          })
         });
       });
     }
@@ -131,17 +209,17 @@ router.get('/:id/tid', function (req, res, next) {
   var ep = new EventProxy();
   var topic_id = req.params.id;
   var current_user = req.session.user ? req.session.user : '';
-  console.log("curretn_user是："+current_user.is_admin);
+  console.log("curretn_user是：" + current_user.is_admin);
   Topic.findById(req.params.id, function (err, topics) {
     topics.visit_count += 1;//浏览量
     Reply.getRepliesByQuery({ 'topic_id': req.params.id, 'deleted': false }, {}, function (err, replies) {
       if (err) {
         return next(err);
       }
-      if (!replies) { 
+      if (!replies) {
         console.log('没有找到replies');
       }
-      console.log('replies有：' +replies.length);
+      console.log('replies有：' + replies.length);
       User.getUserByUserName(topics.username, function (err, user) {
         if (err) {
           console.log('出错');
@@ -150,7 +228,7 @@ router.get('/:id/tid', function (req, res, next) {
         if (!user) {
           console.log('没有user');
         }
-        console.log('user是：'+user);
+        console.log('user是：' + user);
         Topic.findByQuery({ 'username': topics.username, 'deleted': false }, { limit: 5 }, function (err, OtherTopics) {//注意：topic.id只有唯一的一个。多个topic里存储了同一个用户名,故用user.getUserByUserName（topic.username）来查找
           if (err) {
             return next(err);
@@ -166,27 +244,27 @@ router.get('/:id/tid', function (req, res, next) {
               }
               topics.save();
               console.log('current是' + req.session.user);
-              console.log('replies是'+replies.id);
+              console.log('replies是' + replies.id);
               Reply_comment.getReplyCommentByTopicID(topic_id, function (err, reply_comment) {
-                if (err) { 
+                if (err) {
                   return next(err);
                 }
                 var reply_comment_user = reply_comment.map(function (replyComment) {
-                  console.log('replyComent是：'+replyComment);
+                  console.log('replyComent是：' + replyComment);
                   return replyComment.username;
                 })
-                console.log('reply_comment_user是：'+reply_comment_user);
+                console.log('reply_comment_user是：' + reply_comment_user);
                 var queryUser = { 'username': { '$in': reply_comment_user } }
-                
-                User.getUserByQuery(queryUser, {}, function (err, reply_user) { 
-                  if (err) { 
+
+                User.getUserByQuery(queryUser, {}, function (err, reply_user) {
+                  if (err) {
                     console.log('出错');
                     return next(err);
                   }
-                  if (!reply_user) { 
+                  if (!reply_user) {
                     console.log('没有reply_user');
                   }
-                  console.log('reply_comment是：' + reply_comment); 
+                  console.log('reply_comment是：' + reply_comment);
                   res.render('topic/index', {
                     topic: topics,
                     reply: replies,
@@ -203,7 +281,7 @@ router.get('/:id/tid', function (req, res, next) {
                   console.log('...............................');
                   console.log('reply_user是：' + reply_user);
                   console.log('................................');
-                })       
+                })
               })
             });
           });
@@ -295,8 +373,10 @@ router.get('/topic/:id/good', function (req, res, next) {
       if (err) {
         return next(err);
       }
+      var referer = req.get('referer');
+ 
       var msg = topic.good ? '该话题加精华成功' : '该话题精华已被取消';
-      res.render('notify/notify', { error: msg });
+      res.render('notify/notify', { error: msg,referer:referer});
     });
 
   })
@@ -347,7 +427,7 @@ router.get('/user/:username', function (req, res, next) {
         var reply_topic_id = reply.map(function (reply) {
           return reply.topic_id
         })
-        console.log('reply_topic_id是：'+reply_topic_id);
+        console.log('reply_topic_id是：' + reply_topic_id);
         var queryTopic = { '_id': { '$in': reply_topic_id } }
         var optTopic = { sort: '-last_reply_at', limit: 5 }
         Topic.findByQuery(queryTopic, optTopic, function (err, replyTopic) {
@@ -413,7 +493,7 @@ router.post('/:id/:reply_id/comment', function (req, res, next) {
   var topic_id = req.params.id;
   var reply_id = req.params.reply_id;
   var replyuser = req.session.user ? req.session.user.username : '';
-  console.log('replyuser是：'+replyuser);
+  console.log('replyuser是：' + replyuser);
   console.log('content是' + content);
 
   if (content === '') { //这里其实用ajax更好，整个回复都用ajax
@@ -433,22 +513,22 @@ router.post('/:id/:reply_id/comment', function (req, res, next) {
       topic.last_reply_user_avatars = user.avatars;
       topic.reply_count += 1;//话题回复数+1
       topic.save();
-      Reply_comment.newAndSave(content, reply_id,replyuser,user.avatars,topic_id, function (err, reply_comment) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
+      Reply_comment.newAndSave(content, reply_id, replyuser, user.avatars, topic_id, function (err, reply_comment) {//这里记住要返回reply,方便调用reply.id进行网页自动定位
         if (err) {
           return next(err);
         }
         Reply.getRepliesByid(reply_id, function (err, reply) {
-          if (err) { 
+          if (err) {
             return next(err);
           }
           reply.reply_comment_count += 1;
           reply.save();
           console.log('回复的评论的ID是：' + reply_comment.reply_id);
-          console.log('保存的回复用户是：'+reply_comment.username);
+          console.log('保存的回复用户是：' + reply_comment.username);
           console.log('保存成功');
           //Topic.updateLastReply(topic_id);
           res.redirect('/' + topic_id + '/tid/' + '#' + reply.id);//#是网页刷新后定位到#后面新保存reply.id的地址
-         }) 
+        })
       });
     })
   });
@@ -460,7 +540,7 @@ router.post('/reply/:reply_id/delete', function (req, res, next) {
   var reply_id = req.params.reply_id;
   console.log('删除回复里的reply_id' + reply_id);
   var delete_count = req.body.delete_count;
-  console.log('delete_count是：'+delete_count);
+  console.log('delete_count是：' + delete_count);
   Reply.getRepliesByid(reply_id, function (err, reply) {
     if (err) {
 
@@ -475,7 +555,7 @@ router.post('/reply/:reply_id/delete', function (req, res, next) {
       }
       if (delete_count > 0) {
         topic.reply_count -= delete_count;
-      } else { 
+      } else {
         topic.reply_count -= 1;
       }
       topic.save(function () {
@@ -578,14 +658,14 @@ router.post('/upload', function (req, res, next) {
   var imgBuffer = Buffer.from(img, 'base64');//转化为bufer字符
 
   console.log('imgBuffer是否是一个对象：' + Buffer.isBuffer(imgBuffer));
-  
+
   /**
    *写入文件时必须要有public,路径+文件名
    * @param 另：直接以用户名存储则会替换该用户所有之前的头像
    */
   var imgPath = 'public/uploads/' + username + '.jpg';
   fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
-    if (err) { 
+    if (err) {
       throw err;
     }
     User.getUserByUserName(username, function (err, user) {
@@ -593,9 +673,9 @@ router.post('/upload', function (req, res, next) {
         throw err;
       }
       user.avatars = imgPath.slice(6);//去掉public
-      console.log('user.avatars是：'+user.avatars);
-      user.save(function (err) { 
-        if (err) { 
+      console.log('user.avatars是：' + user.avatars);
+      user.save(function (err) {
+        if (err) {
           console.log('保存出错');
         }
         res.send({
@@ -604,7 +684,7 @@ router.post('/upload', function (req, res, next) {
       });
     });
     console.log('the file has been saved');
-   })
+  })
 });
 
 //注册提交
@@ -634,12 +714,17 @@ router.post('/sign', function (req, res) {
       console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
-      User.addsave(username, password, email, true, function (err) {
+      User.addsave(username, password, email, true, function (err, user) {
         if (!err) {
+          var attr = { sex: '男', age: '27', school: { hightScool: '华容三中' } }//这是做mongodb数组测试用的。
+          user.attr.push(attr);
+          user.save(function (err) {
+            res.render('notify/notify', { success: '注册成功', link: link });
+          });
           // req.flash('info', '注册成功，只差邮箱验证了');
           console.log('邮箱是：' + email);
           //mail.sendActiveMail(email, utility.md5(email + 'abcde邮箱验证'), username)//注册成功则发送邮件
-          res.render('notify/notify', { success: '注册成功', link: link });
+
         } else {
           res.redirect('/signup');
           console.log('保存不成功');
@@ -717,15 +802,15 @@ router.post('/login', function (req, res, next) {
     }
     console.log('user是' + user);
     authMiddleWare.gen_seesion(user, res, function (cb) { //登录信息保存进cookies,用数据库//req.session.user = user;//将session保存在内存中
-      if (cb) { 
+      if (cb) {
         //authMiddleWare.authUser();
         console.log('登录成功');
         console.log('user.id是：' + user.id);
         res.redirect('/');
       }
-      
+
     });
-   
+
   })
 
 })
@@ -761,23 +846,36 @@ router.get('/create', authMiddleWare.userRequired, function (req, res, next) {
   });
 });
 
-//保存话题页面
+//保存话题
 router.post('/topic/create', function (req, res, next) {
   console.log('进入保存页页');
   var title = req.body.title;
   var tab = req.body.tab;
-  var content = req.body.t_content;
+  var carBrand = req.body.carBrand;
+  var carModel = req.body.carModel;
+  var content = req.body.r_content;
+
+  if (tab == '申诉') {
+    carBrand = '申诉';
+    carModel = '申诉';
+  }
 
   var errors;
-  if (title.length < 5||title.length>10) {
-    errors = '标题需在5到10字符之间';
+  if (title.length < 5 || title.length > 15) {
+    errors = '标题需在5到15字符之间';
   } else if (content === '') {
     errors = '内容不可为空';
+  } else if (carBrand === '') {
+    errors = '汽车品牌不能为空';
+  } else if (carModel === '') {
+    errors = '汽车型号不能为空'
   }
   if (errors) {
     return res.render('topic/edit', {
       action: '',
       title: title,
+      carBrand: carBrand,
+      carModel: carModel,
       content: content,
       errors: errors,
       tabs: config.tabs,
@@ -788,7 +886,7 @@ router.post('/topic/create', function (req, res, next) {
     if (err) {
       return next(err);
     }
-    Topic.newAndSave(title, tab, content, req.session.user.username, user.avatars, function (err, topic) {
+    Topic.newAndSave(title, tab,carBrand,carModel, content, req.session.user.username, user.avatars, function (err, topic) {
       if (err) {
         return next(err);
       }
@@ -797,13 +895,13 @@ router.post('/topic/create', function (req, res, next) {
       user.topic_count += 1;
       user.save();
       console.log('保存成功');
-      res.redirect('/');
+      res.redirect('/case');
     });
   });
 });
 
 
-//修改话题页面
+//修改话题
 router.get('/topic/:id/edit', function (req, res, next) {
   var topic_id = req.params.id;
   Topic.findById(topic_id, function (err, topic) {
@@ -818,6 +916,8 @@ router.get('/topic/:id/edit', function (req, res, next) {
       action: 'edit',
       tabs: config.tabs,
       title: topic.title,
+      carBrand: topic.carBrand,
+      carModel: topic.carModel,
       content: topic.content,
       topic_id: topic.id,
       current_user: req.session.user ? req.session.user.username : '',
@@ -832,7 +932,9 @@ router.post('/topic/:id/edit', function (req, res, next) {
   var topic_id = req.params.id;
   var title = req.body.title;
   var tab = req.body.tab;
-  var content = req.body.t_content;
+  var carBrand = req.body.carBrand;
+  var carModel = req.body.carModel;
+  var content = req.body.r_content;
   console.log('tab是：' + tab);
 
   Topic.findById(topic_id, function (err, topic) {
@@ -854,6 +956,8 @@ router.post('/topic/:id/edit', function (req, res, next) {
       return res.render('topic/edit', {
         action: 'edit',
         title: title,
+        carBrand: carBrand,
+        carModel: carModel,
         content: content,
         errors: errors,
         tabs: config.tabs,
@@ -865,6 +969,8 @@ router.post('/topic/:id/edit', function (req, res, next) {
     //更新话题
     topic.tab = tab;
     topic.title = title;
+    topic.carBrand = carBrand;
+    topic.carModel = carModel;
     topic.content = content;
     topic.updated_at = new Date();
     topic.save(function (err) {
@@ -902,11 +1008,16 @@ router.get('/topic/:id/remove', function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect('/');
+      res.redirect('/case');
     });
   });
 })
 
+
+
+router.get('/affix', function (req, res, next) {
+  res.render('Affix', {});
+})
 router.get('/email', function (req, res, next) {
   var email = 'eee@qq.com';
   var link = EmailLink.EmailLink(email);
@@ -920,12 +1031,12 @@ router.get('/download', function (req, res, next) {
   console.log(__filename);
   console.log(process.cwd());
   console.log(path.resolve('./'));
-  res.download('E:/BBS/招聘简章.docx','下载的文件', function (err) { 
+  res.download('E:/BBS/招聘简章.docx', '下载的文件', function (err) {
     if (err) {
       console.log(err);
-    } else { 
+    } else {
       console.log('下载成功');
     }
   });
- });
+});
 module.exports = router;

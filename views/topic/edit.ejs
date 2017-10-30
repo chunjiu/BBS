@@ -1,4 +1,106 @@
-<%-include('../header')%>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>福运临</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="keywords" content="高档车辆维修,奔驰,宝马,疑难车辆,服务唯修厂">
+
+
+    <link rel="stylesheet" href="/stylesheets/bootstrap.css">
+    <link rel="stylesheet" href='/stylesheets/style.css' />
+    <!--自定义样式应放在bootstrap后面引入-->
+
+</head>
+
+<body onload="getCar();">
+    <!--onload时运行其它涵数，暂没有引用模块-->
+
+    <div class="head">
+        <img class="logo headImg" src="/images/fuyunlin_logo.jpg">
+        <sapn class="headFont">专为解决汽修厂疑难杂症</sapn>
+        <span class="headLeft">
+            <span style='color:red;font-size:30px;top:10px;' class="glyphicon glyphicon-earphone"></span>
+            <!--此处要去掉图片的自适应-->
+            <span class="headFont">全天候服务热线 0731-86452020</span>
+        </span>
+    </div>
+
+    <!--导航条-->
+    <nav class="navbar navbar-default" style="margin-bottom:0px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle='collapse' data-target='#navhead-1'>
+                    <span class="sr-only">navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">福运临</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navhead-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/">
+                            <span class="glyphicon glyphicon-home"></span>首页</a>
+                    </li>
+                    <li>
+                        <a href="/information">
+                            <span class="glyphicon glyphicon-file"></span>找资料</a>
+                    </li>
+                    <li>
+                        <a href="/MaintenanceCase">维修案例</a>
+                    </li>
+                    <li>
+                        <a href="/case">问诊</a>
+                    </li>
+                    <li>
+                        <a href="#">求贤纳才</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-shopping-cart"></span>商城</a>
+                    </li>
+                    <li class="headHidden">
+                        <a href="#">查询维修进度</a>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <labe for='query' class="mainPageFont">查询维修进度</labe>
+                        <input id="query" type="text" class="form-control" placeholder="输入车牌号">
+                    </div>
+                    <button type="submit" class="btn btn-default">查询</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <% if(current_user){%>
+                        <li>
+                            <a href="/setting">
+                                <span class="glyphicon glyphicon-cog"></span>设置</a>
+                        </li>
+                        <li>
+                            <a href="/singout">
+                                <span class="glyphicon glyphicon-off"></span>退出</a>
+                        </li>
+                        <%}else{%>
+                            <li>
+                                <a href="/signin">
+                                    <span class="glyphicon glyphicon-user"></span>登录</a>
+                            </li>
+                            <li>
+                                <a href="/signup">
+                                    <span class="glyphicon glyphicon-registration-mark"></span>注册</a>
+                            </li>
+                            <% }%>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
  <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
   <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.min.js">
 
@@ -53,16 +155,45 @@
                             <span id="topic_creae_warn"></span>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2">标题：</label>
+                    <div class="form-group car">
+                        <label class="control-label col-sm-2">汽车品牌：</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" name="title" placeholder="请输入标题（10字以上）" value='<%=typeof(title)!=='undefined'&&title||''%>'>
+                            <select id="carBrand" name="carBrand" class="form-control">
+                               <% if(action=='edit'){%>
+                                    <option><%=typeof(carBrand)!=='undefined'&&carBrand||''%></option>
+                                <%}else{%>
+                                    <option class="chooseCarBrand">选择品牌</option>
+
+                                <%}%>
+                            </select>
+                           <!-- <input id="carBrand" type="text" class="form-control" name="carBrand" placeholder="请输入汽车品牌" value='<%=typeof(carBrand)!=='undefined'&&carBrand||''%>'>-->
+                        </div>
+                    </div>
+                    <div class="form-group car">
+                        <label class="control-label col-sm-2">品牌型号：</label>
+                        <div class="col-sm-4">
+                            <!--<input id="carModel" type="text" class="form-control" name="carModel" placeholder="请输入品牌型号" value='<%=typeof(carModel)!=='undefined'&&carModel||''%>'>-->
+                            <select id="carModel" name="carModel" class="form-control">
+                                <% if(action=='edit'){%>
+                                    <option><%=typeof(carModel)!=='undefined'&&carModel||''%></option>
+                                <%}else{%>
+                                    <option class="chooseCarBrand">选择车型</option>
+                                <%}%>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">话题标题：</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="title" placeholder="请输入标题（关键字10字以上）" value='<%=typeof(title)!=='undefined'&&title||''%>'>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-sm-2">正文：</label>
                         <div class="col-sm-8">
-                            <textarea id="editor" style="height:500px;width:100%" name="t_content" rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>
+                           <!-- <textarea id="editor" type="text/plain" style="height:500px;width:80%" name="t_content" rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>-->
+                        <textarea class="r_content" id="editor" type="text/plain" style="height:500px;width:80%" name='r_content' rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>
+                          
                         </div>
                     </div>
                     <div class="form-group">
@@ -76,7 +207,7 @@
         </div>
 
     
-  <%-include('../footer')%>
+  <%-include('../includes/footer')%>
      <script>
 
          var ue = UE.getEditor('editor');
@@ -91,6 +222,7 @@
                 }
             });
             $('#tab-value').change(function () {
+                $('.car').show();
                 //alert($(this).val());
                 //var $this = $(this);
                 var value = $(this).val();
@@ -99,8 +231,46 @@
                     warnMsg = '<strong>提问时，请遵循<a href="https://gist.github.com/alsotang/f654af8b1fff220e63fcb44846423e6d" target="_blank">《提问的智慧》</a>中的要点，以便收到高质量回复</strong>';
                 } else if (value == '招聘') {
                     warnMsg = '<strong>为避免管理员删贴，发贴时请仔细阅读<a href="http://cnodejs.org/topic/541ed2d05e28155f24676a12" target="_blank">《招聘帖规范》</a></strong>';
+                }else if(value=='申诉'){
+                    $('.car').hide();
                 }
                 $('#topic_creae_warn').html(warnMsg);
             });
+
+            //获取车辆品牌
+            function getCar (){
+                console.log('获取品牌');
+                $.get('/getcar',function(data){
+                    var carBrand = $('#carBrand');
+                    if(data.success){
+                        console.log('成功');
+                        data.car.map(function(car,index){
+                        carBrand.append('<option>'+car.carBrand+'</option>');                  
+                        })
+                    }
+                })
+            };
+
+            $('#carBrand').change(function(){
+               var val = $('#carBrand').val();
+               console.log('val是：'+val);
+               var data = {
+                   carBrand:val,
+               };
+               $.post('/getCarModel',data,function(data){
+                   var carModelElement = $('#carModel');
+                   var carModelChildren = carModelElement.children();
+                   if(carModelChildren){
+                       carModelElement.empty();
+                       data.car.carModel.map(function(carModel,index){
+                       carModelElement.append('<option>'+carModel+'</option>')
+                    })
+                   }else{
+                    data.car.carModel.map(function(carModel,index){
+                       carModelElement.append('<option>'+carModel+'</option>')
+                   })
+                }
+               })
+            })
         
     </script>

@@ -1,0 +1,166 @@
+<%-include('../includes/header')%>
+
+    <%if(errors !=''){%>
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong><%=errors%></strong>
+        </div>
+        <%}%>
+
+
+            <div class="panel panel-default panelBorderNone">
+                <div class="">
+                    <ol class="breadcrumb navpath">
+                        <li><a class="navpath_a" href="/">主页</a></li>
+                        <li class="active">更新汽车品牌</li>
+                    </ol>
+                </div>
+                <span class="msg"></span>
+                <div class="panel-body">
+
+                    <form id="carbrandAddForm" class="form-horizontal" action="/carbrand/add" method="post">
+                        <div class="form-group">
+                            <label id="tab-selector" for="tab-value" class="control-label col-sm-2">品牌首字母：</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="carFisrtWord" placeholder="汽车品牌首字母(大写)" value=''>
+                            </div>
+                            <div class="form-group">
+                                <span id="topic_creae_warn"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">汽车品牌：</label>
+                            <div class="col-sm-4">
+                                <input id="carBrand" type="text" class="form-control" name="carBrand" placeholder="汽车品牌（中文）" value=''>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">型号：</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="carModel" placeholder="汽车款式（中文）" value=''>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">年份：</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="carYear" placeholder="汽车年份" value=''>
+                            </div>
+                        </div>
+    
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-8">
+                                    <span id="canavas_img"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">汽车商标：</label>
+                                <div class="col-sm-4">
+                                    <input style="display:none" type="file" id="input_img" onchange="get_img()" />
+                                    <span class="btn btn-default" id="choose_img">选择商标</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:none" class="form-group">
+                            <div class="col-sm-offset-2 col-sm-8">
+                                <input id="addCar" type="submit" class="btn btn-primary" value="添加">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-8">
+                                <span id="uploadTrademark" class="btn btn-primary">添加汽车品牌</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <%-include('../includes/footer')%>
+                <script>
+                    $('#choose_img').click(function () {
+                        $('#input_img').click();
+                    });
+
+                    $('#uploadTrademark').click(function(){
+                        $('#addCar').click();
+                    });
+
+
+
+                    var baseData;//base64位图片变量
+
+                    function get_img() {
+                        var canavas_img = $('#canavas_img');
+                        var img = $('#input_img').get(0).files[0];
+                        console.log(img);
+                        var fileName = img.name;
+                        var fileType = fileName.substring(fileName.indexOf('.'), fileName.length).toLowerCase();
+                        console.log(fileType);
+                        if (fileType != '.jpg' && fileType != '.jpeg' && fileType != '.gif' && fileType != '.png' && fileType != '.bmp') {
+                            alert('请选择jpg,png,fig,bmp格式的图片');
+                            return;
+                        }
+                        var reader = new FileReader();
+                        reader.readAsDataURL(img);
+                        reader.onload = function () {
+                            var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应，否图片裁剪的x和y值不正确
+                            canavas_img.html(img_element);
+                            if (canavas_img.width() > 300 || canavas_img.height() > 400) {
+                                alert('请上传宽不大于300，高不大于400的图片');
+                                canavas_img.html('');
+                                return;
+                            }
+                            baseData = this.result;
+
+                        }
+                    }
+
+                    $('#uploadTrademark').click(
+                        function () {
+
+                            var action = '/upload/trademark';
+
+                            // var imgURL = document.getElementById('trademark');
+                            // console.log('imgURL' + imgURL);
+                            // imgURL = imgURL.toDataURL('image/png');
+
+                            var carBrand = $('#carBrand').val();
+                            console.log('品牌是：' + carBrand);
+
+                            var data = {
+                                carBrand: carBrand,
+                                baseData: baseData,
+                            }
+                            $.post(action, data, function (data) {
+                                if (data.success) {
+                                    var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
+                                        + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                                        + "<span aria-hidden='true'>&times;</span>"
+                                        + "</button>"
+                                        + "<strong>商标上传设置成功</strong>"
+                                        + "</div>"
+                                    var $prompt = $('.msg');
+                                    $prompt.html(msg);
+                                }
+                                else {
+                                    alert('商标上传失败');
+                                }
+                            });
+                        }
+                    )
+
+
+                    /* $('#addCarbrand').click(function () {
+                         $('#addCar').click();/*先执行addCar的事件，后执行addCarbrand的事件*/
+                    //})
+
+
+                    /* $('#addCarbrand').click(function () {
+                         alert($('#carBrandTrademark').val());
+                     })*/
+
+                    $('#addCarbrand').click(function () {
+
+                    })
+                </script>

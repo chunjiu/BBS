@@ -1,12 +1,13 @@
-<%-include('../header')%>
+<%-include('../includes/header')%>
   <%if(errors !=''){%>
     <div class="alert alert-warning alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <strong><%=errors%></strong>
     </div>
     <%}%>
-
-      <div class="row">
+    
+    <div class="container-fluid" style="width:90%">
+      <div class="row" style="margin-top:15px;">
         <div class="col-md-8">
           <div class="panel panel-default">
             <div class="header">
@@ -33,7 +34,8 @@
                 <div class="form-group">
                   <div class="col-sm-offset-4 col-sm-9">
                     <button type="submit" class="btn btn-primary">登录</button>
-                    <a href="/auth/githup" class="a1"><span  class="btn btn-default">通过GitHup登录</span></a>
+                    <a href="/auth/githup" class="a1"><span  class="btn btn-default">通过QQ登录</span></a>
+                    <a href="/auth/githup" class="a1"><span  class="btn btn-default">通过微信登录</span></a>
                   </div>
                 </div>
               </form>
@@ -44,4 +46,5 @@
           <%-include('../sign/sidebar') %>
         </div>
       </div>
-      <%-include('../footer')%>
+    </div>
+      <%-include('../includes/footer')%>

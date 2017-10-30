@@ -2,7 +2,7 @@ var multer = require('multer');//文件上传模块
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null,'public/uploads');
+        cb(null,'public/uploads/car');
     },
     filename: function (req, file, cb) {
         cb(null,file.fieldname+'-'+Date.now()+".jpg")
