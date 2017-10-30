@@ -229,7 +229,7 @@ exports.maintenanceCase = function (req, res, next) {
             }
             if (!caseTopic) {
                 console.log('没有找到caseTopic');
-                return next();
+                next();
             }
             caseTopic.username = username;
             caseTopic.carBrand = carBrand;
@@ -241,8 +241,15 @@ exports.maintenanceCase = function (req, res, next) {
             caseTopic.faultAnalysis = faultAnalysis;
             caseTopic.TroubleShooting = TroubleShooting;
             console.log('caseTopic是:'+caseTopic);
-            caseTopic.save();
-            next();
+            caseTopic.save(function (err) {
+                if (err) {
+                    console.log('保存出错');
+                    return next(err)
+                } else { 
+                    res.redirect('/')
+                }
+             });
+            
         })
     } else {
         console.log('进入title保存');
@@ -329,10 +336,10 @@ exports.maintenanceCaseImg = function (req, res, next) {
                     caseTopic.ConfirmationImg = newPath;
                     break;
                 case 'CheckImg':
-                    caseTopic.CheckImg = newpath;
+                    caseTopic.CheckImg = newPath;
                     break;
                 case 'AanlysisImg':
-                    caseTopic.AanlysisImg = newpath;
+                    caseTopic.AanlysisImg = newPath;
                     break;
                 case 'ShootingImg':
                     caseTopic.ShootingImg = newPath;
