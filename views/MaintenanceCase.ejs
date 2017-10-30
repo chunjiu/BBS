@@ -115,6 +115,7 @@
             <div class="panel-heading" style='font-weight:900;font-size:18px;background-color:#EBE6E6'>维修案例编辑</div>
             <div class="panel-body">
                 <form class="fault" action="/maintenanceCase" method="post">
+                    <input style='display:none' name="username" type="text" value="<%=current_user%>">
                     <div class="form-group">
                         <div class="col-sm-7 col-md-7">
                             <input id="title" name="title" class="select-control col-xs-7 col-sm-7 postData" type="text" placeholder="标题，例：奥迪A6发动机无法启动">
@@ -189,7 +190,8 @@
                         <span class="glyphicon glyphicon-upload btn btn-default upImg" faultImg='ShootingImg'>上传</span>
                     </div>
                     <div class="form-group col-sm-12 col-xs-12 col-sm-offset-5">
-                        <button id="SaveAndUp" type="submit" class="btn btn-default ">保存并上传</button>
+                        <button style='display:none' id="SaveAndUp" type="submit" class="btn btn-defaul">保存并上传</button>
+                        <button class="upload btn btn-default" class="">确认并上传</button>
                     </div>
                 </form>
             </div>
@@ -370,6 +372,9 @@
             //案例保存
             $('#SaveAndUp').click(function () {
 
+                //禁用时无法获得tltle的value值，上传时先删除禁用属性
+                $('#title').removeAttr('disabled');
+
                 let msg = $('.msg');
                 let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
 
@@ -422,9 +427,12 @@
                     imgBase64 = this.result;
 
                     /*获取图片后用AJAX上传  注意：需在reader.onload涵数内，否则会因为异步imgBase64还没有获得result值而报错*/
+                   /* 
                     var up = $(id).next().next();
                     console.log('获取的属性是：' + up.attr('faultImg'));
                     up.click();
+                    
+                    */
                 }
             }
 
@@ -454,8 +462,9 @@
                 })
             })
 
-           /* $('.upload').click(function () {
+           $('.upload').click(function () {
                 $('#SaveAndUp').click();
-            })*/
+                $('.upImg').click();
+            })
 
         </script>

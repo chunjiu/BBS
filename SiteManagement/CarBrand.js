@@ -222,6 +222,9 @@ exports.maintenanceCase = function (req, res, next) {
         let faultAnalysis = req.body.faultAnalysis;
         let TroubleShooting = req.body.TroubleShooting;
 
+        console.log('username是：' + username);
+        console.log('title是：'+title);
+
         CaseTopic.getCaseTopicByTitle(title, function (err, caseTopic) {
             if (err) {
                 console.log('出错');
@@ -229,7 +232,7 @@ exports.maintenanceCase = function (req, res, next) {
             }
             if (!caseTopic) {
                 console.log('没有找到caseTopic');
-                next();
+                return;
             }
             caseTopic.username = username;
             caseTopic.carBrand = carBrand;
