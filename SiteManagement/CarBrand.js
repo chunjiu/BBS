@@ -3,6 +3,8 @@ var fs = require('fs');
 
 var multer = require('../common/multerCar');//文件上传模块
 var Car = require('../models/car');
+var User = require('../models/user');
+var Topic = require('../models/topic');
 var CaseTopic = require('../models/maintenanceCase');
 
 exports.carbrand = function (req, res, next) {
@@ -205,14 +207,16 @@ exports.removeInformation = function (req, res, next) {
 }
 
 //上传维修案例
-exports.maintenanceCase = function (req, res, next) {
+exports.caseUpload = function (req, res, next) {
+    let ReqUser = req.session.user ? req.session.user.username : '';
     console.log('进入案例上传');
     var carBrand = req.body.carBrand;
     console.log('carBrand是' + carBrand);
     if (carBrand) {
-        console.log('进入content保存');
+        console.log('进入content保存'); 
+        let tab = req.body.tab;
         let title = req.body.title;
-        let username = req.body.username;
+        let username = ReqUser;
         let carBrand = req.body.carBrand;
         let carModel = req.body.carModel;
         let mileage = req.body.mileage;
@@ -221,9 +225,10 @@ exports.maintenanceCase = function (req, res, next) {
         let FaultCheck = req.body.FaultCheck;
         let faultAnalysis = req.body.faultAnalysis;
         let TroubleShooting = req.body.TroubleShooting;
+        let attention = req.body.attention;
 
         console.log('username是：' + username);
-        console.log('title是：'+title);
+        console.log('title是：' + title);
 
         CaseTopic.getCaseTopicByTitle(title, function (err, caseTopic) {
             if (err) {
@@ -234,6 +239,7 @@ exports.maintenanceCase = function (req, res, next) {
                 console.log('没有找到caseTopic');
                 return;
             }
+            caseTopic.tab = tab;
             caseTopic.username = username;
             caseTopic.carBrand = carBrand;
             caseTopic.carModel = carModel;
@@ -243,24 +249,25 @@ exports.maintenanceCase = function (req, res, next) {
             caseTopic.FaultCheck = FaultCheck;
             caseTopic.faultAnalysis = faultAnalysis;
             caseTopic.TroubleShooting = TroubleShooting;
-            console.log('caseTopic是:'+caseTopic);
+            caseTopic.attention = attention;
+            console.log('caseTopic是:' + caseTopic);
             caseTopic.save(function (err) {
                 if (err) {
                     console.log('保存出错');
                     return next(err)
-                } else { 
+                } else {
                     res.redirect('/')
                 }
-             });
-            
+            });
+
         })
     } else {
         console.log('进入title保存');
         let title = req.body.OriginalValue || req.body.val;
         let newTitle = req.body.newTitle;
- 
+
         console.log('title是：' + title);
-        console.log('newTitle是：'+newTitle);
+        console.log('newTitle是：' + newTitle);
         CaseTopic.getCaseTopicByTitle(title, function (err, caseTopic) {
             if (err) {
                 console.log('出错');
@@ -277,12 +284,19 @@ exports.maintenanceCase = function (req, res, next) {
                     }
                 })
             } else {
-                caseTopic.title = newTitle;
-                caseTopic.save(function () { 
-                    res.send({
-                        success: true
-                    })
-                });
+                console.log('找到caseTopic' + caseTopic);
+                if (typeof(newTitle)!=='undefined') {
+                    console.log('newTitle不是undefined');
+                    caseTopic.title = newTitle;
+                    caseTopic.save(function () {
+                        res.send({
+                            success: true
+                        })
+                    });
+                } else { 
+                    console.log('不更改，直接退出');
+                    return;
+                }
             }
         })
     }
@@ -290,7 +304,7 @@ exports.maintenanceCase = function (req, res, next) {
 
 
 //上传维修案例图片
-exports.maintenanceCaseImg = function (req, res, next) {
+exports.casUploadImg = function (req, res, next) {
     console.log('进入维修案例图片上传');
 
     if (!req.body.baseData) {
@@ -313,8 +327,8 @@ exports.maintenanceCaseImg = function (req, res, next) {
     /**
      *写入文件时必须要有public,路径+文件名
      * @param 另：直接以用户名存储则会替换该用户所有之前的头像
-     */
-    var imgPath = 'public/uploads/maintenanceCaseImg/' + carModel + Date.now() + '.jpg';
+     */ 
+    var imgPath = 'public/uploads/maintenanceCaseImg/' + carModel + title+ '.jpg';//用title命名，可替换原先上传的图片
     fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
         if (err) {
             throw err;
@@ -340,15 +354,17 @@ exports.maintenanceCaseImg = function (req, res, next) {
                     break;
                 case 'CheckImg':
                     caseTopic.CheckImg = newPath;
+                    console.log('故障检查图片');
                     break;
                 case 'AanlysisImg':
                     caseTopic.AanlysisImg = newPath;
+                    console.log('故障分析图片');
                     break;
                 case 'ShootingImg':
                     caseTopic.ShootingImg = newPath;
                     break;
             }
-            console.log('caseTopc是:'+CaseTopic);
+            console.log('caseTopc是:' + CaseTopic);
             caseTopic.save(function (err) {
                 if (err) {
                     console.log('保存出错');
@@ -360,4 +376,107 @@ exports.maintenanceCaseImg = function (req, res, next) {
             });
         })
     })
+}
+
+/*维修案例编辑页面*/
+exports.caseUploadShow = function (req, res, next) {
+    var ReqUser = req.session.user ? req.session.user.username : ''
+    User.getUserByUserName(ReqUser, function (err, user) {
+        if (err) {
+            return next(err)
+        }
+        res.render('siteBG/caseUpload', {
+            current_user: ReqUser,
+            user: user,
+            edit:''
+        });
+    })
+}
+/*维修案例详情页*/
+exports.MaintenanceCaseDatails = function (req, res, next) {
+    let ReqUser = req.session.user ? req.session.user.username : '';
+    let id = req.params.caseTopic_id;
+    console.log('id是' + id);
+    CaseTopic.getCaseTopicById(id, function (err, caseTopic) {
+        if (err) {
+            console.log('出错');  
+            return next(err);
+        }
+        caseTopic.visit_count += 1;
+        caseTopic.save(function (err) {
+            if (err) {
+                console.log('出错');
+                return next(err);
+            }
+            res.render('MaintenanceCaseDatails/datails', {
+                current_user: ReqUser,
+                caseTopic: caseTopic,
+            })
+        })
+    })
+}
+
+//维修案例修改页面
+exports.caseTopicEdit = function (req, res, next) { 
+    let ReqUser = req.session.user ? req.session.user.username : '';
+    let id = req.params.caseTopic_id;
+    CaseTopic.getCaseTopicById(id, function (err, caseTopic) { 
+        if (err) { 
+            console.log('出错');
+            return next(err);
+        }
+        if (!caseTopic) { 
+            console.log('没有找到案例');
+            return;
+        }
+        User.getUserByUserName(ReqUser, function (err, user) { 
+            if (err) { 
+                return next(err);
+            }
+            res.render('siteBG/caseUpload', {
+                current_user: ReqUser,
+                user:user,
+                caseTopic: caseTopic,
+                edit:'edit',
+            })
+
+        })
+    });
+}
+
+//维修案例删除
+exports.caseTopicRemove = function (req, res, next) { 
+    let ReqUser = req.session.user ? req.session.user.username : '';
+    let id = req.params.caseTopic_id;
+    CaseTopic.getCaseTopicById(id, function (err, caseTopic) { 
+        if (err) { 
+            return next(err);
+        }
+        caseTopic.delete = true;
+        caseTopic.save(function () { 
+            res.redirect('/maintenanceCase');
+        });
+    })
+}
+
+/*求贤纳才*/
+exports.job = function (req, res, next) { 
+    let ReqUser = req.session.user ? req.session.user.username : '';
+    Topic.findByQuery({ 'tab': '招聘','deleted':false }, '', function (err, topic) { 
+        if (err) { 
+            return next(err);
+        }
+        if (!topic) { 
+            console.log('没有找到topic');
+            return;
+        }
+        console.log('topc是：'+topic);
+        res.render('job/job', {
+            topic: topic,
+            current_user:ReqUser,
+        })
+
+    })
+
+    
 }

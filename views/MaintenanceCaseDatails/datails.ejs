@@ -1,0 +1,86 @@
+<%-include('../includes/header')%>
+    <div class="container">
+        <div>
+            <h2>
+                <%=caseTopic.title%>
+            </h2>
+            <span style='border-right:1px solid #CCCCCC;padding-right:5px;margin-right:5px;'>浏览：
+                <%=caseTopic.visit_count%>
+            </span>
+            <span>更新：
+                <%=caseTopic.updated_at_ago()%>
+            </span>
+
+        </div>
+        <div style='margin-top:10px;'>
+            <h4>
+                <%=caseTopic.FaultPhenomenon%>
+            </h4>
+        </div>
+        <div class="col-sm-offset-10">
+            <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/edit">修改</a></span>
+            <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/remove">删除</a></span>
+        </div>
+        <div>
+            <div style='border-bottom:1px solid #CCCCCC;'>
+                <h4 style='font-weight:900;'>步聚/方法</h4>
+            </div>
+            <div style='margin-top:20px;'>
+                <dl>
+                    <dt>
+                        故障确认
+                    </dt>
+                    <dd class='col-sm-offset-1'>
+                        <%=caseTopic.FaultConfirmation%>
+                    </dd>
+                    <dd class='col-sm-offset-1'>
+                        <img src='<%=caseTopic.ConfirmationImg%>'>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        故障检查
+                    </dt>
+                    <dd class='col-sm-offset-1'>
+                        <%=caseTopic.FaultCheck%>
+                    </dd>
+                    <dd class='col-sm-offset-1'>
+                        <img src='<%=caseTopic.CheckImg%>'>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        故障分析
+                    </dt>
+                    <dd class='col-sm-offset-1'>
+                        <%=caseTopic.faultAnalysis%>
+                    </dd>
+                    <dd class='col-sm-offset-1'>
+                        <img src='<%=caseTopic.AanlysisImg%>'>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        故障排除
+                    </dt>
+                    <dd class='col-sm-offset-1'>
+                        <%=caseTopic.TroubleShooting%>
+                    </dd>
+                    <dd class='col-sm-offset-1'>
+                        <img src='<%=caseTopic.ShootingImg%>'>
+                    </dd>
+                </dl>
+                <div style='border-bottom:1px solid #CCCCCC;'>
+                    <h4 style='font-weight:900;'><span class="glyphicon glyphicon-star"></span>注意事项</h4>
+                </div>
+                <dd style='margin-top:15px;'>
+                    
+                    <%=caseTopic.attention%>
+                  
+                </dd>
+
+            </div>
+        </div>
+    </div>
+
+    <%-include('../includes/footer')%>

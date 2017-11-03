@@ -16,6 +16,16 @@ router.get('/getCar',car.getCar);//获取汽车品牌
 router.post('/getCarModel', car.getCarModel);//获取汽车车型
 router.post('/uploadInformation', car.uploadInformation);//上传汽车维修资料
 router.post('/removeInformation', car.removeInformation);//删除资料
-router.post('/maintenanceCase', car.maintenanceCase);//上传案例
-router.post('/maintenanceCase/img',car.maintenanceCaseImg)//上传案例图片
+router.post('/caseUpload',car.caseUpload);//上传案例
+router.post('/caseUpload/img', car.casUploadImg);//上传案例图片
+
+router.get('/caseUploadShow', car.caseUploadShow);//维修案例编辑页面
+router.get('/:caseTopic_id/datails', car.MaintenanceCaseDatails)//单个维修案例详情页
+router.get('/MaintenanceCaseDatails/:caseTopic_id/edit', car.caseTopicEdit);//维修案例修改
+router.get('/MaintenanceCaseDatails/:caseTopic_id/remove', car.caseTopicRemove)//维修案例删除
+
+router.get('/job',car.job)
+
+
+
 module.exports = router;

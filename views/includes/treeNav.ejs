@@ -30,7 +30,7 @@
                        <% car.carModel.map(function(carModel){%>
                             <li style="cursor:pointer;margin-bottom:5px;">
                                <% if(ChooseModel){%>
-                                    <a class="chooseModel" href='#'><%=carModel%></a>
+                                    <a class="chooseModel" href='#' carBrand='<%=car.carBrand%>'><%=carModel%></a>
                                <% }else{%>
                                     <a class="chooseModel" href='/case?carModel=<%=carModel%>'><%=carModel%></a>
                                <% }%>

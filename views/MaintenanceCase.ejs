@@ -1,470 +1,107 @@
-<!DOCTYPE html>
+<%-include('./includes/header')%>
 
-<html>
-
-<head>
-    <title>福运临</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="keywords" content="高档车辆维修,奔驰,宝马,疑难车辆,服务维修厂">
-    <link rel="stylesheet" href="/stylesheets/bootstrap.css">
-    <link rel='stylesheet/less' type="text/css" href='/stylesheets/styles.less' />
-</head>
-
-<body onload="getCar();">
-    <!--onload时运行其它涵数，暂没有引用模块-->
-
-    <div class="head">
-        <img class="logo headImg" src="/images/fuyunlin_logo.jpg">
-        <sapn class="headFont">专为解决汽修厂疑难杂症</sapn>
-        <span class="headLeft">
-            <span style='color:red;font-size:30px;top:10px;' class="glyphicon glyphicon-earphone"></span>
-            <span class="headFont">全天候服务热线 0731-86452020</span>
-        </span>
-    </div>
-
-    <!--导航条-->
-    <nav class="navbar navbar-default" style="margin-bottom:0px;">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle='collapse' data-target='#navhead-1'>
-                    <span class="sr-only">navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">福运临</a>
-            </div>
-            <div class="collapse navbar-collapse" id="navhead-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/">
-                            <span class="glyphicon glyphicon-home"></span>首页</a>
-                    </li>
-                    <li>
-                        <a href="/information">
-                            <span class="glyphicon glyphicon-file"></span>找资料</a>
-                    </li>
-                    <li>
-                        <a href="MaintenanceCase">维修案例</a>
-                    </li>
-                    <li>
-                        <a href="/case">问诊</a>
-                    </li>
-                    <li>
-                        <a href="#">求贤纳才</a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="glyphicon glyphicon-shopping-cart"></span>商城</a>
-                    </li>
-                    <li class="headHidden">
-                        <a href="#">查询维修进度</a>
-                    </li>
-                </ul>
-                <form class="navbar-form navbar-left">
-                    <div class="form-group">
-                        <labe for='query' class="mainPageFont">查询维修进度</labe>
-                        <input id="query" type="text" class="form-control" placeholder="输入车牌号">
-                    </div>
-                    <button type="submit" class="btn btn-default">查询</button>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <% if(current_user){%>
-                        <li>
-                            <a href="/setting">
-                                <span class="glyphicon glyphicon-cog"></span>设置</a>
-                        </li>
-                        <li>
-                            <a href="/singout">
-                                <span class="glyphicon glyphicon-off"></span>退出</a>
-                        </li>
-                        <%}else{%>
+    <div class="row">
+        <%-include('./includes/treeNav')%>
+            <div class="col-md-8">
+                <div class="panel noborder topcinav" style="border-style:none">
+                    <div class="panel-heading">
+                        <ul class="nav nav-pills">
                             <li>
-                                <a href="/signin">
-                                    <span class="glyphicon glyphicon-user"></span>登录</a>
+                                <a class="tabURL" href="/maintenanceCase/?tab=机电维修案例" carModelUrl='<%=typeof( carModelURL)!=='undefined'&& carModelURL||' '%>'>机电维修案例</a>
                             </li>
                             <li>
-                                <a href="/signup">
-                                    <span class="glyphicon glyphicon-registration-mark"></span>注册</a>
+                                <a class="tabURL" href='/maintenanceCase/?tab=电子维修案例' carModelUrl='<%=typeof(carModelURL)!=='undefined'&& carModelURL||' '%>'>电子维修案例</a>
                             </li>
-                            <% }%>
+                        </ul>
+                    </div>
+                    <div class="" style="background-color:white;">
+                        <%if(caseTopic.length){%>
+                            <p style='font-weight:900;font-size:18px;border-bottom:1px solid #CCCCCC;padding-top:15px;'>当前车型:
+                                <%=typeof(carModelURL)!==' undefined '&& carModelURL||'全部 '%>
+                                    <span>(
+                                        <%=caseTopic.length%>篇)</span>
+                            </p>
 
-                </ul>
-            </div>
-        </div>
-    </nav>
+                            <%caseTopic.forEach(function(caseTopic){%>
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="/<%=caseTopic.id%>/datails">
+                                            <img style='max-width:none;width:100px;height:100px;' class="media-object" src='<%=caseTopic.PhenomenonImg%>' alt='加载中...'>
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <a href="/<%=caseTopic.id%>/datails">
+                                            <h4>
+                                                <%=caseTopic.title%>
+                                            </h4>
+                                        </a>
+                                        <p>
+                                            <%=caseTopic.FaultPhenomenon%>
+                                        </p>
+                                    </div>
+                                </div>
+                                <%})%>
 
+                                    <%}else{%>
+                                        <span>无</span>
+                                        <%}%>
 
-    <div class="container">
-        <span class="session"></span>
-
-        <div class="row" style='margin-top:30px;'>
-            <%if(current_user){%>
-                <div style='margin:10px;border-right:2px solid rgb(163, 161, 161);' class="col-sm-2 col-xs-4">
-                    <%-include('./includes/sidebar')%>
+                    </div>
                 </div>
-                <div style='line-height:30px;'>
-                    该篇发布成功后，您将获得20积分
-                </div>
-                <img style='width:40px;height:30px;' src='/images/integral.jpg'>
-                <%}else{%>
-                    <%-include('./includes/sidebar2')%>
-                        <%}%>
-        </div>
-        <div class="panel panel-default row">
-            <div class="panel-heading" style='font-weight:900;font-size:18px;background-color:#EBE6E6'>维修案例编辑</div>
-            <div class="panel-body">
-                <form class="fault" action="/maintenanceCase" method="post">
-                    <input style='display:none' name="username" type="text" value="<%=current_user%>">
-                    <div class="form-group">
-                        <div class="col-sm-7 col-md-7">
-                            <input id="title" name="title" class="select-control col-xs-7 col-sm-7 postData" type="text" placeholder="标题，例：奥迪A6发动机无法启动">
-                            <span class="msg"></span>
-                            <span class="btn btn-default revise" style="display:none;margin-left:2px;">修改</span>
-                        </div>
-                        <div class="col-sm-12 col-md-12">
-                            <select id="carBrand" name="carBrand" class="col-sm-2 col-xs-3 select-control" style='margin-top:10px;margin-right:5px;'>
-                                <option>选择分类</option>
-                            </select>
-                            <span class="msg"></span>
-                            <select id="carModel" name="carModel" class="col-sm-2 col-xs-3 select-control" style='display:none;margin-top:10px;margin-right:5px;'>
-                            </select>
-                            <input name="Mileage" type="text" class="col-sm-2 col-xs-3 select-control mileage" placeholder="行驶里程" style='margin-top:10px;margin-bottom:15px;'>
-                            <span class="msg"></span>
-                        </div>
-                    </div>
-                    <div class="form-grop col-sm-12 col-xs-12">
-                        <label style='color:#EC971F'>故障现象:</label>
-                        <textarea name="FaultPhenomenon" class="select-control postData" rows="20" style='width:50%;height:80px;'></textarea>
-                        <span class="msg"></span>
-                        <div>
-                            <span id="canavas_img"></span>
-                        </div>
-                        <input id="input-1" type="file" style='display:none' onchange="get_img(this.files[0],this.id);">
-                        <span class="glyphicon glyphicon-plus-sign btn btn-warning">选择图片</span>
-                        <span class="glyphicon glyphicon-upload btn btn-default upImg" faultImg='PhenomenonImg'>上传</span>
-
-                    </div>
-                    <div class="form-grop col-sm-12 col-xs-12" style='margin-top:15px;'>
-                        <label style='color:#286090'>故障确认:</label>
-                        <textarea name="FaultConfirmation" class="select-control postData" rows="20" style='width:50%;height:80px;'></textarea>
-                        <span class="msg"></span>
-                        <div>
-                            <span id="canavas_img"></span>
-                        </div>
-                        <input id="input-2" type="file" style='display:none' onchange="get_img(this.files[0],this.id);">
-                        <span class="glyphicon glyphicon-plus-sign btn btn-info">选择图片</span>
-                        <span class="glyphicon glyphicon-upload btn btn-default upImg" faultImg='ConfirmationImg'>上传</span>
-                    </div>
-                    <div class="form-grop col-sm-12 col-xs-12" style='margin-top:15px;'>
-                        <label style='color:#C9302C'>故障检查</label>
-                        <textarea name="FaultCheck" class="select-control postData" rows="20" style='width:50%;height:80px;'></textarea>
-                        <span class="msg"></span>
-                        <div>
-                            <span id="canavas_img"></span>
-                        </div>
-                        <input id="input-3" type="file" style='display:none' onchange="get_img(this.files[0],this.id);">
-                        <span class="glyphicon glyphicon-plus-sign btn btn-danger">选择图片</span>
-                        <span class="glyphicon glyphicon-upload btn btn-default upImg" faultImg='CheckImg'>上传</span>
-                    </div>
-                    <div class="form-grop col-sm-12 col-xs-12" style='margin-top:15px;'>
-                        <label style='color:#31B0D5'>故障分析</label>
-                        <textarea name="faultAnalysis" class="select-control postData" rows="20" style='width:50%;height:80px;'></textarea>
-                        <span class="msg"></span>
-                        <div>
-                            <span id="canavas_img"></span>
-                        </div>
-                        <input id="input-4" type="file" style='display:none' onchange="get_img(this.files[0],this.id);">
-                        <span class="glyphicon glyphicon-plus-sign btn btn-primary">选择图片</span>
-                        <span class="glyphicon glyphicon-upload btn btn-default upImg" faultImg='AnalysisImg'>上传</span>
-                    </div>
-                    <div class="form-grop col-sm-12 col-xs-12" style='margin-top:15px;'>
-                        <label style='color:#449D44'>故障排除</label>
-                        <textarea name="TroubleShooting" class="select-control postData" rows="20" style='width:50%;height:80px;'></textarea>
-                        <span class="msg"></span>
-                        <div>
-                            <span id="canavas_img"></span>
-                        </div>
-                        <input id="input-5" type="file" style='display:none' onchange="get_img(this.files[0],this.id);">
-                        <span class="glyphicon glyphicon-plus-sign btn btn-success">选择图片</span>
-                        <span class="glyphicon glyphicon-upload btn btn-default upImg" faultImg='ShootingImg'>上传</span>
-                    </div>
-                    <div class="form-group col-sm-12 col-xs-12 col-sm-offset-5">
-                        <button style='display:none' id="SaveAndUp" type="submit" class="btn btn-defaul">保存并上传</button>
-                        <button class="upload btn btn-default" class="">确认并上传</button>
-                    </div>
-                </form>
             </div>
-        </div>
-    </div>
+            <%-include('./includes/end')%>
 
-    <%-include('./includes/end')%>
-        <script>
+                <script>
+                    $('.chooseModel').click(function () {
+                        $this = $(this);
+                        let text = $this.text();
+                        carModelUrl = '/maintenanceCase/?carModel=' + text;
+                        console.log('carModelUrl是：' + carModelUrl);
+                        $this.attr('href', carModelUrl);
+                    })
 
-            //获取车辆品牌
-            function getCar() {
-                console.log('获取品牌');
-                $.get('/getcar', function (data) {
-                    var carBrand = $('#carBrand');
-                    if (data.success) {
-                        console.log('成功');
-                        data.car.map(function (car, index) {
-                            carBrand.append('<option>' + car.carBrand + '</option>');
-                        })
-                    }
-                })
-            };
+                    var carModelURL = $('.tabURL').attr('carModelURL');//汽车品牌条件选择变量
 
-            //后台拉取车辆型号
-            $('#carBrand').change(function () {
-                var val = $('#carBrand').val();
-                var data = {
-                    carBrand: val,
-                };
-                $.post('/getCarModel', data, function (data) {
-                    var carModelElement = $('#carModel');
-                    carModelElement.show();
-                    var carModelChildren = carModelElement.children();
-                    if (carModelChildren) {
-                        carModelElement.empty();
-                        data.car.carModel.map(function (carModel, index) {
-                            carModelElement.append('<option>' + carModel + '</option>')
-                        })
-                    } else {
-                        data.car.carModel.map(function (carModel, index) {
-                            carModelElement.append('<option>' + carModel + '</option>')
-                        })
-                    }
-                })
-            })
-
-            //内容及字数验证
-            $('.mileage').blur(function () {
-                $this = $(this);
-                let val = $this.val();
-                let msg = '<span style="color:red;line-height:40px;" class="col-sm-3 col-xs-3 col-md-3 msg">请输入里程</span>'
-                let errorMsg = $this.next().hasClass('msg')
-                if (val == '') {
-                    if (errorMsg) {
-                        $this.next().replaceWith(msg)
-                    } else {
-                        $this.after(msg);
-                    }
-                } else {
-                    if (errorMsg) {
-                        $this.next().remove();
-                    }
-                }
-            })
-            $('#carBrand').blur(function () {
-                $this = $(this);
-                let val = $this.val();
-                let msg = '<span style="color:red" class="col-sm-12 msg">请选择分类</span>'
-                let errorMsg = $this.next().hasClass('msg')
-                if (val == '选择分类') {
-                    if (errorMsg) {
-                        $this.next().replaceWith(msg)
-                    } else {
-                        $this.after(msg);
-                    }
-                } else {
-                    if (errorMsg) {
-                        $this.next().remove();
-                    }
-                }
-            })
-
-            $('.postData').blur(function () {
-                $this = $(this);
-                let val = $this.val();
-                let errorMsg = $this.next().hasClass('msg')
-
-                let msg = '<span style="color:red" class="col-sm-12 msg">内容至少20个字节</span>'
-                if (!val || val.length < 20) {
-                    if (errorMsg) {
-                        $this.next().replaceWith(msg)
-                    } else {
-                        $this.after(msg);
-                    }
-                } else {
-                    if (errorMsg) {
-                        $this.next().remove();
-                    }
-                }
-            })
-
-            //标题验证 + AJAX标题上传
-            $('#title').blur(function () {
-                let msg = '<span style="color:red" class="col-sm-12 msg">标题字符需在8到25之间</span>';
-                let errorMsg = $this.next().hasClass('msg')
-                $this = $(this);
-                let val = $(this).val();
-                if (val.length < 8 || val.length > 25) {
-                    if (errorMsg) {
-                        $this.next().replaceWith(msg)
-                    } else {
-                        $this.after(msg);
-                    }
-                } else {
-                    if (errorMsg) {
-                        $this.next().remove();
-
-                        let action = '/maintenanceCase';
-                        let title = val;
-                        let data = {
-                            val: val,
+                    $('.tabURL').click(function () {
+                        $this = $(this);
+                        var url = $this.attr('href');
+                        if (carModelURL) {
+                            url = url + '&carModel=' + carModelURL;
+                            $this.attr('href', url);
+                        } else {
+                            next();
                         }
-                        $this.attr({ 'title': '修改请点击右边修改按钮', "disabled": "disabled" })
-                        $('.revise').show();
-                        $.post(action, data, function () {
-                            console.log('title保存');
-                        })
-                    }
-                }
+                    })
 
-            })
+                    //汽车品牌侧边导航
+                    $('.tree').scroll(function () {
+                        var tree = $('.tree').offset().top;
+                        var navScrollLeft = $('.navscroll').offset().left;
+                        $('.navscroll').offset({ top: tree, left: navScrollLeft });
 
-            //标题修改
-            $('.revise').click(function () {
-                $that = $(this)
-                let OriginalValue = $('#title').val();
-                $('#title').off();
-                $('#title').removeAttr('disabled');
+                    })
+                    $(".carBrand,.treeFisrtWord").click(function () {
+                        var $this = $(this);
+                        var carModel = $this.next();
+                        carModel.toggle();
+                    });
+                    $(window).scroll(function () {
 
-                $('#title').change(function () {
-                    $this = $(this)
-                    console.log('标题已改变');
-                    console.log('原标题是：' + OriginalValue);
-                    console.log('现标题是：' + $this.val());
+                        var windowWidth = $(window).height();
 
-                    let toggleText = $that.text();
-                    let newTitle = $this.val();
+                        if (windowWidth > 700) {//当屏幕大于700时
+                            var scrollTop = $(window).scrollTop();
+                            var head = $('.head');
+                            var nav = $('.navbar')
 
-                    //此处用涵数，可用retrun退出整个事件，否则点击时一直处于change事件内
-                    $that.click(updateTitle(OriginalValue, newTitle))
+                            var headHeight = head.height();
+                            var navHeight = nav.height();
 
-                })
-
-            })
-
-            function updateTitle(OriginalValue, newTitle) {
-                console.log('再次点击');
-                $('#title').attr('disabled', 'desabled');
-
-                let action = '/maintenanceCase';
-                let data = {
-                    OriginalValue: OriginalValue,
-                    newTitle: newTitle
-                };
-                $.post(action, data, function (data) {
-                    if (data.success) {
-                        console.log('标题修改成功');
-                    } else {
-                        console.log('标题修改失败');
-                    }
-
-                })
-                //更新更改后的标题
-                OriginalValue = newTitle;
-                return;
-            }
-
-            //案例保存
-            $('#SaveAndUp').click(function () {
-
-                //禁用时无法获得tltle的value值，上传时先删除禁用属性
-                $('#title').removeAttr('disabled');
-
-                let msg = $('.msg');
-                let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
-
-                if (typeof (msgCla) !== 'undefined') {
-                    console.log('还存在' + msgCla);
-                    msg.prev().focus();
-                    return false;
-                } else {
-                    return true;
-                }
-            })
-
-
-
-            //获取图片
-            $('.form-grop span:nth-child(6)').click(function () {
-                console.log('执行次数');
-                $this = $(this);
-                let input = $this.prev();
-                input.click();
-
-            })
-
-            //base64位图片全局变量
-            var imgBase64;
-
-            function get_img(file, id) {
-                var id = '#' + id;//让jquery可以接收id参数
-
-                var canavas_img = $(id).prev().find('span');
-                var img = file;
-                console.log('这个元素是：' + id);
-                var fileName = img.name;
-                var fileType = fileName.substring(fileName.indexOf('.'), fileName.length).toLowerCase();
-                console.log(fileType);
-                if (fileType != '.jpg' && fileType != '.jpeg' && fileType != '.gif' && fileType != '.png' && fileType != '.bmp') {
-                    alert('请选择jpg,png,fig,bmp格式的图片');
-                    return;
-                }
-                var reader = new FileReader();
-                reader.readAsDataURL(img);
-                reader.onload = function () {
-                    var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应
-                    canavas_img.html(img_element);
-                    if (canavas_img.width() > 300 || canavas_img.height() > 400) {
-                        alert('请上传宽不大于300，高不大于400的图片');
-                        canavas_img.html('');
-                        return;
-                    }
-                    imgBase64 = this.result;
-
-                    /*获取图片后用AJAX上传  注意：需在reader.onload涵数内，否则会因为异步imgBase64还没有获得result值而报错*/
-                   /* 
-                    var up = $(id).next().next();
-                    console.log('获取的属性是：' + up.attr('faultImg'));
-                    up.click();
-                    
-                    */
-                }
-            }
-
-            //图片上传
-            $('.upImg').click(function () {
-
-                $this = $(this)
-                let fautlType = $this.attr('faultImg')
-                let title = $('#title').val();
-
-                var carModel = $('#carModel').val();
-                console.log('车型是：' + carModel);
-                console.log('title是：' + title);
-                console.log('fautlType是：' + fautlType);
-                console.log('base64是' + imgBase64);
-
-                var action = '/maintenanceCase/img';
-                var data = {
-                    title: title,
-                    carModel: carModel,
-                    faultType: fautlType,
-                    baseData: imgBase64,
-                }
-
-                $.post(action, data, function () {
-
-                })
-            })
-
-           $('.upload').click(function () {
-                $('#SaveAndUp').click();
-                $('.upImg').click();
-            })
-
-        </script>
+                            if (scrollTop > 130) {
+                                $('.tree').offset({ top: scrollTop })
+                            } else {
+                                $('.tree').offset({ top: headHeight + navHeight + 2 })
+                            }
+                        }
+                    })
+                </script>

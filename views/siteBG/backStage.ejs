@@ -1,0 +1,37 @@
+<%-include('../includes/header')%>
+    <div class="container topicIndex" style='width:99%;'>
+        <div class="col-sm-2">
+            <div class="treeNavFont treeFisrtWord col-sm-12" style='text-align:center;cursor:pointer;margin-bottom:5px;'>品牌管理
+            </div>
+            <ul class="carModel col-sm-offset-3">
+                <li style="cursor:pointer;margin-bottom:5px;">添加汽车品牌</li>
+            </ul>
+            <div class="treeNavFont treeFisrtWord col-sm-12" style='text-align:center;cursor:pointer;margin-bottom:5px;'>案例管理
+            </div>
+            <ul class="carModel col-sm-offset-3">
+                <li style="cursor:pointer;margin-bottom:5px;">添加维修案例</li>
+            </ul>
+            <div class="treeNavFont treeFisrtWord col-sm-12" style='text-align:center;cursor:pointer;margin-bottom:5px;'>广告管理
+            </div>
+            <ul class="carModel col-sm-offset-3">
+                <li style="cursor:pointer;margin-bottom:5px;">上传首页广告</li>
+            </ul>
+        </div>
+
+    </div>
+
+
+
+    <%-include('../includes/end')%>
+        <script>
+            $(document).ready(function () {
+                $(".treeFisrtWord").click(function () {
+                    var $this = $(this);
+                    var carModel = $this.next();
+                    let val = carModel.find('li').text();
+                    console.log('val是:' + val);
+                    carModel.toggle();
+                });
+            })
+
+        </script>

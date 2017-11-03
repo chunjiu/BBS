@@ -2,8 +2,12 @@
 
     <%if(errors !=''){%>
         <div class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong><%=errors%></strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>
+                <%=errors%>
+            </strong>
         </div>
         <%}%>
 
@@ -11,7 +15,9 @@
             <div class="panel panel-default panelBorderNone">
                 <div class="">
                     <ol class="breadcrumb navpath">
-                        <li><a class="navpath_a" href="/">主页</a></li>
+                        <li>
+                            <a class="navpath_a" href="/">主页</a>
+                        </li>
                         <li class="active">更新汽车品牌</li>
                     </ol>
                 </div>
@@ -46,7 +52,7 @@
                                 <input type="text" class="form-control" name="carYear" placeholder="汽车年份" value=''>
                             </div>
                         </div>
-    
+
 
                         <div class="form-horizontal">
                             <div class="form-group">
@@ -63,7 +69,7 @@
                             </div>
                         </div>
 
-                        <div style="display:none" class="form-group">
+                        <div style="" class="form-group">
                             <div class="col-sm-offset-2 col-sm-8">
                                 <input id="addCar" type="submit" class="btn btn-primary" value="添加">
                             </div>
@@ -76,15 +82,17 @@
                     </form>
                 </div>
             </div>
-            <%-include('../includes/footer')%>
+            <%-include('../includes/end')%>
                 <script>
                     $('#choose_img').click(function () {
                         $('#input_img').click();
                     });
 
-                    $('#uploadTrademark').click(function(){
-                        $('#addCar').click();
+                    //此处注意事件顺序
+                    $('#addCar').click(function () {
+                        $('#uploadTrademark').click();
                     });
+
 
 
 

@@ -1,4 +1,3 @@
-
 <%-include('./includes/header')%>
 	<style type="text/css">
 		.lightbox {
@@ -43,72 +42,79 @@
 			showPdf(false);
 		}
 	</script>
-	
+
 	<div class="row">
-			
+
 		<%-include('./includes/treeNav')%>
-			<div class="col-md-10">
+			<div class="col-md-10 carModelURL" carModelUrl='<%=typeof( carModelURL)!=='undefined'&& carModelURL||' '%>'>
 				<%car.map(function(car){%>
 					<%car.carModel.map(function(carModel){%>
-					   <div class="panel panel-default" carModel='<%=carModel%>' style='display:none;'>
-						    <div class="panel-heading" style='background-color:#EBE6E6;'>
-							   <span style='font-weight:900;'>当前车型</span>
-						     </div>
-						    <div>
-							    <div class="media">
-								    <div class="media-left">
-									    <img style='max-width:none;width:100px;height:100px;' src="/uploads/carModel/car.jpg">
-								    </div>
-								<div class="media-body">
-									<h4>厂家：
-										<span>
-											<%=car.carBrand%>
-										</span>
-									</h4>
-									<h4>车型：
-										<span><%=carModel%></span>
-									</h4>
+						<div class="panel panel-default" carModel=<%=carModel%> style='display:none'>
+							<div class="panel-heading" style='background-color:#EBE6E6;'>
+								<span style='font-weight:900;'>当前车型</span>
+							</div>
+							<div>
+								<div class="media">
+									<div class="media-left">
+										<img style='max-width:none;width:100px;height:100px;' src="/uploads/carModel/car.jpg">
+									</div>
+									<div class="media-body">
+										<h4>厂家：
+											<span>
+												<%=car.carBrand%>
+											</span>
+										</h4>
+										<h4>车型：
+											<span>
+												<%=carModel%>
+											</span>
+										</h4>
+									</div>
+									<%car.carYear.map(function(carYear){%>
+										<%if(carYear.carModel==carModel){%>
+											<div class="col-sm-4">
+
+												<h3 style="font-weight:900;">年份：
+													<%=carModel%>&nbsp;
+														<%=carYear.carYear%>
+												</h3>
+
+												<ul style="margin-bottom:30px;">
+
+													<% car.carInformation.map(function(carInformation){%>
+														<% if(carInformation.carModel==carModel&&carInformation.carYear==carYear.carYear){%>
+															<li class="infoData" style='font-weight:900;font-size:15px;'>
+																<a href="<%=carInformation.carInformation%>" target="pdfContainer" onclick="showPdf(true)">
+																	<span class="glyphicon glyphicon-file"></span>
+																	【
+																	<%=carInformation.fileName%>】
+																</a>
+																<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>'></a>
+
+															</li>
+															<% }%>
+																<% })%>
+
+																	<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
+
+																		<form method="post" action="/uploadInformation?Brand=<%=car.carBrand%>&Year=<%=carYear.carYear%>&Model=<%=carModel%>" enctype="multipart/form-data">
+																			<input id="upInformation" name="upInformation" type="file" value="上传" onchange="getFile();">
+																			<button style='margin-top:10px;' class="btn btn-default" id='upLoadInformation' type="submit">上传资料</button>
+																		</form>
+
+																	</li>
+
+												</ul>
+											</div>
+											<!--col-sm-4-->
+											<%}%>
+												<%})%>
 								</div>
-								<%car.carYear.map(function(carYear){%>
-									<%if(carYear.carModel==carModel){%>
-									<div class="col-sm-4">
-										
-										<h3 style="font-weight:900;">年份：<%=carModel%>&nbsp;<%=carYear.carYear%></h3>
-										
-										<ul style="margin-bottom:30px;">
-												
-										   <% car.carInformation.map(function(carInformation){%>
-											   <% if(carInformation.carModel==carModel&&carInformation.carYear==carYear.carYear){%>
-													<li class="infoData" style='font-weight:900;font-size:15px;'>
-														<a href="<%=carInformation.carInformation%>" target="pdfContainer" onclick="showPdf(true)">
-															<span class="glyphicon glyphicon-file"></span>
-																【<%=carInformation.fileName%>】
-														</a>
-														<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>' ></a>
-														   
-													</li>
-												<% }%>
-											<% })%>
-											
-											<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
-											
-												<form method="post" action="/uploadInformation?Brand=<%=car.carBrand%>&Year=<%=carYear.carYear%>&Model=<%=carModel%>" enctype="multipart/form-data">
-												<input id="upInformation" name="upInformation" type="file" value="上传" onchange="getFile();">
-												<button style='margin-top:10px;' class="btn btn-default" id='upLoadInformation' type="submit">上传资料</button>
-												</form>
-												
-											</li>
-											
-										</ul>
-									</div><!--col-sm-4-->
-									<%}%>
-								<%})%>
 							</div>
 						</div>
-					</div>
-					<%})%>
-				<%})%>
-				<!--
+						<%})%>
+							<%})%>
+								<!--
 	            <div class="lightbox" id="lightbox"></div>
 				<div id="pop" class="pop" style="display: none;">
 					<a href="javascript:close()" style="
@@ -122,13 +128,14 @@
 				   <iframe frameborder="0" id="pdfContainer" name="pdfContainer" style='height:800px;width:100%;'></iframe>
 				
 			    </div>-->
-		   </div><!-- col-md-10 -->
+			</div>
+			<!-- col-md-10 -->
 	</div>
 
 
 
 
-<!--
+	<!--
 	<div style="position: static; width: 0px; height: 0px; border: none; padding: 0px; margin: 0px;">
 		<div id="trans-tooltip">
 			<div id="tip-left-top" style="background: url(&quot;chrome-extension://ikkepelhgbcgmhhmcmpfkjmchccjblkd/imgs/map/tip-left-top.png&quot;);">
@@ -158,27 +165,30 @@
 -->
 	<!--是body的onload事件，注意这个script的摆放位置-->
 	<script>
-		function showInformation(){
+
+		//加载完时按选择的车型显示
+		function showInformation() {
 			console.log('加载完成');
-			var Model = $('.panel').attr('carModel');//此处只获得了第一个元素的类，与点击事件不同
-			console.log('Model是：'+Model);
-			$('.panel[carModel='+Model+']').show();
+			var carModelURL = $('.carModelURL').attr('carModelURL');
+			console.log('Model是：' + carModelURL);
+			$('.panel[carModel=' + carModelURL + ']').show();
 		}
 
-		$(window).scroll(function(){
-          var scrollTop = $(window).scrollTop();
-          var head = $('.head');
-          var nav = $('.navbar')
+		$(window).scroll(function () {
+			console.log('进入window.scroll');
+			var scrollTop = $(window).scrollTop();
+			var head = $('.head');
+			var nav = $('.navbar')
 
-          var headHeight = head.height();
-          var navHeight = nav.height();
+			var headHeight = head.height();
+			var navHeight = nav.height();
 
-          if(scrollTop>130){
-            $('.tree').offset({top:scrollTop})
-          }else{
-            $('.tree').offset({top:headHeight+navHeight+2})
-          }
-        })
+			if (scrollTop > 130) {
+				$('.tree').offset({ top: scrollTop })
+			} else {
+				$('.tree').offset({ top: headHeight + navHeight + 2 })
+			}
+		})
 	</script>
 
 	<script src="/javascripts/jquery-3.2.1.min.js"></script>
@@ -198,63 +208,75 @@
 			upInformation.click();
 			// $('#upInformation').click();
 		})*/
-	$(document).ready(function(){
-		
-		function getFile() {
-			var file = $('#upInformation').get(0).files[0];
-			console.log('file是：' + file.name);
-			var fileElement = '<span class="fileName">' + file.name + '</span>';
-			$('#upload').after(fileElement);
-		}
+		$(document).ready(function () {
 
-		$('.remove').click(function(){//不要用ID，ID只能获得第一个元素
-			var $this = $(this);
-			var carBrand = $this.attr('Brand');
-			var carInformation = $this.attr('Information');
-
-			infoData = $this.closest('.infoData');
-			console.log('carBrand是：'+carBrand);
-			console.log('carInformation是：'+carInformation);
-			var data = {
-				carBrand:carBrand,
-				carInformation:carInformation
+			function getFile() {
+				var file = $('#upInformation').get(0).files[0];
+				console.log('file是：' + file.name);
+				var fileElement = '<span class="fileName">' + file.name + '</span>';
+				$('#upload').after(fileElement);
 			}
 
-			$.post('/removeInformation',data,function(data){
-				if(data.success){
-					infoData.remove();
+
+			$('.remove').click(function () {//不要用ID，ID只能获得第一个元素
+				var $this = $(this);
+				var carBrand = $this.attr('Brand');
+				var carInformation = $this.attr('Information');
+
+				infoData = $this.closest('.infoData');
+				console.log('carBrand是：' + carBrand);
+				console.log('carInformation是：' + carInformation);
+				var data = {
+					carBrand: carBrand,
+					carInformation: carInformation
 				}
+
+				$.post('/removeInformation', data, function (data) {
+					if (data.success) {
+						infoData.remove();
+					}
+				})
+			})
+
+			//根据车型选择
+			$('.chooseModel').click(function () {
+				var $this = $(this);
+
+				var carBrand = $this.attr('carBrand');
+				var Model = $this.text();
+				ModelURL =  '&carModel='+Model;
+				carBrandUrl = '/information/?carBrand=' + carBrand+ModelURL;
+				console.log('carModelUrl是：' + carBrandUrl);
+				$this.attr('href', carBrandUrl);
+				
+				
+				/*$('.panel').hide();
+				$('.panel[carModel=' + Model + ']').show();*/
+
+		
+			})
+
+			//汽车品牌侧边导航
+			$('.tree').scroll(function () {
+				var tree = $('.tree').offset().top;
+				var navScrollLeft = $('.navscroll').offset().left;
+				$('.navscroll').offset({ top: tree, left: navScrollLeft });
+
+			})
+			$(".carBrand,.treeFisrtWord").click(function () {
+				var $this = $(this);
+				var carModel = $this.next();
+				carModel.toggle();
+			});
+
+			$('.en').click(function () {
+				console.log('点击');
+				console.log(encodeURI('http://localhost:3000/uploads/carInformation/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BANode.js.www.java1234.com.pdf.pdf'))
 			})
 		})
 
-		$('.chooseModel').click(function(){
-			var $this = $(this);
-			var Model = $this.text();
-			$('.panel').hide();
-			$('.panel[carModel='+Model+']').show();
-		})
-
-		 //汽车品牌侧边导航
-		$('.tree').scroll(function () {
-          var tree = $('.tree').offset().top;
-          var navScrollLeft = $('.navscroll').offset().left;
-          $('.navscroll').offset({ top: tree, left: navScrollLeft });
-          
-		})
-		$(".carBrand,.treeFisrtWord").click(function(){
-          var $this =$(this);
-          var carModel = $this.next();
-          carModel.toggle();
-		});
-		
-		$('.en').click(function(){
-			console.log('点击');
-	     	console.log(encodeURI('http://localhost:3000/uploads/carInformation/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BANode.js.www.java1234.com.pdf.pdf'))
-		})
-	})
 
 
-	 
 
 	</script>
 

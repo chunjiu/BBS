@@ -125,10 +125,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.listen(443, function () { 
-  console.log('服务器已在3000端口运行');
+  console.log('服务器已在443端口运行');
 });
-app.listen(3000, function () {//上线要改成80
-  console.log('服务器已在80端口运行');
-})
+/*app.listen(3000, function () {//上线要改成80
+  console.log('服务器已在300端口运行');
+})*/
+
 
 module.exports = app;

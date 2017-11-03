@@ -1,0 +1,70 @@
+<body onload=''>
+    <!--清除header模版中的onload事件，方便调用jquery的ready涵数-->
+    <%-include('../includes/header')%>
+
+        <div class="container">
+            <div style='border-bottom:1px solid #CCCCCC;margin-top:30px;'>
+                <h4 style='font-weight:900;'>
+                    求贤纳才
+                </h4>
+            </div>
+            <div style='margin-top:20px;'>
+                <%if(topic.length){%>
+                    <%topic.forEach(function(topic){%>
+                        <div class="row jd">
+                            <div class="col-sm-7">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><span><img src='/images/job.png' style='width:30px;height:30px;'></span>
+                                        <%=topic.title%>
+                                    </div>
+                                </div>
+                                <%-topic.content%>
+                                    <p class="col-sm-offset-9">发送简历到：xxxxxxxxx@163.com</p>
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="/topic/<%=topic.id%>/edit" class="btn btn-default col-sm-7" style='margin-bottom:5px;'>更改</a>
+                                <a href="/topic/<%=topic.id%>/remove" class="btn btn-default col-sm-7" style='margin-bottom:5px;'>删除</a>
+                                <a href="/create" class="btn btn-default col-sm-7" style='margin-bottom:5px;'>新增</a>
+                            </div>
+                        </div>
+                        <%})%>
+                            <%}%>
+
+            </div>
+        </div>
+
+        <%-include('../includes/end')%>
+            <script>
+                $(document).ready(function () {//body的onload事件发生于所有元素未载入时，无法获得元素的宽、高等
+                    $('.jd').map(function (index, elment) {
+                        let height = $(elment).height();
+                        if (height > 400) {
+                            $(elment).addClass('textHidden');
+                            let show = "<p class='show col-sm-offset-6' style='cursor: pointer;margin-bottom:35px;'><i class='icon glyphicon glyphicon-triangle-bottom'></i><span>点击展开</span></p>";
+                            $(elment).after(show);
+                        }
+                    })
+
+                    $('.show').click(function () {
+                        $this = $(this);
+                        let jd = $this.prev();
+                        let ico = $this.find('i');  
+                        let text = $this.find('span').text(); 
+
+                        if(text=='点击展开'){
+                            $this.find('span').text('点击收起');
+                            let stop ="<i class='glyphicon glyphicon-triangle-top'></i>";
+                            ico.replaceWith(stop)
+                        }else{
+                            $this.find('span').text('点击展开');
+                            let open = "<i class='icon glyphicon glyphicon-triangle-bottom'></i>";
+                            ico.replaceWith(open);
+                        }
+
+                        jd.toggleClass('textHidden');
+                    })
+                })
+
+
+
+            </script>

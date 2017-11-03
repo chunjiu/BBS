@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const CaseSchema = new Schema({
+    tab:String,
     username: String,
     title: String,
     carBrand: String,
@@ -18,12 +19,16 @@ const CaseSchema = new Schema({
     FaultCheck: String,//故障检查
     faultAnalysis: String,//故障分析
     TroubleShooting: String,//故障排除
+    attention:String,//注意事项
     
     PhenomenonImg:String,//故障现象图片
     ConfirmationImg: String,//故障确认图片
     CheckImg: String,//故障检查图片
     AanlysisImg: String,//故障分析图片
     ShootingImg: String,//故障排除图片
+
+    visit_count: { type: Number, default: 0 },//浏览次数
+    delete: {type:Boolean,default:false},
     
     creat_at: { type: Date, default: Date.now() },
     updated_at: { type: Date, default: Date.now()},
@@ -51,5 +56,11 @@ exports.newAddSave = function (title,callback) {
 
 exports.getCaseTopicByTitle = function (title, callback) { 
     CaseTopic.findOne({ 'title': title }, callback);
+}
+exports.getCaseTopicByQuery = function (query,opt, callback) { 
+    CaseTopic.find(query, {},opt,callback)
+}
+exports.getCaseTopicById = function (id, callback) { 
+    CaseTopic.findById({'_id':id},callback)
 }
 

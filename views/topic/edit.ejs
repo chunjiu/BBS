@@ -57,7 +57,7 @@
                         <a href="/case">问诊</a>
                     </li>
                     <li>
-                        <a href="#">求贤纳才</a>
+                        <a href="/job">求贤纳才</a>
                     </li>
                     <li>
                         <a href="#">
@@ -192,7 +192,7 @@
                         <label class="control-label col-sm-2">正文：</label>
                         <div class="col-sm-8">
                            <!-- <textarea id="editor" type="text/plain" style="height:500px;width:80%" name="t_content" rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>-->
-                        <textarea class="r_content" id="editor" type="text/plain" style="height:500px;width:80%" name='r_content' rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>
+                        <textarea class="r_content" id="editor" type="text/plain" style="height:500px;width:100%" name='r_content' rows='20'><%=typeof(content) !=='undefined'&&content||''%></textarea>
                           
                         </div>
                     </div>
@@ -226,12 +226,18 @@
                 //alert($(this).val());
                 //var $this = $(this);
                 var value = $(this).val();
+
                 var warnMsg = '';
                 if (value == '问答') {
                     warnMsg = '<strong>提问时，请遵循<a href="https://gist.github.com/alsotang/f654af8b1fff220e63fcb44846423e6d" target="_blank">《提问的智慧》</a>中的要点，以便收到高质量回复</strong>';
                 } else if (value == '招聘') {
-                    warnMsg = '<strong>为避免管理员删贴，发贴时请仔细阅读<a href="http://cnodejs.org/topic/541ed2d05e28155f24676a12" target="_blank">《招聘帖规范》</a></strong>';
+                    warnMsg = '<strong>为避免管理员删贴，发贴时请仔细阅读<a href="#">《招聘帖规范》</a></strong>';
                 }else if(value=='申诉'){
+                    console.log('申诉');
+                    $('.car').hide();
+                }
+                if(value=='招聘'){
+                    console.log('招聘'); 
                     $('.car').hide();
                 }
                 $('#topic_creae_warn').html(warnMsg);
