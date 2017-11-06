@@ -193,20 +193,20 @@
         </div>
         <%-include('../includes/end')%>
             <script>
-                $('.insert').click(function(){
+                $('.insert').click(function () {
                     let $this = $(this);
                     let val = $this.prev().val();
                     //let yn = true;
-                    
+
                     let action = '/set/admin';
-                    let admin='admin';
+                    let admin = 'admin';
                     let data = {
-                        title:val,
-                        admin:admin,
-                        yn:true,
-             
+                        title: val,
+                        admin: admin,
+                        yn: true,
+
                     }
-                    $.post(action,data,function(){})              
+                    $.post(action, data, function () { })
                 })
 
 
@@ -404,15 +404,18 @@
                 $('.form-grop span:nth-child(6)').click(function () {
                     console.log('执行次数');
                     $this = $(this);
+                    console.log('属性是：'+$this.text());
                     let input = $this.prev();
                     input.click();
 
                 })
 
-                //base64位图片全局变量
-                var imgBase64;
+                var imgBase64;//base64位图片全局变量
+                
 
                 function get_img(file, id) {
+                    $that = $(this);
+                    
                     var id = '#' + id;//让jquery可以接收id参数
 
                     var canavas_img = $(id).prev().find('span');
@@ -430,34 +433,29 @@
                     reader.onload = function () {
                         var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应
                         canavas_img.html(img_element);
-                        if (canavas_img.width() > 300 || canavas_img.height() > 400) {
-                            alert('请上传宽不大于300，高不大于400的图片');
+                        if (canavas_img.width() > 400 || canavas_img.height() > 400) {
+                            alert('请上传宽不大于400，高不大于400的图片');
                             canavas_img.html('');
                             return;
                         }
-                        imgBase64 = this.result;
+                       imgBase64 = this.result;
 
                         /*获取图片后用AJAX上传  注意：需在reader.onload涵数内，否则会因为异步imgBase64还没有获得result值而报错*/
                         var up = $(id).next().next();
                         console.log('获取的属性是：' + up.attr('faultImg'));
                         up.click();
 
-
                     }
                 }
 
                 //图片上传
-                $('.upImg').click(function () {
-
+               $('.upImg').click(function () {
+                    console.log('进入图片上传');
                     $this = $(this)
                     let fautlType = $this.attr('faultImg')
                     let title = $('#title').val();
 
                     var carModel = $('#carModel').val();
-                    console.log('车型是：' + carModel);
-                    console.log('title是：' + title);
-                    console.log('fautlType是：' + fautlType);
-                    console.log('base64是' + imgBase64);
 
                     var action = '/caseUpload/img';
                     var data = {

@@ -19,7 +19,10 @@ exports.carbrandAdd = function (req, res, next) {
     var carFisrtWord = req.body.carFisrtWord;
     var carBrand = req.body.carBrand;
     var carModel = req.body.carModel;
-    var carYear = req.body.carYear;
+    var carYear = [];
+    for (let i = 0; i < 20; i++) { 
+        carYear.push(2000 + i);
+    }
     var carAvatars = '';
     Car.getCarByCarBrand(carBrand, function (err, car) {
         if (err) {
@@ -36,8 +39,8 @@ exports.carbrandAdd = function (req, res, next) {
             })
         } else {
             // car.carModel.addToSet(carModel,carYear)
-            var Year = [{ carModel: carModel, carYear: carYear }];//这里要注意与carmodel的书写顺序
-            car.carYear.addToSet(Year);
+            //var Year = {carYear:carYear};//这里要注意与carmodel的书写顺序
+            //car.carYear.addToSet(Year);
             car.carModel.addToSet(carModel);
             car.save(function (err) {
                 if (err) {
@@ -143,9 +146,9 @@ exports.uploadInformation = function (req, res, next) {
     console.log('进入维修资料上传');
     var upload = multer.single('upInformation');
 
-    var carBrand = req.query.Brand
-    var carYear = req.query.Year;
-    var carModel = req.query.Model;
+    var carBrand = req.query.carBrand;
+    var carYear = req.query.carYear;
+    var carModel = req.query.carModel;
 
     console.log('carModle是：' + carModel);
     console.log('carYear是：' + carYear);
@@ -308,6 +311,7 @@ exports.casUploadImg = function (req, res, next) {
     console.log('进入维修案例图片上传');
 
     if (!req.body.baseData) {
+        console.log('base64出错');
         return next();
     }
 
@@ -328,7 +332,7 @@ exports.casUploadImg = function (req, res, next) {
      *写入文件时必须要有public,路径+文件名
      * @param 另：直接以用户名存储则会替换该用户所有之前的头像
      */ 
-    var imgPath = 'public/uploads/maintenanceCaseImg/' + carModel + title+ '.jpg';//用title命名，可替换原先上传的图片
+    var imgPath = 'public/uploads/maintenanceCaseImg/' + title + faultType+ '.jpg';//用title命名，可替换原先上传的图片
     fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
         if (err) {
             throw err;

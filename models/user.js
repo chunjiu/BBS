@@ -28,7 +28,7 @@ var UserSchema = new Schema({
     score: { type: Number, default: 0 },
     topic_count: { type: Number, default: 0 },
     collect_topic_count: { type: Number, default: 0 },//被收藏的话题数
-    attr: {type:Array}
+    attr:[Schema.Types.Mixed]//用户属性：普通用户，员工、管理员、hr等
 })
 
 UserSchema.methods.create_at_ago = function () { 

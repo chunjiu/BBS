@@ -78,6 +78,26 @@ router.get('/api', function (req, res, next) {
 });
 //接口结束
 
+/*汽车年份查找测试*/
+router.post('/chekYear', function (req, res, next) { 
+  console.log('进入查询');
+
+  let year = req.body.year;
+  let model = req.body.model;
+  console.log(year);
+  console.log(model);
+  Car.getCarByYear(year, model, function (err, car) {
+    if (err) { 
+      console.log('出错');
+      return next();
+    }
+    if (!car) { 
+      console.log('没有找到车');
+    }
+    console.log('car是：'+car)
+   })
+}) 
+
 router.post('/set/admin', function (req, res, next) { 
   let title = req.body.title;
   let admin = req.body.admin;
@@ -91,15 +111,19 @@ router.post('/set/admin', function (req, res, next) {
 
 router.get('/information', function (req, res, next) {
   var carBrand = req.query.carBrand ||'奥迪';
-  var carModel = req.query.carModel||'奥迪A8';
+  var carModel = req.query.carModel||'奥迪A6';
 
   console.log('carBrand是：' + carBrand);
   var query = {};
   if (carBrand) { 
     query.carBrand = carBrand;
   }
-  
-    Car.getCarByQuery(query, function (err, car) { 
+  Car.getCarByQuery('', '', function (err, car) { 
+    if (err) { 
+      console.log('出错');
+      return next(err);
+    }
+    Car.getCarByQuery(query,'' ,function (err, car_Brand) { 
       if (err) {
         console.log('出错');
         return next(err);
@@ -108,14 +132,19 @@ router.get('/information', function (req, res, next) {
         console.log('没有找到车');
         return next(err);
       }
-      console.log('car是:'+car);
+      console.log('car是:' + car);
+
       res.render('Document', {
-        current_user: req.session.user ? req.session.user.username : '',
+        current_user: req.session.user ? req.session.user : '',
         car: car,
+        car_Brand:car_Brand,
         carModelURL:carModel,
         ChooseModel: true,
       })
     })
+
+  })
+  
 })
 
 /*get MaintenaceCase page*/
@@ -772,10 +801,8 @@ router.post('/sign', function (req, res) {
       console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
-      User.addsave(username, password, email, true, function (err, user) {
+      User.addsave(username, password, email, false, function (err, user) {
         if (!err) {
-          var attr = { sex: '男', age: '27', school: { hightScool: '华容三中' } }//这是做mongodb数组测试用的。
-          user.attr.push(attr);
           user.save(function (err) {
             res.render('notify/notify', { success: '注册成功', link: link });
           });
@@ -863,7 +890,7 @@ router.post('/login', function (req, res, next) {
       if (cb) {
         //authMiddleWare.authUser();
         console.log('登录成功');
-        console.log('user.id是：' + user.id);
+        console.log('user.id是：' + user);
         res.redirect('/');
       }
 

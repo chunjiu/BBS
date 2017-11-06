@@ -1,0 +1,45 @@
+<%-include('../includes/header')%>
+
+    <div class="container adminSetting">
+        <div class="msg"></div>
+        <div class="input-group">
+            <input type='text' class="form-control" placeholder="输入要设置的用户名">
+            <span class="input-group-addon set" style='cursor:pointer;'>
+                <span class="glyphicon glyphicon-lock"></span>设为管理员</span>
+        </div>
+    </div>
+
+
+    <%-include('../includes/end')%>
+
+        <script>
+            $(document).ready(function () {
+
+                $('.set').click(function () {
+                    $this = $(this);
+                    let user = $this.prev().val();
+
+                    let action = '/admin/addAdmin';
+                    let data = {
+                        user: user,
+                    }
+                    console.log('user是：'+user);
+                    $.post(action, data, function (data) {
+                        if (data.success) {
+                            var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
+                                + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                                + "<span aria-hidden='true'>&times;</span>"
+                                + "</button>"
+                                + "<strong>用户权限设置成功</strong>"
+                                + "</div>"
+                            var $prompt = $('.msg');
+                            $prompt.html(msg);
+                        }
+                        else {
+                            alert('设置失败');
+                        }
+
+                    })
+                })
+            })
+        </script>

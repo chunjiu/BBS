@@ -55,10 +55,10 @@ exports.authUser = function (req, res, next) {
         })
     }
     getUser(user_id).then(resp => next())
-   // return next();
+    // return next();
 }
 
-
+//登录验证
 exports.userRequired = function (req, res, next) {
     console.log('在auth.j中sessionuser是：' + req.session.user);
     if (!req.session.user) {
@@ -67,6 +67,44 @@ exports.userRequired = function (req, res, next) {
         return res.render('notify/notify', { error: msg, link: '' });
     } else {
         console.log('属已登录奖态');
+        next();
+    }
+}
+
+//普通管理员验证
+exports.AdminRequired = function (req, res, next) {
+    console.log('在auth.j中sessionuser是：' + req.session.user);
+    if (!req.session.user) {
+        console.log('未登录');
+        var msg = '<p>您还未登录，<span>请先<a href="/signin" style="color:red">登录</a></span></p>'
+        return res.render('notify/notify', { error: msg, link: '' });
+    } else {
+        user = req.session.user;
+        if (typeof (user.attr[0]) !== 'undefined') {
+            console.log('attr不为空');
+            if (!user.attr[0].admin) {
+                var msg = '<p>您还不是管理员，<span>请联系后台管理人员</span></p>'
+                return res.render('notify/notify', { error: msg, link: '' });
+            } else {
+                next();
+            }
+
+        } else { 
+            console.log('attr为空')
+            var msg = '<p>您还不是管理员，<span>请联系后台管理人员</span></p>'
+            return res.render('notify/notify', { error: msg, link: '' });
+        }
+    }
+}
+
+//超级管理员验证
+exports.SuperRequired = function (req, res, next) { 
+    let user = req.session.user;
+    if (!user.is_admin) { 
+        var msg = '<p>对不起，<span>您无此权限</span>'
+        return res.render('notify/notify', { error: msg, link: '' });
+    }
+    if (user.is_admin) { 
         next();
     }
 }

@@ -46,8 +46,8 @@
 	<div class="row">
 
 		<%-include('./includes/treeNav')%>
-			<div class="col-md-10 carModelURL" carModelUrl='<%=typeof( carModelURL)!=='undefined'&& carModelURL||' '%>'>
-				<%car.map(function(car){%>
+			<div class="col-md-9 carModelURL" carModelUrl='<%=typeof( carModelURL)!==' undefined '&& carModelURL||' '%>'>
+				<%car_Brand.map(function(car){%>
 					<%car.carModel.map(function(carModel){%>
 						<div class="panel panel-default" carModel=<%=carModel%> style='display:none'>
 							<div class="panel-heading" style='background-color:#EBE6E6;'>
@@ -70,45 +70,87 @@
 											</span>
 										</h4>
 									</div>
-									<%car.carYear.map(function(carYear){%>
-										<%if(carYear.carModel==carModel){%>
-											<div class="col-sm-4">
 
-												<h3 style="font-weight:900;">年份：
-													<%=carModel%>&nbsp;
-														<%=carYear.carYear%>
-												</h3>
+									<div class="col-sm-8">
 
-												<ul style="margin-bottom:30px;">
+										<h3 style="font-weight:900;">年份：
+											<%=carModel%>&nbsp;
+											<%if(current_user.attr[0].admin){%>
+												<select class="chooseYear" style='width:90px;'><!--上传选择年份-->
+													<%car.carYear[0].carYear.map(function(carYear){%>
+														<option>
+															<%=carYear%>
+														</option>
+														<%})%>
+												</select>
+											<%}%>
+													
+												<select class="ChooseCarInformationYear" style='width:90px;'><!--查看资料时选择年份-->
 
-													<% car.carInformation.map(function(carInformation){%>
-														<% if(carInformation.carModel==carModel&&carInformation.carYear==carYear.carYear){%>
-															<li class="infoData" style='font-weight:900;font-size:15px;'>
-																<a href="<%=carInformation.carInformation%>" target="pdfContainer" onclick="showPdf(true)">
-																	<span class="glyphicon glyphicon-file"></span>
-																	【
-																	<%=carInformation.fileName%>】
-																</a>
-																<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>'></a>
+													<!--对比两个对象的键值是否有相同，取相同值存进另一数组-->
+													<%var carInformationYear = [];%>
+
+													<%var le = car.carYear[0].carYear.length%>
+													<%var lf =car.carInformation.length%>
+													<%for(let i=0;i<le;i++){%>
+														<%for(let j=0;j<lf;j++){%>
+															<%var leYear=car.carYear[0].carYear[i]%>
+															<%var lfYear=car.carInformation[j].carYear%>
+																<%if(leYear==lfYear){%>
+																	<%carInformationYear[leYear]=leYear%><!--有同一个leYear键替换相同值-->
+																<%}%>
+														<%}%>		
+													<%}%>
+
+												
+												
+													
+													<%carInformationYear.map(function(year){%>
+														<option><%=year%></option>
+													<%})%>
+
+												
+												</select>
+										</h3>
+
+										<ul style="margin-bottom:30px;">
+
+											<% car.carInformation.map(function(carInformation){%>
+												<% if(carInformation.carModel==carModel){%>
+													<li class="infoData" style='font-weight:900;font-size:15px;' carInformationYear='<%=carInformation.carYear%>'>
+														<a href="<%=carInformation.carInformation%>" target="pdfContainer" onclick="showPdf(true)">
+															<span class="glyphicon glyphicon-file"></span>
+															【
+															<span class="fileName">
+																<%=carInformation.fileName%>
+															</span>】
+														</a>
+														<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>'
+														 fileName='<%=carInformation.fileName%>'></a>
+
+													</li>
+													<% }%>
+														<% })%>
+
+															<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
+
+																<form class="from" method="post" action="/uploadInformation" enctype="multipart/form-data">
+																	<input class="upfile" id="upInformation" name="upInformation" type="file" value="上传">
+																	<p style='margin-top:10px;' class="btn btn-default upLoadData" id='upLoadInformation' carModel='<%=carModel%>' carBrand='<%=car.carBrand%>'>上传资料</p>
+																</form>
 
 															</li>
-															<% }%>
-																<% })%>
+															<div style='display:none;'>
+																<!--数组元素查询测试-->
+																<input type="text" placeholder="年份">
+																<input type='text' placeholder="车型">
+																<button class="chek">查找年份</button>
+															</div>
 
-																	<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
+										</ul>
+									</div>
+									<!--col-sm-4-->
 
-																		<form method="post" action="/uploadInformation?Brand=<%=car.carBrand%>&Year=<%=carYear.carYear%>&Model=<%=carModel%>" enctype="multipart/form-data">
-																			<input id="upInformation" name="upInformation" type="file" value="上传" onchange="getFile();">
-																			<button style='margin-top:10px;' class="btn btn-default" id='upLoadInformation' type="submit">上传资料</button>
-																		</form>
-
-																	</li>
-
-												</ul>
-											</div>
-											<!--col-sm-4-->
-											<%}%>
-												<%})%>
 								</div>
 							</div>
 						</div>
@@ -174,21 +216,6 @@
 			$('.panel[carModel=' + carModelURL + ']').show();
 		}
 
-		$(window).scroll(function () {
-			console.log('进入window.scroll');
-			var scrollTop = $(window).scrollTop();
-			var head = $('.head');
-			var nav = $('.navbar')
-
-			var headHeight = head.height();
-			var navHeight = nav.height();
-
-			if (scrollTop > 130) {
-				$('.tree').offset({ top: scrollTop })
-			} else {
-				$('.tree').offset({ top: headHeight + navHeight + 2 })
-			}
-		})
 	</script>
 
 	<script src="/javascripts/jquery-3.2.1.min.js"></script>
@@ -209,19 +236,81 @@
 			// $('#upInformation').click();
 		})*/
 		$(document).ready(function () {
+			/*
+			$('.chek').click(function () {
+				$this = $(this);
+				let year = $this.prev().prev().val();
+				let model = $this.prev().val();
 
-			function getFile() {
-				var file = $('#upInformation').get(0).files[0];
-				console.log('file是：' + file.name);
-				var fileElement = '<span class="fileName">' + file.name + '</span>';
-				$('#upload').after(fileElement);
-			}
+				console.log('year是：' + year);
+				console.log('model是：' + model);
+
+				let action = '/chekYear';
+				let data = {
+					year: year,
+					model: model
+				}
+				$.post(action, data, function () { })
+			})*/
+
+			/*获取上传文件*/
+			$('.upfile').change(function () {
+				console.log('获取文件');
+				var fileNames = [];
+				$('.fileName').map(function (index, elment) {
+					let fileName = $(elment).text();
+					fileNames.push(fileName);
+				})
+				var file = $(this).get(0).files[0];
+				fileNames.map(function (fileName, index) {
+					if (fileName === file.name) {//要去掉字符串前后空格
+
+						let r = confirm('上传同一文件是为了更新吗?');
+						if (r == true) {
+							$this.next().show();
+						}
+					}
+				})
+				console.log('fileName是：' + file.name);
+				console.log('fileNames是：' + fileNames);
+
+			})
+
+			/*上传文件*/
+			let carYear;
+			$('.chooseYear').change(function(){
+				$this = $(this);
+				let val = $this.val();
+				carYear = val;
+				console.log('val是：'+val);
+			})
+			$('.upLoadData').click(function () {
+				$this = $(this);
+				console.log('进入uploadData');
+				let carModel = $this.attr('carModel');
+				let carBrand = $this.attr('carBrand');
+				
+				console.log('carModel是：' + carModel);
+				console.log('carBrand是:' + carBrand);
+				console.log('carYear是:' + carYear);
+
+				let url = $this.closest('.from').attr('action');
+				let queryUrl = "?carBrand=" + carBrand + "&carYear=" + carYear + "&carModel=" + carModel;
+				url = url + queryUrl;
+
+				$('.from').attr('action', url);
+				$('.from').submit();
+
+			})
 
 
+
+			/*删除资料*/
 			$('.remove').click(function () {//不要用ID，ID只能获得第一个元素
 				var $this = $(this);
 				var carBrand = $this.attr('Brand');
 				var carInformation = $this.attr('Information');
+				var fileName = $this.attr('fileName');
 
 				infoData = $this.closest('.infoData');
 				console.log('carBrand是：' + carBrand);
@@ -230,12 +319,18 @@
 					carBrand: carBrand,
 					carInformation: carInformation
 				}
-
-				$.post('/removeInformation', data, function (data) {
-					if (data.success) {
-						infoData.remove();
+				let r = confirm('确认删除吗？')
+				if (r == true) {
+					let rn = confirm('您将删除   ' + fileName + '   这个文件')
+					if (rn == true) {
+						$.post('/removeInformation', data, function (data) {
+							if (data.success) {
+								infoData.remove();
+							}
+						})
 					}
-				})
+				}
+
 			})
 
 			//根据车型选择
@@ -244,16 +339,25 @@
 
 				var carBrand = $this.attr('carBrand');
 				var Model = $this.text();
-				ModelURL =  '&carModel='+Model;
-				carBrandUrl = '/information/?carBrand=' + carBrand+ModelURL;
+				ModelURL = '&carModel=' + Model;
+				carBrandUrl = '/information/?carBrand=' + carBrand + ModelURL;
 				console.log('carModelUrl是：' + carBrandUrl);
 				$this.attr('href', carBrandUrl);
-				
-				
+
+
 				/*$('.panel').hide();
 				$('.panel[carModel=' + Model + ']').show();*/
 
-		
+
+			})
+
+			/*选择查看年份*/
+			$('.ChooseCarInformationYear').change(function(){
+				$this = $(this);
+				let year = $this.val();
+				console.log('year是：'+year)
+				$('.infoData').hide();
+				$('.infoData[carInformationYear='+year+']').show();
 			})
 
 			//汽车品牌侧边导航
@@ -268,6 +372,22 @@
 				var carModel = $this.next();
 				carModel.toggle();
 			});
+
+			$(window).scroll(function () {
+				console.log('进入window.scroll');
+				var scrollTop = $(window).scrollTop();
+				var head = $('.head');
+				var nav = $('.navbar')
+
+				var headHeight = head.height();
+				var navHeight = nav.height();
+
+				if (scrollTop > 130) {
+					$('.tree').offset({ top: scrollTop })
+				} else {
+					$('.tree').offset({ top: headHeight + navHeight + 2 })
+				}
+			})
 
 			$('.en').click(function () {
 				console.log('点击');

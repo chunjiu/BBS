@@ -21,14 +21,15 @@
                         <li class="active">更新汽车品牌</li>
                     </ol>
                 </div>
-                <span class="msg"></span>
+                <span class="note"></span>
                 <div class="panel-body">
 
                     <form id="carbrandAddForm" class="form-horizontal" action="/carbrand/add" method="post">
                         <div class="form-group">
-                            <label id="tab-selector" for="tab-value" class="control-label col-sm-2">品牌首字母：</label>
+                            <label id="tab-selector" for="tab-value" class="control-label col-sm-2 postData">品牌首字母：</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" name="carFisrtWord" placeholder="汽车品牌首字母(大写)" value=''>
+                                <input type="text" class="form-control postData" name="carFisrtWord" placeholder="汽车品牌首字母(大写)" value=''>
+                                <span class="msg"></span>
                             </div>
                             <div class="form-group">
                                 <span id="topic_creae_warn"></span>
@@ -37,13 +38,15 @@
                         <div class="form-group">
                             <label class="control-label col-sm-2">汽车品牌：</label>
                             <div class="col-sm-4">
-                                <input id="carBrand" type="text" class="form-control" name="carBrand" placeholder="汽车品牌（中文）" value=''>
+                                <input id="carBrand" type="text" class="form-control postData" name="carBrand" placeholder="汽车品牌（中文）" value=''>
+                                <span class="msg"></span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-2">型号：</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" name="carModel" placeholder="汽车款式（中文）" value=''>
+                                <input type="text" class="form-control postData" name="carModel" placeholder="汽车款式（中文）" value=''>
+                                <span class="msg"></span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -74,7 +77,7 @@
                                 <input id="addCar" type="submit" class="btn btn-primary" value="添加">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none">
                             <div class="col-sm-offset-2 col-sm-8">
                                 <span id="uploadTrademark" class="btn btn-primary">添加汽车品牌</span>
                             </div>
@@ -84,13 +87,43 @@
             </div>
             <%-include('../includes/end')%>
                 <script>
+                    //输入验证
+                    $('.postData').blur(function () {
+                        $this = $(this);
+                        let val = $this.val();
+                        let errorMsg = $this.next().hasClass('msg')
+
+                        let msg = '<span style="color:red" class="col-sm-12 msg">不能为空</span>'
+                        if (val == '') {
+                            if (errorMsg) {
+                                $this.next().replaceWith(msg)
+                            } else {
+                                $this.after(msg);
+                            }
+                        } else {
+                            if (errorMsg) {
+                                $this.next().remove();
+                            }
+                        }
+                    })
+
+
                     $('#choose_img').click(function () {
                         $('#input_img').click();
                     });
 
                     //此处注意事件顺序
                     $('#addCar').click(function () {
-                        $('#uploadTrademark').click();
+                        let msg = $('.msg');
+                        let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
+                        if (typeof (msgCla) !== 'undefined') {
+                            console.log('还存在' + msgCla);
+                            msg.prev().focus();
+                            return false;
+                        } else {
+                            $('#uploadTrademark').click();
+                        }
+                        
                     });
 
 
@@ -148,7 +181,7 @@
                                         + "</button>"
                                         + "<strong>商标上传设置成功</strong>"
                                         + "</div>"
-                                    var $prompt = $('.msg');
+                                    var $prompt = $('.note');
                                     $prompt.html(msg);
                                 }
                                 else {

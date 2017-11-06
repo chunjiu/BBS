@@ -31,7 +31,7 @@ exports.addsave = function (carFisrtWord, carBrand,carModel,carYear, carAvatars,
     car.carFisrtWord = carFisrtWord;
     car.carBrand = carBrand;
     car.carModel.addToSet(carModel);
-    car.carYear = [{carYear:carYear,carModel:carModel,}]//这里要注意书写顺序
+    car.carYear = {carYear:carYear}//这里要注意书写顺序
     car.carAvatars = carAvatars;
 
     car.save(function (err) {

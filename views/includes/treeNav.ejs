@@ -19,13 +19,13 @@
                 <% var alphabet =String.fromCharCode(65+i) %>
                 <div id="a-<%=i%>" class="treeNavFont treeFisrtWord" style='text-align:center;cursor:pointer;margin-bottom:5px;'><%=alphabet%>
                 </div>
-                <ul>
+                <ul style='padding:0px;'>
                    <% car.forEach(function(car){%> 
                    <% if(car.carFisrtWord==alphabet){%>
-                    <div class=" carBrand" style='cursor: pointer;'>
+                    <p class="carBrand" style='cursor: pointer;'>
                       <span class="carTrademark"><img style='width:35px;height:35px;' src='<%=car.carAvatars%>'></img><span>
                       <span class="treeNavFont"><%=car.carBrand%>(<%=car.carModel.length%>)</span>
-                    </div>
+                    </p>
                     <ul class="carModel">
                        <% car.carModel.map(function(carModel){%>
                             <li style="cursor:pointer;margin-bottom:5px;">

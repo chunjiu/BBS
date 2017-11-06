@@ -127,9 +127,9 @@ app.use(bodyParser.json());
 app.listen(443, function () { 
   console.log('服务器已在443端口运行');
 });
-/*app.listen(3000, function () {//上线要改成80
+app.listen(80, function () {//上线要改成80
   console.log('服务器已在300端口运行');
-})*/
+})
 
 
 module.exports = app;
