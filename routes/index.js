@@ -133,6 +133,7 @@ router.get('/information', function (req, res, next) {
         return next(err);
       }
       console.log('car是:' + car);
+      
 
       res.render('Document', {
         current_user: req.session.user ? req.session.user : '',
@@ -180,7 +181,7 @@ router.get('/MaintenanceCase', function (req, res, next) {
       }
       console.log('caseTopic是：'+caseTopic);
       res.render('MaintenanceCase', {
-        current_user: req.session.user ? req.session.user.username : '',
+        current_user: req.session.user ? req.session.user: '',
         car: car,
         caseTopic:caseTopic,
         ChooseModel: true,

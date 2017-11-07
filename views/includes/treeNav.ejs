@@ -19,7 +19,7 @@
                 <% var alphabet =String.fromCharCode(65+i) %>
                 <div id="a-<%=i%>" class="treeNavFont treeFisrtWord" style='text-align:center;cursor:pointer;margin-bottom:5px;'><%=alphabet%>
                 </div>
-                <ul style='padding:0px;'>
+                <ul class="alphabet" style='padding:0px;'>
                    <% car.forEach(function(car){%> 
                    <% if(car.carFisrtWord==alphabet){%>
                     <p class="carBrand" style='cursor: pointer;'>
@@ -34,6 +34,10 @@
                                <% }else{%>
                                     <a class="chooseModel" href='/case?carModel=<%=carModel%>'><%=carModel%></a>
                                <% }%>
+                               <%if(current_user.attr[0].admin){%>
+                                <a href="" class="glyphicon glyphicon-edit carBrandEdit"></a>
+                               <%}%>
+                               
                              </li>
                            <!-- 显示年份
                                <%  car.carYear.map(function(carYear){%>
@@ -50,10 +54,6 @@
          <% } %>              
      </div>
   </div>
-  
 </div>
 
 
-<script>
-          
-</script>

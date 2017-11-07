@@ -73,8 +73,8 @@
 
 									<div class="col-sm-8">
 
-										<h3 style="font-weight:900;">年份：
-											<%=carModel%>&nbsp;
+										<h3 style="font-weight:900;"><%=carModel%>&nbsp;
+											年份：
 											<%if(current_user.attr[0].admin){%>
 												<select class="chooseYear" style='width:90px;'><!--上传选择年份-->
 													<%car.carYear[0].carYear.map(function(carYear){%>
@@ -387,6 +387,21 @@
 				} else {
 					$('.tree').offset({ top: headHeight + navHeight + 2 })
 				}
+			})
+
+			$('.carBrandEdit').click(function(){
+				$this = $(this);
+				let carBrand = $this.prev().attr('carBrand');
+				let carModel = $this.prev().text();
+				let FisrtWord = $this.closest('.alphabet').prev().text();
+				
+				let url = '/carBrand/edit'
+				
+				let queryURL = '?carBrand='+carBrand+'&carModel='+carModel+'&FisrtWord='+FisrtWord;
+				url= url+queryURL;		
+				
+				$this.attr('href',url);
+						
 			})
 
 			$('.en').click(function () {

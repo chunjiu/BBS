@@ -7,9 +7,11 @@ var User = require('../models/user');
 var Topic = require('../models/topic');
 var CaseTopic = require('../models/maintenanceCase');
 
+//添加汽车品牌页面
 exports.carbrand = function (req, res, next) {
     res.render('siteBG/CarBrand', {
         current_user: req.session.user ? req.session.user.username : '',
+        edit:false
     });
 }
 
@@ -41,6 +43,8 @@ exports.carbrandAdd = function (req, res, next) {
             // car.carModel.addToSet(carModel,carYear)
             //var Year = {carYear:carYear};//这里要注意与carmodel的书写顺序
             //car.carYear.addToSet(Year);
+            let content = { a: 789, b: 101112 };
+            car.content.addToSet(content);
             car.carModel.addToSet(carModel);
             car.save(function (err) {
                 if (err) {
@@ -50,6 +54,47 @@ exports.carbrandAdd = function (req, res, next) {
                 res.redirect('/carbrand');
             });
         }
+    })
+}
+
+//修改汽车品牌
+exports.carBrandEdit = function (req, res, next) { 
+    console.log('进入车型删除');
+    let carBrand = req.query.carBrand;
+    let carModel = req.query.carModel;
+    let FirstWord = req.query.FirstWord;
+    
+
+    console.log('carBrand是：' + carBrand);
+    console.log('carModel是：'+carModel)
+    console.log('FirstWord是：'+FirstWord);
+
+    Car.getCarByCarBrand(carBrand, function (err, car) { 
+        if (err) { 
+            return next(err);
+        }
+        if (!car) { 
+            console.log('没有找到车');
+            return;
+        }
+        car.carModel.pull(carModel);
+        car.save(function (err, car) { 
+            if (err) { 
+                return next(err)
+            }
+            if (!car) { 
+                console.log('没有找到车');
+                return;
+            }
+            res.render('siteBG/CarBrand', {
+                current_user: req.session.user ? req.session.user.username : '',
+                carFisrtWord: FirstWord,
+                carBrand: carBrand,//用于显示删掉的车型
+                carModel: carModel,
+                edit: true,
+            });
+            
+        })
     })
 }
 

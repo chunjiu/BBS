@@ -12,7 +12,7 @@ var CarSchema = new Schema({
     carAvatars: String,
     carYear: [Schema.Types.Mixed],
     carModelAvatars: String,//车型图片
-    carInformation:[Schema.Types.Mixed]//维修资料
+    carInformation: [Schema.Types.Mixed],//维修资料
 })
 
 
