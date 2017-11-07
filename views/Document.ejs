@@ -46,7 +46,7 @@
 	<div class="row">
 
 		<%-include('./includes/treeNav')%>
-			<div class="col-md-9 carModelURL" carModelUrl='<%=typeof( carModelURL)!==' undefined '&& carModelURL||' '%>'>
+			<div class="col-md-10 carModelURL" carModelUrl='<%=typeof( carModelURL)!==' undefined '&& carModelURL||' '%>'>
 				<%car_Brand.map(function(car){%>
 					<%car.carModel.map(function(carModel){%>
 						<div class="panel panel-default" carModel=<%=carModel%> style='display:none'>
@@ -71,21 +71,25 @@
 										</h4>
 									</div>
 
-									<div class="col-sm-8">
-
+									<div class="col-sm-10">
+										<div class="msg" style='margin-top:10px;'></div>
 										<h3 style="font-weight:900;"><%=carModel%>&nbsp;
 											年份：
-											<%if(current_user.attr[0].admin){%>
-												<select class="chooseYear" style='width:90px;'><!--上传选择年份-->
-													<%car.carYear[0].carYear.map(function(carYear){%>
-														<option>
-															<%=carYear%>
-														</option>
-														<%})%>
-												</select>
-											<%}%>
+											
+												<%if(current_user&&current_user.attr[0].admin){%>
+													<select class="chooseYear" style='width:150px;'><!--上传选择年份-->
+														<option>请选择年份</option>
+														<%car.carYear[0].carYear.map(function(carYear){%>
+															<option>
+																<%=carYear%>
+															</option>
+															<%})%>
+													</select>
+												<%}%>
+											
+											
 													
-												<select class="ChooseCarInformationYear" style='width:90px;'><!--查看资料时选择年份-->
+												<select class="ChooseCarInformationYear" style='width:150px;'><!--查看资料时选择年份-->
 
 													<!--对比两个对象的键值是否有相同，取相同值存进另一数组-->
 													<%var carInformationYear = [];%>
@@ -120,26 +124,24 @@
 													<li class="infoData" style='font-weight:900;font-size:15px;' carInformationYear='<%=carInformation.carYear%>'>
 														<a href="<%=carInformation.carInformation%>" target="pdfContainer" onclick="showPdf(true)">
 															<span class="glyphicon glyphicon-file"></span>
-															【
-															<span class="fileName">
-																<%=carInformation.fileName%>
-															</span>】
+															【<span class="fileName"><%=carInformation.fileName%></span>】
 														</a>
-														<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>'
+														<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>' carInformationYear='<%=carInformation.carYear%>'
 														 fileName='<%=carInformation.fileName%>'></a>
 
 													</li>
 													<% }%>
 														<% })%>
-
+														<%if(current_user&&current_user.attr[0].admin){%>
 															<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
-
+																
 																<form class="from" method="post" action="/uploadInformation" enctype="multipart/form-data">
 																	<input class="upfile" id="upInformation" name="upInformation" type="file" value="上传">
 																	<p style='margin-top:10px;' class="btn btn-default upLoadData" id='upLoadInformation' carModel='<%=carModel%>' carBrand='<%=car.carBrand%>'>上传资料</p>
 																</form>
-
 															</li>
+
+														<%}%>	
 															<div style='display:none;'>
 																<!--数组元素查询测试-->
 																<input type="text" placeholder="年份">
@@ -255,51 +257,96 @@
 
 			/*获取上传文件*/
 			$('.upfile').change(function () {
-				console.log('获取文件');
-				var fileNames = [];
-				$('.fileName').map(function (index, elment) {
-					let fileName = $(elment).text();
-					fileNames.push(fileName);
-				})
+				$this = $(this);
+				
 				var file = $(this).get(0).files[0];
-				fileNames.map(function (fileName, index) {
-					if (fileName === file.name) {//要去掉字符串前后空格
+				let year = $('.chooseYear').val();
+				let model = $this.next().attr('carModel');
+				var fileNames = $('.fileName');
+					
+				let patt1 = new RegExp(year);
+				let patt2 = new RegExp(model);
+				let result1 = patt1.test(file.name);
+				let result2 = patt2.test(file.name);
+			
+				//检查上传的文件名是否符合规范
+				let error = '';
+				if(!result1||!result2){
+					var msg = " <div class='alert alert-warning alert-dismissible' role='alert'>"
+                        + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                        + "<span aria-hidden='true'>&times;</span>"
+                        + "</button>"
+                        + "<strong>请查看是否已选择年份或文件命名是否规范</strong>"
+						+ "</div>"
+						let $prompt = $('.msg');
+						$prompt.html(msg);
+						$this.val('');//取消选择的文件
+				}
 
-						let r = confirm('上传同一文件是为了更新吗?');
-						if (r == true) {
-							$this.next().show();
+				//上传同一文件名时提醒是不是更新
+				fileNames.map(function(index,elment){
+					let text = $(elment).text();
+					if(file.name==text){
+						let r = confirm('之前上传过同一文件，现在是为了更新吗？');
+						if(r){
+							return true;
 						}
+						if(!r){
+							$this.val('');//取消选择的文件
+						}
+
 					}
-				})
+				})		
 				console.log('fileName是：' + file.name);
 				console.log('fileNames是：' + fileNames);
+				console.log('chooseYear是：'+year);
+				console.log('model是：'+model);
 
 			})
 
 			/*上传文件*/
-			let carYear;
+		
 			$('.chooseYear').change(function(){
 				$this = $(this);
 				let val = $this.val();
-				carYear = val;
+				//carYear = val;
 				console.log('val是：'+val);
+				$('.upfile').change();//验证年份与文件名
 			})
 			$('.upLoadData').click(function () {
 				$this = $(this);
 				console.log('进入uploadData');
 				let carModel = $this.attr('carModel');
 				let carBrand = $this.attr('carBrand');
+				let carYear = $('.chooseYear').val();
 				
 				console.log('carModel是：' + carModel);
 				console.log('carBrand是:' + carBrand);
 				console.log('carYear是:' + carYear);
 
+				let error = ''
+				if(carYear=='请选择年份'){
+					var msg = " <div class='alert alert-warning alert-dismissible' role='alert'>"
+                        + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                        + "<span aria-hidden='true'>&times;</span>"
+                        + "</button>"
+                        + "<strong>请选择年份</strong>"
+						+ "</div>"
+						let $prompt = $('.msg');
+						$prompt.html(msg);
+						$('.chooseYear').focus();
+
+						return;
+				}
+
 				let url = $this.closest('.from').attr('action');
 				let queryUrl = "?carBrand=" + carBrand + "&carYear=" + carYear + "&carModel=" + carModel;
 				url = url + queryUrl;
 
-				$('.from').attr('action', url);
-				$('.from').submit();
+				let from = $this.closest('.from');
+
+				from.attr('action', url);
+				from.submit();
 
 			})
 
@@ -310,6 +357,7 @@
 				var $this = $(this);
 				var carBrand = $this.attr('Brand');
 				var carInformation = $this.attr('Information');
+				var carInformationYear = $this.attr('carInformationYear');
 				var fileName = $this.attr('fileName');
 
 				infoData = $this.closest('.infoData');
@@ -317,7 +365,8 @@
 				console.log('carInformation是：' + carInformation);
 				var data = {
 					carBrand: carBrand,
-					carInformation: carInformation
+					carInformation: carInformation,
+					carInformationYear:carInformationYear,
 				}
 				let r = confirm('确认删除吗？')
 				if (r == true) {

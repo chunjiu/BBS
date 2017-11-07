@@ -1,5 +1,5 @@
 var fs = require('fs');
-//var path = require('path');
+var path = require('path');
 
 var multer = require('../common/multerCar');//文件上传模块
 var Car = require('../models/car');
@@ -43,8 +43,6 @@ exports.carbrandAdd = function (req, res, next) {
             // car.carModel.addToSet(carModel,carYear)
             //var Year = {carYear:carYear};//这里要注意与carmodel的书写顺序
             //car.carYear.addToSet(Year);
-            let content = { a: 789, b: 101112 };
-            car.content.addToSet(content);
             car.carModel.addToSet(carModel);
             car.save(function (err) {
                 if (err) {
@@ -236,10 +234,11 @@ exports.removeInformation = function (req, res, next) {
     console.log('进入资料删除');
     var carBrand = req.body.carBrand;
     var carInformation = req.body.carInformation;
+    var carInformationYear = req.body.carInformationYear;
     console.log('carBrand是：' + carBrand);
     console.log('carInformation是：' + carInformation);
 
-    Car.removeInformation(res, carBrand, carInformation, function (err, car) { })
+    Car.removeInformation(res, carBrand, carInformation,carInformationYear, function (err, car) { })
 
     carInformation = carInformation.replace(/\\/g, '/');
     var newPath = 'e:/BBS/public' + carInformation;//注意字符串间不能有空格

@@ -63,9 +63,9 @@ exports.getCarByModel = function (carModel, callback) {
  }
 
 
-exports.removeInformation = function (res,carBrand, carInformation, callback) { 
+exports.removeInformation = function (res,carBrand, carInformation,carYear, callback) { 
     console.log('开始资料路径删除');
-    Car.update({ 'carBrand': carBrand }, { $pull: { "carInformation": { "carInformation": carInformation } } }, function (err) { 
+    Car.update({ 'carBrand': carBrand }, { $pull: { "carInformation": { "carInformation": carInformation,"carYear":carYear} } }, function (err) { 
         if (err) {
             console.log('查询出错');
             return next(err);

@@ -17,10 +17,13 @@
                 <%=caseTopic.FaultPhenomenon%>
             </h4>
         </div>
-        <div class="col-sm-offset-10">
-            <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/edit">修改</a></span>
-            <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/remove">删除</a></span>
-        </div>
+        <%if(current_user&&current_user.attr[0].admin){%>
+            <div class="col-sm-offset-10">
+                <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/edit">修改</a></span>
+                <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/remove">删除</a></span>
+            </div>
+        <%}%>
+        
         <div>
             <div style='border-bottom:1px solid #CCCCCC;'>
                 <h4 style='font-weight:900;'>步聚/方法</h4>

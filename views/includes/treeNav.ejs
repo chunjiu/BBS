@@ -34,9 +34,13 @@
                                <% }else{%>
                                     <a class="chooseModel" href='/case?carModel=<%=carModel%>'><%=carModel%></a>
                                <% }%>
-                               <%if(current_user.attr[0].admin){%>
-                                <a href="" class="glyphicon glyphicon-edit carBrandEdit"></a>
-                               <%}%>
+                               
+                                <%if(current_user&&current_user.attr[0].admin){%>
+                                  <a href="" class="glyphicon glyphicon-edit carBrandEdit"></a> 
+                              <%}%>
+                              
+                               
+                               
                                
                              </li>
                            <!-- 显示年份
