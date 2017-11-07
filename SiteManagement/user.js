@@ -20,13 +20,15 @@ exports.addAdmin = function (req, res, next) {
             console.log('没有找到user');
             return;
         }
-        let admin = { admin: true };
-        user.attr.addToSet(admin);
-        user.save(function (err) { 
+        //let admin = { admin: '123' } ;
+        
+        user.attr.admin = true;
+        user.save(function (err,user) { 
             if (err) {
                 console.log('保存出错');
                 return next(err);
             } else { 
+                console.log('保存后的user是：'+user);
                 res.send({
                     success: true,
                 })

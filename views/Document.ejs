@@ -74,9 +74,9 @@
 									<div class="col-sm-10">
 										<div class="msg" style='margin-top:10px;'></div>
 										<h3 style="font-weight:900;"><%=carModel%>&nbsp;
-											年份：
+											年份：<%=current_user&&current_user.attr.admin%>
 											
-												<%if(current_user&&current_user.attr[0].admin){%>
+												<%if(current_user&&current_user.attr.admin){%>
 													<select class="chooseYear" style='width:150px;'><!--上传选择年份-->
 														<option>请选择年份</option>
 														<%car.carYear[0].carYear.map(function(carYear){%>
@@ -126,13 +126,14 @@
 															<span class="glyphicon glyphicon-file"></span>
 															【<span class="fileName"><%=carInformation.fileName%></span>】
 														</a>
+														<%if(current_user&&current_user.attr.admin){%>
 														<a style='cursor: pointer; text-decoration: none;' class="glyphicon glyphicon-trash remove" Brand='<%=car.carBrand%>' Information='<%=carInformation.carInformation%>' carInformationYear='<%=carInformation.carYear%>'
 														 fileName='<%=carInformation.fileName%>'></a>
-
+														<%}%>
 													</li>
 													<% }%>
 														<% })%>
-														<%if(current_user&&current_user.attr[0].admin){%>
+														<%if(current_user&&current_user.attr.admin){%>
 															<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
 																
 																<form class="from" method="post" action="/uploadInformation" enctype="multipart/form-data">

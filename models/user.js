@@ -28,7 +28,7 @@ var UserSchema = new Schema({
     score: { type: Number, default: 0 },
     topic_count: { type: Number, default: 0 },
     collect_topic_count: { type: Number, default: 0 },//被收藏的话题数
-    attr:[Schema.Types.Mixed]//用户属性：普通用户，员工、管理员、hr等
+    attr: {admin:false,staff:false}//用户属性：普通用户，员工、管理员、hr等
 })
 
 UserSchema.methods.create_at_ago = function () { 
@@ -47,7 +47,8 @@ exports.addsave = function (name, password, email,active,callback) {
     user.password = password;
     user.email = email;
     user.active = active;
-    user.indexOf = indexOf +=1;
+    user.indexOf = indexOf += 1;
+    user.attr = { admin: false, staff: false };
     user.save(function (err) { 
         callback(err, user);
     });

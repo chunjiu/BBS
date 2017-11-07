@@ -35,7 +35,7 @@
                                     <a class="chooseModel" href='/case?carModel=<%=carModel%>'><%=carModel%></a>
                                <% }%>
                                
-                                <%if(current_user&&current_user.attr[0].admin){%>
+                                <%if(current_user&&current_user.attr.admin){%>
                                   <a href="" class="glyphicon glyphicon-edit carBrandEdit"></a> 
                               <%}%>
                               

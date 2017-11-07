@@ -79,7 +79,7 @@ router.get('/api', function (req, res, next) {
 //接口结束
 
 /*汽车年份查找测试*/
-router.post('/chekYear', function (req, res, next) { 
+router.post('/chekYear', function (req, res, next) {
   console.log('进入查询');
 
   let year = req.body.year;
@@ -87,18 +87,18 @@ router.post('/chekYear', function (req, res, next) {
   console.log(year);
   console.log(model);
   Car.getCarByYear(year, model, function (err, car) {
-    if (err) { 
+    if (err) {
       console.log('出错');
       return next();
     }
-    if (!car) { 
+    if (!car) {
       console.log('没有找到车');
     }
-    console.log('car是：'+car)
-   })
-}) 
+    console.log('car是：' + car)
+  })
+})
 
-router.post('/set/admin', function (req, res, next) { 
+router.post('/set/admin', function (req, res, next) {
   let title = req.body.title;
   let admin = req.body.admin;
   let yn = req.body.yn;
@@ -110,20 +110,22 @@ router.post('/set/admin', function (req, res, next) {
 /*get information page*/
 
 router.get('/information', function (req, res, next) {
-  var carBrand = req.query.carBrand ||'奥迪';
-  var carModel = req.query.carModel||'奥迪A6';
+  var ReqUser = req.session.user ? req.session.user: '';
+
+  var carBrand = req.query.carBrand || '奥迪';
+  var carModel = req.query.carModel || '奥迪A6';
 
   console.log('carBrand是：' + carBrand);
   var query = {};
-  if (carBrand) { 
+  if (carBrand) {
     query.carBrand = carBrand;
   }
-  Car.getCarByQuery('', '', function (err, car) { 
-    if (err) { 
+  Car.getCarByQuery('', '', function (err, car) {
+    if (err) {
       console.log('出错');
       return next(err);
     }
-    Car.getCarByQuery(query,'' ,function (err, car_Brand) { 
+    Car.getCarByQuery(query, '', function (err, car_Brand) {
       if (err) {
         console.log('出错');
         return next(err);
@@ -133,61 +135,60 @@ router.get('/information', function (req, res, next) {
         return next(err);
       }
       console.log('car是:' + car);
-      
-
-      res.render('Document', {
-        current_user: req.session.user ? req.session.user : '',
-        car: car,
-        car_Brand:car_Brand,
-        carModelURL:carModel,
-        ChooseModel: true,
-      })
+    
+        res.render('Document', {
+          current_user: ReqUser,
+          car: car,
+          car_Brand: car_Brand,
+          carModelURL: carModel,
+          ChooseModel: true,
+        })
     })
 
   })
-  
+
 })
 
 /*get MaintenaceCase page*/
-router.get('/MaintenanceCase', function (req, res, next) { 
-  var ReqUser = req.session.user ? req.session.user.username : '';
+router.get('/MaintenanceCase', function (req, res, next) {
+  var ReqUser = req.session.user ? req.session.user: '';
   var tab = req.query.tab;
   var carModel = req.query.carModel;
 
-  Car.getCarByQuery('', function (err, car) { 
+  Car.getCarByQuery('', function (err, car) {
     if (err) {
       console.log('出错');
       return next(err);
-    } 
+    }
     let query = {};
 
     query.tab = tab || '';
-    if (query.tab == '') { 
-      query.tab = { $in: [['机电维修案例'],['电子维修案例']] };
+    if (query.tab == '') {
+      query.tab = { $in: [['机电维修案例'], ['电子维修案例']] };
     }
-    if (carModel) { 
+    if (carModel) {
       query.carModel = carModel;
     }
     query.delete = false;
-  
-    MaintenaceCase.getCaseTopicByQuery(query, '', function (err, caseTopic) { 
-      if (err) { 
+
+    MaintenaceCase.getCaseTopicByQuery(query, '', function (err, caseTopic) {
+      if (err) {
         console.log('出错');
         return next(err);
       }
-      if (!caseTopic) { 
+      if (!caseTopic) {
         console.log('没有找到维修案例');
         return;
       }
-      console.log('caseTopic是：'+caseTopic);
-      res.render('MaintenanceCase', {
-        current_user: req.session.user ? req.session.user: '',
-        car: car,
-        caseTopic:caseTopic,
-        ChooseModel: true,
-        carModelURL:carModel
+        console.log('caseTopic是：' + caseTopic);
+        res.render('MaintenanceCase', {
+          current_user: ReqUser,
+          car: car,
+          caseTopic: caseTopic,
+          ChooseModel: true,
+          carModelURL: carModel
+        })
       })
-    })
   })
 })
 
@@ -204,10 +205,10 @@ router.get('/', function (req, res, next) {
 });
 
 /*get backStage page*/
-router.get('/backStage', function (req, res, next) { 
+router.get('/backStage', function (req, res, next) {
   var ReqUser = req.session.user ? req.session.user.username : '';
   res.render('siteBg/backStage', {
-    current_user:ReqUser,
+    current_user: ReqUser,
   });
 })
 
@@ -222,13 +223,13 @@ router.get('/case', function (req, res, next) {
   console.log('carModel是：' + carModel);
 
   var query = {};
-  
-  if (carModel) { 
+
+  if (carModel) {
     query.carModel = carModel;
   }
-  
+
   if (!tab || tab == '全部') {
-    query.tab = { $nin: ['申诉','招聘'] };//db.col.find(tab:{$nin:['招聘','招聘']})
+    query.tab = { $nin: ['申诉', '招聘'] };//db.col.find(tab:{$nin:['招聘','招聘']})
   } else if (tab == '精华') {
     query.good = true;
   } else {
@@ -237,7 +238,7 @@ router.get('/case', function (req, res, next) {
 
   query.deleted = false;
 
-   // query.carModel = carModel;
+  // query.carModel = carModel;
   console.log('query是：' + query.tab)
 
   var limit = 20;
@@ -282,7 +283,7 @@ router.get('/case', function (req, res, next) {
               pages: pages,
               car: car,
               carModelURL: carModel,
-              ChooseModel:false
+              ChooseModel: false
             });
 
           })
@@ -462,9 +463,9 @@ router.get('/topic/:id/good', function (req, res, next) {
         return next(err);
       }
       var referer = req.get('referer');
- 
+
       var msg = topic.good ? '该话题加精华成功' : '该话题精华已被取消';
-      res.render('notify/notify', { error: msg,referer:referer});
+      res.render('notify/notify', { error: msg, referer: referer });
     });
 
   })
@@ -802,7 +803,7 @@ router.post('/sign', function (req, res) {
       console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
-      User.addsave(username, password, email, false, function (err, user) {
+      User.addsave(username, password, email, true, function (err, user) {
         if (!err) {
           user.save(function (err) {
             res.render('notify/notify', { success: '注册成功', link: link });
@@ -945,7 +946,7 @@ router.post('/topic/create', function (req, res, next) {
     carBrand = '申诉';
     carModel = '申诉';
   }
-  if (tab == '招聘') { 
+  if (tab == '招聘') {
     carBrand = '招聘';
     carModel = '招聘';
   }
@@ -976,7 +977,7 @@ router.post('/topic/create', function (req, res, next) {
     if (err) {
       return next(err);
     }
-    Topic.newAndSave(title, tab,carBrand,carModel, content, req.session.user.username, user.avatars, function (err, topic) {
+    Topic.newAndSave(title, tab, carBrand, carModel, content, req.session.user.username, user.avatars, function (err, topic) {
       if (err) {
         return next(err);
       }
