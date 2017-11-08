@@ -14,7 +14,8 @@ router.use('/', index);
 router.get('/carbrand',auth.AdminRequired, car.carbrand);//添加汽车品牌页面
 router.post('/carbrand/add',car.carbrandAdd);//添加汽车品牌
 router.post('/upload/trademark', car.uploadTrademark);//添加汽车品牌商标
-router.get('/carBrand/edit',car.carBrandEdit)
+router.get('/carBrand/edit', car.carBrandEdit);//车型删除、修改
+router.post('/carBrand/remove', car.carBrandRemove);//汽车品牌删除
 
 router.get('/getCar',car.getCar);//获取汽车品牌
 router.post('/getCarModel', car.getCarModel);//获取汽车车型

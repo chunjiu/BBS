@@ -95,7 +95,8 @@
             </div>
           </div>
         </div>
-
+        <!-- <script src="javascripts/jquery-3.2.1.min.js"></script>validate1.4插件只能引入jquery的1.1版本 -->
+        <script src="javascripts/bootstrap.js"></script>
 
         <script>
           $().ready(function () {
@@ -105,7 +106,7 @@
               var patt = /(.*[A-Z]+.*[a-z]+.*[0-9]+)|(.*[A-Z]+.*[0-9]+.*[a-z]+)|(.*[a-z]+.*[0-9]+.*[A-Z]+)|(.*[a-z]+.*[A-Z]+.*[0-9]+)|(.*[0-9]+.*[a-z]+.*[A-Z]+)|(.*[0-9]+.*[A-Z]+.*[a-z]+)/;
               console.log(patt.test(pass));
               console.log('搜索到的结果'+pass.match(patt))
-              if(!patt.test(pass)){
+              if(!patt.test(pass)||pass==''){
                 var errElement= $('#password-error');
                 if(errElement){
                   $('#password-error').replaceWith('<label id="password-error" class="error" for="password">密码应+大小写字母+数字+特殊符号组成，且不能少于7个字符</label>');
@@ -157,10 +158,6 @@
             });
           });
         </script>
-
-
-        <!-- <script src="javascripts/jquery-3.2.1.min.js"></script>validate1.4插件只能引入jquery的1.1版本 -->
-        <script src="javascripts/bootstrap.js"></script>
 
 
   </body>

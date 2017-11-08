@@ -38,7 +38,10 @@ exports.addsave = function (carFisrtWord, carBrand,carModel,carYear, carAvatars,
         callback(err, car);
     });
 }
-
+exports.remove = function (carBrand, callback) { 
+    console.log('开始删除品牌');
+    Car.remove({carBrand:carBrand},callback)
+}
 
 exports.getCarByCarBrand = function (carBrand, callback) {
     Car.findOne({ 'carBrand': carBrand }, callback);

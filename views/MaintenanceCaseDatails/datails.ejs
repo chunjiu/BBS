@@ -4,12 +4,14 @@
             <h2>
                 <%=caseTopic.title%>
             </h2>
+            <span style='font-weight:bold;margin-right:3px;border-right:1px solid #CCCCCC;padding-right:5px;'>作者：<%=caseTopic.username%></span>
             <span style='border-right:1px solid #CCCCCC;padding-right:5px;margin-right:5px;'>浏览：
                 <%=caseTopic.visit_count%>
             </span>
             <span>更新：
                 <%=caseTopic.updated_at_ago()%>
             </span>
+            <span style='color:red;font-weight:bold;border-left:1px solid red;padding-left:5px;margin-left:15px;'>注：未经同意，不得转载</span>
 
         </div>
         <div style='margin-top:10px;'>
@@ -17,7 +19,7 @@
                 <%=caseTopic.FaultPhenomenon%>
             </h4>
         </div>
-        <%if(current_user&&current_user.attr[0].admin){%>
+        <%if(current_user&&current_user.attr.admin){%>
             <div class="col-sm-offset-10">
                 <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/edit">修改</a></span>
                 <span class="btn btn-default"><a href="/MaintenanceCaseDatails/<%=caseTopic.id%>/remove">删除</a></span>

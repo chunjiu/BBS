@@ -193,285 +193,289 @@
         </div>
         <%-include('../includes/end')%>
             <script>
-                $('.insert').click(function () {
-                    let $this = $(this);
-                    let val = $this.prev().val();
-                    //let yn = true;
+                $(document).ready(function () {
+                    $('.insert').click(function () {
+                        let $this = $(this);
+                        let val = $this.prev().val();
+                        //let yn = true;
 
-                    let action = '/set/admin';
-                    let admin = 'admin';
-                    let data = {
-                        title: val,
-                        admin: admin,
-                        yn: true,
+                        let action = '/set/admin';
+                        let admin = 'admin';
+                        let data = {
+                            title: val,
+                            admin: admin,
+                            yn: true,
 
-                    }
-                    $.post(action, data, function () { })
-                })
-
-
-
-                //获取车辆品牌
-                function getCar() {
-                    console.log('获取品牌');
-                    $.get('/getcar', function (data) {
-                        var carBrand = $('#carBrand');
-                        if (data.success) {
-                            console.log('成功');
-                            data.car.map(function (car, index) {
-                                carBrand.append('<option>' + car.carBrand + '</option>');
-                            })
                         }
+                        $.post(action, data, function () { })
                     })
-                };
 
-                //后台拉取车辆型号
-                $('#carBrand').change(function () {
-                    var val = $('#carBrand').val();
-                    var data = {
-                        carBrand: val,
-                    };
-                    $.post('/getCarModel', data, function (data) {
-                        var carModelElement = $('#carModel');
-                        carModelElement.show();
-                        var carModelChildren = carModelElement.children();
-                        if (carModelChildren) {
-                            carModelElement.empty();
-                            data.car.carModel.map(function (carModel, index) {
-                                carModelElement.append('<option>' + carModel + '</option>')
-                            })
-                        } else {
-                            data.car.carModel.map(function (carModel, index) {
-                                carModelElement.append('<option>' + carModel + '</option>')
-                            })
-                        }
-                    })
-                })
 
-                //内容及字数验证
-                $('.mileage').blur(function () {
-                    $this = $(this);
-                    let val = $this.val();
-                    let reg = /^[0-9]*$/;
-                    let msg = '<span style="color:red;line-height:40px;" class="col-sm-3 col-xs-3 col-md-3 msg">请输入里程(数字)</span>'
-                    let errorMsg = $this.next().hasClass('msg')
-                    if (val == '' || !reg.test(val)) {
-                        if (errorMsg) {
-                            $this.next().replaceWith(msg)
-                        } else {
-                            $this.after(msg);
-                        }
-                    } else {
-                        if (errorMsg) {
-                            $this.next().remove();
-                        }
-                    }
-                })
-                $('#carBrand').blur(function () {
-                    $this = $(this);
-                    let val = $this.val();
-                    let msg = '<span style="color:red" class="col-sm-12 msg">请选择品牌</span>'
-                    let errorMsg = $this.next().hasClass('msg')
-                    if (val == '选择品牌') {
-                        if (errorMsg) {
-                            $this.next().replaceWith(msg)
-                        } else {
-                            $this.after(msg);
-                        }
-                    } else {
-                        if (errorMsg) {
-                            $this.next().remove();
-                        }
-                    }
-                })
 
-                $('.postData').blur(function () {
-                    $this = $(this);
-                    let val = $this.val();
-                    let errorMsg = $this.next().hasClass('msg')
-
-                    let msg = '<span style="color:red" class="col-sm-12 msg">内容至少20个字节</span>'
-                    if (!val || val.length < 20) {
-                        if (errorMsg) {
-                            $this.next().replaceWith(msg)
-                        } else {
-                            $this.after(msg);
-                        }
-                    } else {
-                        if (errorMsg) {
-                            $this.next().remove();
-                        }
-                    }
-                })
-
-                //标题验证 + AJAX标题上传
-                $('#title').blur(function () {
-                    let msg = '<span style="color:red" class="col-sm-12 msg">标题字符需在8到25之间</span>';
-                    let errorMsg = $this.next().hasClass('msg')
-                    $this = $(this);
-                    let val = $(this).val();
-                    if (val.length < 8 || val.length > 25) {
-                        if (errorMsg) {
-                            $this.next().replaceWith(msg)
-                        } else {
-                            $this.after(msg);
-                        }
-                    } else {
-                        if (errorMsg) {
-                            $this.next().remove();
-
-                            let action = '/caseUpload';
-                            let title = val;
-                            let data = {
-                                val: val,
+                    //获取车辆品牌
+                    function getCar() {
+                        console.log('获取品牌');
+                        $.get('/getcar', function (data) {
+                            var carBrand = $('#carBrand');
+                            if (data.success) {
+                                console.log('成功');
+                                data.car.map(function (car, index) {
+                                    carBrand.append('<option>' + car.carBrand + '</option>');
+                                })
                             }
-                            $this.attr({ 'title': '修改请点击右边修改按钮', "disabled": "disabled" })
-                            $('.revise').show();
-                            $.post(action, data, function () {
-                                console.log('title保存');
-                            })
-                        }
-                    }
-
-                })
-
-                //标题修改
-                $('.revise').click(function () {
-                    $that = $(this)
-                    let OriginalValue = $('#title').val();
-                    $('#title').off();
-                    $('#title').removeAttr('disabled');
-
-                    $('#title').change(function () {
-                        $this = $(this)
-                        console.log('标题已改变');
-                        console.log('原标题是：' + OriginalValue);
-                        console.log('现标题是：' + $this.val());
-
-                        let toggleText = $that.text();
-                        let newTitle = $this.val();
-
-                        //此处用涵数，可用retrun退出整个事件，否则点击时一直处于change事件内
-                        $that.click(updateTitle(OriginalValue, newTitle))
-
-                    })
-
-                })
-
-                function updateTitle(OriginalValue, newTitle) {
-                    console.log('再次点击');
-                    $('#title').attr('disabled', 'desabled');
-
-                    let action = '/caseUpload';
-                    let data = {
-                        OriginalValue: OriginalValue,
-                        newTitle: newTitle
+                        })
                     };
-                    $.post(action, data, function (data) {
-                        if (data.success) {
-                            console.log('标题修改成功');
+
+                    //后台拉取车辆型号
+                    $('#carBrand').change(function () {
+                        var val = $('#carBrand').val();
+                        var data = {
+                            carBrand: val,
+                        };
+                        $.post('/getCarModel', data, function (data) {
+                            var carModelElement = $('#carModel');
+                            carModelElement.show();
+                            var carModelChildren = carModelElement.children();
+                            if (carModelChildren) {
+                                carModelElement.empty();
+                                data.car.carModel.map(function (carModel, index) {
+                                    carModelElement.append('<option>' + carModel + '</option>')
+                                })
+                            } else {
+                                data.car.carModel.map(function (carModel, index) {
+                                    carModelElement.append('<option>' + carModel + '</option>')
+                                })
+                            }
+                        })
+                    })
+
+                    //内容及字数验证
+                    $('.mileage').blur(function () {
+                        $this = $(this);
+                        let val = $this.val();
+                        let reg = /^[0-9]*$/;
+                        let msg = '<span style="color:red;line-height:40px;" class="col-sm-3 col-xs-3 col-md-3 msg">请输入里程(数字)</span>'
+                        let errorMsg = $this.next().hasClass('msg')
+                        if (val == '' || !reg.test(val)) {
+                            if (errorMsg) {
+                                $this.next().replaceWith(msg)
+                            } else {
+                                $this.after(msg);
+                            }
                         } else {
-                            console.log('标题修改失败');
+                            if (errorMsg) {
+                                $this.next().remove();
+                            }
+                        }
+                    })
+                    $('#carBrand').blur(function () {
+                        $this = $(this);
+                        let val = $this.val();
+                        let msg = '<span style="color:red" class="col-sm-12 msg">请选择品牌</span>'
+                        let errorMsg = $this.next().hasClass('msg')
+                        if (val == '选择品牌') {
+                            if (errorMsg) {
+                                $this.next().replaceWith(msg)
+                            } else {
+                                $this.after(msg);
+                            }
+                        } else {
+                            if (errorMsg) {
+                                $this.next().remove();
+                            }
+                        }
+                    })
+
+                    $('.postData').blur(function () {
+                        $this = $(this);
+                        let val = $this.val();
+                        let errorMsg = $this.next().hasClass('msg')
+
+                        let msg = '<span style="color:red" class="col-sm-12 msg">内容至少20个字节</span>'
+                        if (!val || val.length < 20) {
+                            if (errorMsg) {
+                                $this.next().replaceWith(msg)
+                            } else {
+                                $this.after(msg);
+                            }
+                        } else {
+                            if (errorMsg) {
+                                $this.next().remove();
+                            }
+                        }
+                    })
+
+                    //标题验证 + AJAX标题上传
+                    $('#title').blur(function () {
+                        let msg = '<span style="color:red" class="col-sm-12 msg">标题字符需在8到25之间</span>';
+                        let errorMsg = $this.next().hasClass('msg')
+                        $this = $(this);
+                        let val = $(this).val();
+                        if (val.length < 8 || val.length > 25) {
+                            if (errorMsg) {
+                                $this.next().replaceWith(msg)
+                            } else {
+                                $this.after(msg);
+                            }
+                        } else {
+                            if (errorMsg) {
+                                $this.next().remove();
+
+                                let action = '/caseUpload';
+                                let title = val;
+                                let data = {
+                                    val: val,
+                                }
+                                $this.attr({ 'title': '修改请点击右边修改按钮', "disabled": "disabled" })
+                                $('.revise').show();
+                                $.post(action, data, function () {
+                                    console.log('title保存');
+                                })
+                            }
                         }
 
                     })
-                    //更新更改后的标题
-                    OriginalValue = newTitle;
-                    return;
-                }
 
-                //案例保存
-                $('#SaveAndUp').click(function () {
+                    //标题修改
+                    $('.revise').click(function () {
+                        $that = $(this)
+                        let OriginalValue = $('#title').val();
+                        $('#title').off();
+                        $('#title').removeAttr('disabled');
 
-                    //禁用时无法获得tltle的value值，上传时先删除禁用属性
-                    $('#title').removeAttr('disabled');
+                        $('#title').change(function () {
+                            $this = $(this)
+                            console.log('标题已改变');
+                            console.log('原标题是：' + OriginalValue);
+                            console.log('现标题是：' + $this.val());
 
-                    let msg = $('.msg');
-                    let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
+                            let toggleText = $that.text();
+                            let newTitle = $this.val();
 
-                    if (typeof (msgCla) !== 'undefined') {
-                        console.log('还存在' + msgCla);
-                        msg.prev().focus();
-                        return false;
-                    } else {
-                        return true;
-                    }
-                })
+                            //此处用涵数，可用retrun退出整个事件，否则点击时一直处于change事件内
+                            $that.click(updateTitle(OriginalValue, newTitle))
 
+                        })
 
+                    })
 
-                //获取图片
-                $('.form-grop span:nth-child(6)').click(function () {
-                    console.log('执行次数');
-                    $this = $(this);
-                    console.log('属性是：'+$this.text());
-                    let input = $this.prev();
-                    input.click();
+                    function updateTitle(OriginalValue, newTitle) {
+                        console.log('再次点击');
+                        $('#title').attr('disabled', 'desabled');
 
-                })
+                        let action = '/caseUpload';
+                        let data = {
+                            OriginalValue: OriginalValue,
+                            newTitle: newTitle
+                        };
+                        $.post(action, data, function (data) {
+                            if (data.success) {
+                                console.log('标题修改成功');
+                            } else {
+                                console.log('标题修改失败');
+                            }
 
-                var imgBase64;//base64位图片全局变量
-                
-
-                function get_img(file, id) {
-                    $that = $(this);
-                    
-                    var id = '#' + id;//让jquery可以接收id参数
-
-                    var canavas_img = $(id).prev().find('span');
-                    var img = file;
-                    console.log('这个元素是：' + id);
-                    var fileName = img.name;
-                    var fileType = fileName.substring(fileName.indexOf('.'), fileName.length).toLowerCase();
-                    console.log(fileType);
-                    if (fileType != '.jpg' && fileType != '.jpeg' && fileType != '.gif' && fileType != '.png' && fileType != '.bmp') {
-                        alert('请选择jpg,png,fig,bmp格式的图片');
+                        })
+                        //更新更改后的标题
+                        OriginalValue = newTitle;
                         return;
                     }
-                    var reader = new FileReader();
-                    reader.readAsDataURL(img);
-                    reader.onload = function () {
-                        var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应
-                        canavas_img.html(img_element);
-                        if (canavas_img.width() > 400 || canavas_img.height() > 400) {
-                            alert('请上传宽不大于400，高不大于400的图片');
-                            canavas_img.html('');
-                            return;
+
+                    //案例保存
+                    $('#SaveAndUp').click(function () {
+
+                        //禁用时无法获得tltle的value值，上传时先删除禁用属性
+                        $('#title').removeAttr('disabled');
+
+                        let msg = $('.msg');
+                        let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
+
+                        if (typeof (msgCla) !== 'undefined') {
+                            console.log('还存在' + msgCla);
+                            msg.prev().focus();
+                            return false;
+                        } else {
+                            return true;
                         }
-                       imgBase64 = this.result;
+                    })
 
-                        /*获取图片后用AJAX上传  注意：需在reader.onload涵数内，否则会因为异步imgBase64还没有获得result值而报错*/
-                        var up = $(id).next().next();
-                        console.log('获取的属性是：' + up.attr('faultImg'));
-                        up.click();
 
-                    }
-                }
 
-                //图片上传
-               $('.upImg').click(function () {
-                    console.log('进入图片上传');
-                    $this = $(this)
-                    let fautlType = $this.attr('faultImg')
-                    let title = $('#title').val();
-
-                    var carModel = $('#carModel').val();
-
-                    var action = '/caseUpload/img';
-                    var data = {
-                        title: title,
-                        carModel: carModel,
-                        faultType: fautlType,
-                        baseData: imgBase64,
-                    }
-
-                    $.post(action, data, function () {
+                    //获取图片
+                    $('.form-grop span:nth-child(6)').click(function () {
+                        console.log('执行次数');
+                        $this = $(this);
+                        console.log('属性是：' + $this.text());
+                        let input = $this.prev();
+                        input.click();
 
                     })
-                })
 
-                $('.upload').click(function () {
-                    $('#SaveAndUp').click();
+                    var imgBase64;//base64位图片全局变量
+
+
+                    function get_img(file, id) {
+                        $that = $(this);
+
+                        var id = '#' + id;//让jquery可以接收id参数
+
+                        var canavas_img = $(id).prev().find('span');
+                        var img = file;
+                        console.log('这个元素是：' + id);
+                        var fileName = img.name;
+                        var fileType = fileName.substring(fileName.indexOf('.'), fileName.length).toLowerCase();
+                        console.log(fileType);
+                        if (fileType != '.jpg' && fileType != '.jpeg' && fileType != '.gif' && fileType != '.png' && fileType != '.bmp') {
+                            alert('请选择jpg,png,fig,bmp格式的图片');
+                            return;
+                        }
+                        var reader = new FileReader();
+                        reader.readAsDataURL(img);
+                        reader.onload = function () {
+                            var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应
+                            canavas_img.html(img_element);
+                            if (canavas_img.width() > 400 || canavas_img.height() > 400) {
+                                alert('请上传宽不大于400，高不大于400的图片');
+                                canavas_img.html('');
+                                return;
+                            }
+                            imgBase64 = this.result;
+
+                            /*获取图片后用AJAX上传  注意：需在reader.onload涵数内，否则会因为异步imgBase64还没有获得result值而报错*/
+                            var up = $(id).next().next();
+                            console.log('获取的属性是：' + up.attr('faultImg'));
+                            up.click();
+
+                        }
+                    }
+
+                    //图片上传
+                    $('.upImg').click(function () {
+                        console.log('进入图片上传');
+                        $this = $(this)
+                        let fautlType = $this.attr('faultImg')
+                        let title = $('#title').val();
+
+                        var carModel = $('#carModel').val();
+
+                        var action = '/caseUpload/img';
+                        var data = {
+                            title: title,
+                            carModel: carModel,
+                            faultType: fautlType,
+                            baseData: imgBase64,
+                        }
+
+                        $.post(action, data, function () {
+
+                        })
+                    })
+
+                    $('.upload').click(function () {
+                        $('#SaveAndUp').click();
+                    })
+
+
                 })
 
             </script>

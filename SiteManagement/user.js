@@ -20,8 +20,7 @@ exports.addAdmin = function (req, res, next) {
             console.log('没有找到user');
             return;
         }
-        //let admin = { admin: '123' } ;
-        
+       
         user.attr.admin = true;
         user.save(function (err,user) { 
             if (err) {

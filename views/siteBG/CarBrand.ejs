@@ -30,10 +30,10 @@
                             <div class="col-sm-4">
                                 <%if(edit){%>
                                     <input type="text" class="form-control postData" name="carFisrtWord" placeholder="汽车品牌首字母(大写)" value='<%=typeof(carFisrtWord)!=="undefined"&&carFisrtWord%>'>
-                                <%}else{%>
-                                    <input type="text" class="form-control postData" name="carFisrtWord" placeholder="汽车品牌首字母(大写)" value=''>
-                                <%}%>                               
-                                <span class="msg"></span>
+                                    <%}else{%>
+                                        <input type="text" class="form-control postData" name="carFisrtWord" placeholder="汽车品牌首字母(大写)" value=''>
+                                        <%}%>
+                                            <span class="msg"></span>
                             </div>
                             <div class="form-group">
                                 <span id="topic_creae_warn"></span>
@@ -44,10 +44,10 @@
                             <div class="col-sm-4">
                                 <%if(edit){%>
                                     <input id="carBrand" type="text" class="form-control postData" name="carBrand" placeholder="汽车品牌（中文）" value='<%=typeof(carBrand)!=="undefined"&&carBrand%>'>
-                                <%}else{%>
-                                    <input id="carBrand" type="text" class="form-control postData" name="carBrand" placeholder="汽车品牌（中文）" value=''>
-                                <%}%>
-                                <span class="msg"></span>
+                                    <%}else{%>
+                                        <input id="carBrand" type="text" class="form-control postData" name="carBrand" placeholder="汽车品牌（中文）" value=''>
+                                        <%}%>
+                                            <span class="msg"></span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -55,14 +55,14 @@
                             <div class="col-sm-4">
                                 <%if(edit){%>
                                     <input type="text" class="form-control postData" name="carModel" placeholder="汽车款式（中文）" value='<%=typeof(carModel)!=="undefined"&&carModel%>'>
-                                <%}else{%>
-                                    <input type="text" class="form-control postData" name="carModel" placeholder="汽车款式（中文）" value=''>
-                                <%}%>
-                                
-                                <span class="msg"></span>
+                                    <%}else{%>
+                                        <input type="text" class="form-control postData" name="carModel" placeholder="汽车款式（中文）" value=''>
+                                        <%}%>
+
+                                            <span class="msg"></span>
                             </div>
                         </div>
-        
+
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-8">
@@ -93,121 +93,124 @@
             </div>
             <%-include('../includes/end')%>
                 <script>
-                    //输入验证
-                    $('.postData').blur(function () {
-                        $this = $(this);
-                        let val = $this.val();
-                        let errorMsg = $this.next().hasClass('msg')
+                    $(document).ready(function () {
+                        //输入验证
+                        $('.postData').blur(function () {
+                            $this = $(this);
+                            let val = $this.val();
+                            let errorMsg = $this.next().hasClass('msg')
 
-                        let msg = '<span style="color:red" class="col-sm-12 msg">不能为空</span>'
-                        if (val == '') {
-                            if (errorMsg) {
-                                $this.next().replaceWith(msg)
+                            let msg = '<span style="color:red" class="col-sm-12 msg">不能为空</span>'
+                            if (val == '') {
+                                if (errorMsg) {
+                                    $this.next().replaceWith(msg)
+                                } else {
+                                    $this.after(msg);
+                                }
                             } else {
-                                $this.after(msg);
+                                if (errorMsg) {
+                                    $this.next().remove();
+                                }
                             }
-                        } else {
-                            if (errorMsg) {
-                                $this.next().remove();
+                        })
+
+
+                        $('#choose_img').click(function () {
+                            $('#input_img').click();
+                        });
+
+                        //此处注意事件顺序
+                        $('#addCar').click(function () {
+                            let msg = $('.msg');
+                            let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
+                            if (typeof (msgCla) !== 'undefined') {
+                                console.log('还存在' + msgCla);
+                                msg.prev().focus();
+                                return false;
+                            } else {
+                                $('#uploadTrademark').click();
                             }
-                        }
-                    })
 
-
-                    $('#choose_img').click(function () {
-                        $('#input_img').click();
-                    });
-
-                    //此处注意事件顺序
-                    $('#addCar').click(function () {
-                        let msg = $('.msg');
-                        let msgCla = msg.attr('class');//jquery的remove涵数并没有并元素彻底删除，但属性都删除了.原生JS的删除也是一样
-                        if (typeof (msgCla) !== 'undefined') {
-                            console.log('还存在' + msgCla);
-                            msg.prev().focus();
-                            return false;
-                        } else {
-                            $('#uploadTrademark').click();
-                        }
-                        
-                    });
+                        });
 
 
 
 
-                    var baseData;//base64位图片变量
+                        var baseData;//base64位图片变量
 
-                    function get_img() {
-                        var canavas_img = $('#canavas_img');
-                        var img = $('#input_img').get(0).files[0];
-                        console.log(img);
-                        var fileName = img.name;
-                        var fileType = fileName.substring(fileName.indexOf('.'), fileName.length).toLowerCase();
-                        console.log(fileType);
-                        if (fileType != '.jpg' && fileType != '.jpeg' && fileType != '.gif' && fileType != '.png' && fileType != '.bmp') {
-                            alert('请选择jpg,png,fig,bmp格式的图片');
-                            return;
-                        }
-                        var reader = new FileReader();
-                        reader.readAsDataURL(img);
-                        reader.onload = function () {
-                            var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应，否图片裁剪的x和y值不正确
-                            canavas_img.html(img_element);
-                            if (canavas_img.width() > 300 || canavas_img.height() > 400) {
-                                alert('请上传宽不大于300，高不大于400的图片');
-                                canavas_img.html('');
+                        function get_img() {
+                            var canavas_img = $('#canavas_img');
+                            var img = $('#input_img').get(0).files[0];
+                            console.log(img);
+                            var fileName = img.name;
+                            var fileType = fileName.substring(fileName.indexOf('.'), fileName.length).toLowerCase();
+                            console.log(fileType);
+                            if (fileType != '.jpg' && fileType != '.jpeg' && fileType != '.gif' && fileType != '.png' && fileType != '.bmp') {
+                                alert('请选择jpg,png,fig,bmp格式的图片');
                                 return;
                             }
-                            baseData = this.result;
+                            var reader = new FileReader();
+                            reader.readAsDataURL(img);
+                            reader.onload = function () {
+                                var img_element = "<img id='trademark' src='" + this.result + "' style='  max-width:none;'/>"//此处要去掉img自适应，否图片裁剪的x和y值不正确
+                                canavas_img.html(img_element);
+                                if (canavas_img.width() > 300 || canavas_img.height() > 400) {
+                                    alert('请上传宽不大于300，高不大于400的图片');
+                                    canavas_img.html('');
+                                    return;
+                                }
+                                baseData = this.result;
 
-                        }
-                    }
-
-                    $('#uploadTrademark').click(
-                        function () {
-
-                            var action = '/upload/trademark';
-
-                            // var imgURL = document.getElementById('trademark');
-                            // console.log('imgURL' + imgURL);
-                            // imgURL = imgURL.toDataURL('image/png');
-
-                            var carBrand = $('#carBrand').val();
-                            console.log('品牌是：' + carBrand);
-
-                            var data = {
-                                carBrand: carBrand,
-                                baseData: baseData,
                             }
-                            $.post(action, data, function (data) {
-                                if (data.success) {
-                                    var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
-                                        + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
-                                        + "<span aria-hidden='true'>&times;</span>"
-                                        + "</button>"
-                                        + "<strong>商标上传设置成功</strong>"
-                                        + "</div>"
-                                    var $prompt = $('.note');
-                                    $prompt.html(msg);
-                                }
-                                else {
-                                    alert('商标上传失败');
-                                }
-                            });
                         }
-                    )
+
+                        $('#uploadTrademark').click(
+                            function () {
+
+                                var action = '/upload/trademark';
+
+                                // var imgURL = document.getElementById('trademark');
+                                // console.log('imgURL' + imgURL);
+                                // imgURL = imgURL.toDataURL('image/png');
+
+                                var carBrand = $('#carBrand').val();
+                                console.log('品牌是：' + carBrand);
+
+                                var data = {
+                                    carBrand: carBrand,
+                                    baseData: baseData,
+                                }
+                                $.post(action, data, function (data) {
+                                    if (data.success) {
+                                        var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
+                                            + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                                            + "<span aria-hidden='true'>&times;</span>"
+                                            + "</button>"
+                                            + "<strong>商标上传设置成功</strong>"
+                                            + "</div>"
+                                        var $prompt = $('.note');
+                                        $prompt.html(msg);
+                                    }
+                                    else {
+                                        alert('商标上传失败');
+                                    }
+                                });
+                            }
+                        )
 
 
-                    /* $('#addCarbrand').click(function () {
-                         $('#addCar').click();/*先执行addCar的事件，后执行addCarbrand的事件*/
-                    //})
+                        /* $('#addCarbrand').click(function () {
+                             $('#addCar').click();/*先执行addCar的事件，后执行addCarbrand的事件*/
+                        //})
 
 
-                    /* $('#addCarbrand').click(function () {
-                         alert($('#carBrandTrademark').val());
-                     })*/
+                        /* $('#addCarbrand').click(function () {
+                             alert($('#carBrandTrademark').val());
+                         })*/
 
-                    $('#addCarbrand').click(function () {
+                        $('#addCarbrand').click(function () {
 
+                        })
                     })
+
                 </script>

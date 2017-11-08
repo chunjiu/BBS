@@ -48,7 +48,7 @@ exports.addsave = function (name, password, email,active,callback) {
     user.email = email;
     user.active = active;
     user.indexOf = indexOf += 1;
-    user.attr = { admin: false, staff: false };
+    user.attr = { admin: false, staff: false };//JSON对象只能先定义,JOSN对象操作起来很方便
     user.save(function (err) { 
         callback(err, user);
     });

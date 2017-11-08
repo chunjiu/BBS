@@ -113,7 +113,7 @@ router.get('/information', function (req, res, next) {
   var ReqUser = req.session.user ? req.session.user: '';
 
   var carBrand = req.query.carBrand || '奥迪';
-  var carModel = req.query.carModel || '奥迪A6';
+  var carModel = req.query.carModel || 'A6L';
 
   console.log('carBrand是：' + carBrand);
   var query = {};
@@ -197,10 +197,10 @@ router.get('/MaintenanceCase', function (req, res, next) {
 
 router.get('/', function (req, res, next) {
   console.log('进入主页');
-  var ReqUser = req.session.user ? req.session.user.username : '';
+  var ReqUser = req.session.user ? req.session.user: '';
   console.log('reqUser是：' + ReqUser);
   res.render('index', {
-    current_user: req.session.user,
+    current_user: ReqUser,
   });
 });
 
@@ -803,14 +803,14 @@ router.post('/sign', function (req, res) {
       console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
-      User.addsave(username, password, email, true, function (err, user) {
+      User.addsave(username, password, email, false, function (err, user) {
         if (!err) {
           user.save(function (err) {
             res.render('notify/notify', { success: '注册成功', link: link });
           });
           // req.flash('info', '注册成功，只差邮箱验证了');
           console.log('邮箱是：' + email);
-          //mail.sendActiveMail(email, utility.md5(email + 'abcde邮箱验证'), username)//注册成功则发送邮件
+          mail.sendActiveMail(email, utility.md5(email + 'abcde邮箱验证'), username)//注册成功则发送邮件
 
         } else {
           res.redirect('/signup');
@@ -859,6 +859,8 @@ router.get('/signin', function (req, res) {
 })
 //登录
 router.post('/login', function (req, res, next) {
+  var ReqUser = req.session.user ? req.session.user.username : '';
+
   var username = req.body.inputusername;
   var password = req.body.inputpassword;
   console.log('username是：' + username);
@@ -885,7 +887,7 @@ router.post('/login', function (req, res, next) {
     }
     if (!user.active) {
       mail.sendActiveMail(user.email, utility.md5(user.email + 'abcde邮箱验证'), user.username);
-      return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收' });
+      return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收',current_user:ReqUser });
     }
     console.log('user是' + user);
     authMiddleWare.gen_seesion(user, res, function (cb) { //登录信息保存进cookies,用数据库//req.session.user = user;//将session保存在内存中

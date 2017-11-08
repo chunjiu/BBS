@@ -144,6 +144,27 @@ exports.uploadTrademark = function (req, res, next) {
     })
 }
 
+//删除汽车品牌
+exports.carBrandRemove = function (req, res, next) { 
+    console.log('进入品牌删除');
+    let carBrand = req.body.carBrand;
+    console.log('carBrand是：'+carBrand)
+    Car.remove(carBrand, function (err, car) {
+        if (err) {
+            console.log('删除出错')
+        }
+        if (!car) { 
+            console.log('没有找到这个车');
+            return next();
+        }
+        console.log('删掉后的品牌：'+car);
+        res.send({
+            success: true,
+        })
+
+    })
+}
+
 //获取所有汽车品牌
 exports.getCar = function (req, res, next) {
     console.log('进入获取汽车品牌');
@@ -284,7 +305,7 @@ exports.caseUpload = function (req, res, next) {
             }
             if (!caseTopic) {
                 console.log('没有找到caseTopic');
-                return;
+                return next();
             }
             caseTopic.tab = tab;
             caseTopic.username = username;
@@ -442,7 +463,7 @@ exports.caseUploadShow = function (req, res, next) {
 }
 /*维修案例详情页*/
 exports.MaintenanceCaseDatails = function (req, res, next) {
-    let ReqUser = req.session.user ? req.session.user.username : '';
+    let ReqUser = req.session.user ? req.session.user: '';
     let id = req.params.caseTopic_id;
     console.log('id是' + id);
     CaseTopic.getCaseTopicById(id, function (err, caseTopic) {

@@ -80,31 +80,25 @@ exports.AdminRequired = function (req, res, next) {
         return res.render('notify/notify', { error: msg, link: '' });
     } else {
         user = req.session.user;
-        if (typeof (user.attr[0]) !== 'undefined') {
-            console.log('attr不为空');
-            if (!user.attr[0].admin) {
-                var msg = '<p>您还不是管理员，<span>请联系后台管理人员</span></p>'
-                return res.render('notify/notify', { error: msg, link: '' });
-            } else {
-                next();
-            }
 
-        } else { 
-            console.log('attr为空')
+        if (!user.attr.admin) {
             var msg = '<p>您还不是管理员，<span>请联系后台管理人员</span></p>'
             return res.render('notify/notify', { error: msg, link: '' });
+        } else {
+            next();
         }
+
     }
 }
 
 //超级管理员验证
-exports.SuperRequired = function (req, res, next) { 
+exports.SuperRequired = function (req, res, next) {
     let user = req.session.user;
-    if (!user.is_admin) { 
+    if (!user.is_admin) {
         var msg = '<p>对不起，<span>您无此权限</span>'
         return res.render('notify/notify', { error: msg, link: '' });
     }
-    if (user.is_admin) { 
+    if (user.is_admin) {
         next();
     }
 }

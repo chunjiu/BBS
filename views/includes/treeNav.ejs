@@ -25,7 +25,9 @@
                     <p class="carBrand" style='cursor: pointer;'>
                       <span class="carTrademark"><img style='width:35px;height:35px;' src='<%=car.carAvatars%>'></img><span>
                       <span class="treeNavFont"><%=car.carBrand%>(<%=car.carModel.length%>)</span>
+                      <span class="glyphicon glyphicon-trash removeCar" carBrand='<%=car.carBrand%>'></span>
                     </p>
+                    
                     <ul class="carModel">
                        <% car.carModel.map(function(carModel){%>
                             <li style="cursor:pointer;margin-bottom:5px;">
