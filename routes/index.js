@@ -128,7 +128,7 @@ router.get('/information', function (req, res, next) {
       }
       console.log('car是:' + car);
     
-        res.render('document', {
+        res.render('Document', {
           current_user: ReqUser,
           car: car,
           car_Brand: car_Brand,
