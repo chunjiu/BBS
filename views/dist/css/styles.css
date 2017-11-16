@@ -1,0 +1,386 @@
+body {
+  margin: 0 auto;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.body-weidth {
+  /*移动优先100%的宽*/
+  width: 100%;
+}
+/*解决图片上传自适应div大小*/
+img {
+  max-width: 100%;
+  height: auto;
+}
+/*导航条*/
+.HeadFixed {
+  position: fixed;
+  top: 0px;
+  z-index: 1033;
+  width: 100%;
+}
+.NavFixed {
+  position: fixed;
+  z-index: 1033;
+  width: 100%;
+  top: 70px;
+}
+/*首页*/
+.head {
+  background-color: #3D4850;
+  height: 70px;
+  text-align: center;
+  line-height: 70px;
+}
+.headImg {
+  width: 30px;
+  height: 30px;
+  max-width: none;
+}
+.headFont {
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  font-style: italic;
+}
+.mainPageFont1 {
+  visibility: hidden;
+}
+.mainPageFont {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: #777777;
+}
+.headLeft {
+  margin-left: 20px;
+  display: block;
+}
+.headHidden {
+  display: none;
+}
+.logo {
+  width: 50px;
+  border-radius: 15px;
+}
+/*首页结束*/
+.slide span {
+  cursor: pointer;
+}
+.up {
+  font-size: 25px;
+  color: #7A7878;
+  position: absolute;
+  top: -20px;
+}
+.up1 {
+  left: 20px;
+}
+/*
+  .ask ul li:nth-child(even){
+    list-style-type: none;
+    text-align: center;
+  }
+  .ask ul li:nth-child(odd){
+    list-style-type: none;
+    text-align: center;
+  }
+  */
+/*问诊*/
+.ask p {
+  text-align: center;
+  list-style-type: none;
+  margin-top: 15px;
+  font-family: "Arial";
+  color: #8C9ECF;
+}
+.ask p a {
+  text-decoration: none;
+  cursor: pointer;
+}
+/*首页结束*/
+/*treeNav*/
+.carModel {
+  display: none;
+}
+.carModel li {
+  list-style-type: none;
+}
+.treeNavFont {
+  background-color: #f7f7f7;
+  font-size: 15px;
+  color: #333;
+  height: 40px;
+  line-height: 40px;
+}
+.treeNavFixed {
+  position: fixed;
+  z-index: 1033;
+  top: 100px;
+}
+/*treeNav 结束*/
+/*案例编辑*/
+.select-control {
+  display: block;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.fault div label {
+  font-weight: bold;
+  font-size: 18px;
+}
+.fault div {
+  margin-bottom: 25px;
+}
+/*job页*/
+.jd {
+  margin-bottom: 35px;
+  width: 100%;
+}
+.textHidden {
+  height: 400px;
+  overflow: hidden;
+  margin-bottom: 0px;
+}
+/*管理员用户设置*/
+.adminSetting {
+  width: 100%;
+  margin-top: 20px;
+}
+/*登录界面*/
+.aboutTitle {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: #777777;
+}
+/*维修案例详情页*/
+.ddWidth {
+  margin-bottom: 7px;
+  text-indent: 1cm;
+}
+.culture p {
+  font-size: 10px;
+  font-weight: bolder;
+}
+.carousel-caption {
+  bottom: -10px;
+  right: 15px;
+}
+.carousel-caption a {
+  font-size: 10px;
+  color: red;
+}
+.img_avatars {
+  -moz-border-radius: 25px;
+  /* Firefox */
+  -webkit-border-radius: 25px;
+  /* Safari 和 Chrome */
+  -o-border-radius: 25px;
+  width: 30px;
+  height: 30px;
+  border-radius: 25%;
+  display: none;
+}
+.li_hidden {
+  visibility: hidden;
+}
+.side {
+  display: none;
+}
+.time_ago {
+  display: none;
+}
+@media (min-width: 768px) {
+  /*媒体查询需放在正常样式的下面，才能起来移动设备和桌面设备各自展现自成己样式*/
+  .headFont {
+    font-size: 20px;
+  }
+  .headLeft {
+    margin-left: 100px;
+    display: inline;
+  }
+  .headHidden {
+    visibility: hidden;
+  }
+  .body-weidth {
+    width: 80%;
+  }
+  .mainPageFont {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 900;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: #777777;
+  }
+  .carousel-caption {
+    bottom: 20px;
+  }
+  .carousel-caption a {
+    font-size: 15px;
+    font-weight: bold;
+    color: red;
+  }
+  .img_avatars {
+    width: 30px;
+    height: 30px;
+    border-radius: 25%;
+    display: inline-block;
+  }
+  .page_li {
+    width: 18%;
+  }
+  .side {
+    display: block;
+  }
+  .time_ago {
+    display: inline-block;
+  }
+  .footer {
+    width: 70%;
+  }
+  .page_jump {
+    width: 20%;
+  }
+  .topicIndex {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+  }
+  .adminSetting {
+    width: 25%;
+  }
+  .treeNavFont {
+    background-color: #f7f7f7;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    height: 40px;
+    line-height: 40px;
+  }
+  .ddWidth {
+    width: 70%;
+  }
+}
+.foo {
+  text-align: center;
+  background-color: silver;
+}
+.topcinav {
+  background-color: #EBE6E6;
+}
+.panle_title {
+  height: 70px;
+  line-height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.nav li a {
+  font-weight: 900;
+}
+.panelBorderNone {
+  border: none;
+}
+.sidebar {
+  width: 298px;
+}
+a:link {
+  color: black;
+  text-decoration: none;
+}
+a:visited {
+  color: #808080;
+  text-decoration: none;
+}
+a:hover {
+  color: #808080;
+}
+.nav-stacked li a:hover {
+  background-color: #EE3E42;
+}
+.r_btn {
+  margin-top: 5px;
+}
+._reply {
+  margin-top: -5px;
+}
+.reply_head {
+  font-size: 18px;
+  font-weight: bold;
+}
+.ReplyContent {
+  padding-top: 10px;
+}
+.TopTitile {
+  font-weight: 900;
+  font-size: 24px;
+}
+.TopicInfo {
+  color: #838383;
+  margin: 5px;
+}
+.navpath {
+  width: 25%;
+}
+.navpath_a:visited {
+  color: black;
+}
+.ReplyTitle {
+  color: #008080;
+}
+.TopicTab {
+  background-color: #e5e5e5;
+  margin: 1px;
+  padding: 2px;
+  color: #999;
+}
+.TopicGood {
+  background-color: #91CE13;
+  margin: 1px;
+  padding: 2px;
+  color: white;
+}
+.OtherTopic {
+  background-color: #5cb85c;
+}
+.r_content {
+  margin-top: 0px;
+}
+.reply_btn,
+.remove_btn {
+  cursor: pointer;
+  opacity: 0.5;
+}
+.nice_btn {
+  opacity: 0.4;
+  cursor: pointer;
+}
+.remove_btn:hover {
+  opacity: 1;
+}
+.nice_btn:hover {
+  opacity: 1;
+}
+.reply_btn:hover {
+  opacity: 1;
+}
+.ReplyReply {
+  margin-top: -1%;
+}
+.reply_hidden {
+  display: none;
+}

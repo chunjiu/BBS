@@ -7,12 +7,11 @@
                     <div class="panel-heading">
                         <ul class="nav nav-pills">
                             <li>
-                                <a class="tabURL" href="/maintenanceCase/?tab=机电维修案例" carModelUrl='<%=typeof( carModelURL)!==' undefined
-                                    '&& carModelURL||' '%>'>机电维修案例</a>
+                                <a class="tabURL" href="/maintenanceCase/?tab=机电维修案例" carModelUrl='<%=typeof( carModelURL)!==' undefined'&& carModelURL||' '%>'>机电维修案例</a>
+                                <!--这里格式调试，换行了会报错-->
                             </li>
                             <li>
-                                <a class="tabURL" href='/maintenanceCase/?tab=电子维修案例' carModelUrl='<%=typeof(carModelURL)!==' undefined
-                                    '&& carModelURL||' '%>'>电子维修案例</a>
+                                <a class="tabURL" href='/maintenanceCase/?tab=电子维修案例' carModelUrl='<%=typeof(carModelURL)!==' undefined'&& carModelURL||' '%>'>电子维修案例</a>
                             </li>
                         </ul>
                     </div>
@@ -58,80 +57,87 @@
                         $('.removeCar').click(function () {
                             $this = $(this);
                             let carBrand = $this.attr('carBrand');
-                            let action = '/carBrand/remove';
-                            let data = {
-                                carBrand: carBrand,
-                            }
-                            $.post(action, data, function (data) {
-                                if (data.success) {
-                                    var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
-                                        + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
-                                        + "<span aria-hidden='true'>&times;</span>"
-                                        + "</button>"
-                                        + "<strong>品牌删除成功</strong>"
-                                        + "</div>"
-                                    var $prompt = $('.removeMSG');
-                                    $prompt.html(msg);
-                                    $this.closest('.carBrand').remove();
+                            let r = confirm('要删除这个品牌吗');
+                            if (r) {
+                                let rn = confirm('将删除 ' + carBrand + ' 这个品牌');
+                                if (rn) {
+                                    let action = '/carBrand/remove';
+                                    let data = {
+                                        carBrand: carBrand,
+                                    }
+                                    $.post(action, data, function (data) {
+                                        if (data.success) {
+                                            var msg = " <div class='alert alert-success alert-dismissible' role='alert'>"
+                                                + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+                                                + "<span aria-hidden='true'>&times;</span>"
+                                                + "</button>"
+                                                + "<strong>品牌删除成功</strong>"
+                                                + "</div>"
+                                            var $prompt = $('.removeMSG');
+                                            $prompt.html(msg);
+                                            $this.closest('.carBrand').remove();
 
-                                } else {
-                                    alert('删除出错')
-                                }
-                            })
-                        })
-
-                        $('.chooseModel').click(function () {
-                            $this = $(this);
-                            let text = $this.text();
-                            carModelUrl = '/maintenanceCase/?carModel=' + text;
-                            console.log('carModelUrl是：' + carModelUrl);
-                            $this.attr('href', carModelUrl);
-                        })
-
-                        var carModelURL = $('.tabURL').attr('carModelURL');//汽车品牌条件选择变量
-
-                        $('.tabURL').click(function () {
-                            $this = $(this);
-                            var url = $this.attr('href');
-                            if (carModelURL) {
-                                url = url + '&carModel=' + carModelURL;
-                                $this.attr('href', url);
-                            } else {
-                                next();
-                            }
-                        })
-
-                        //汽车品牌侧边导航
-                        $('.tree').scroll(function () {
-                            var tree = $('.tree').offset().top;
-                            var navScrollLeft = $('.navscroll').offset().left;
-                            $('.navscroll').offset({ top: tree, left: navScrollLeft });
-
-                        })
-                        $(".carBrand,.treeFisrtWord").click(function () {
-                            var $this = $(this);
-                            var carModel = $this.next();
-                            carModel.toggle();
-                        });
-                        $(window).scroll(function () {
-
-                            var windowWidth = $(window).height();
-
-                            if (windowWidth > 700) {//当屏幕大于700时
-                                var scrollTop = $(window).scrollTop();
-                                var head = $('.head');
-                                var nav = $('.navbar')
-
-                                var headHeight = head.height();
-                                var navHeight = nav.height();
-
-                                if (scrollTop > 130) {
-                                    $('.tree').offset({ top: scrollTop })
-                                } else {
-                                    $('.tree').offset({ top: headHeight + navHeight + 2 })
+                                        } else {
+                                            alert('删除出错')
+                                        }
+                                    })
                                 }
                             }
+
                         })
                     })
 
+                    //根据车型选择
+                    $('.chooseModel').click(function () {
+                        $this = $(this);
+                        let text = $this.text();
+                        carModelUrl = '/maintenanceCase/?carModel=' + text;
+                        console.log('carModelUrl是：' + carModelUrl);
+                        $this.attr('href', carModelUrl);
+                    })
+
+                    var carModelURL = $('.tabURL').attr('carModelURL');//汽车品牌条件选择变量
+
+                    $('.tabURL').click(function () {
+                        $this = $(this);
+                        var url = $this.attr('href');
+                        if (carModelURL) {
+                            url = url + '&carModel=' + carModelURL;
+                            $this.attr('href', url);
+                        } else {
+                            next();
+                        }
+                    })
+
+                    //汽车品牌侧边导航
+                    $('.tree').scroll(function () {
+                        var tree = $('.tree').offset().top;
+                        var navScrollLeft = $('.navscroll').offset().left;
+                        $('.navscroll').offset({ top: tree, left: navScrollLeft });
+
+                    })
+                    $(".carBrand,.treeFisrtWord").click(function () {
+                        var $this = $(this);
+                        var carModel = $this.next();
+                        carModel.toggle();
+                    });
+                    $(window).scroll(function () {
+
+                        var windowWidth = $(window).height();
+
+                        if (windowWidth > 700) {//当屏幕大于700时
+                            var scrollTop = $(window).scrollTop();
+                            var head = $('.head');
+                            var nav = $('.navbar')
+
+                            var headHeight = head.height();
+                            var navHeight = nav.height();
+
+                            if (scrollTop > 130) {
+                                $('.tree').offset({ top: scrollTop })
+                            } else {
+                                $('.tree').offset({ top: headHeight + navHeight + 2 })
+                            }
+                        }
+                    })
                 </script>

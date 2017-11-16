@@ -98,14 +98,6 @@ router.post('/chekYear', function (req, res, next) {
   })
 })
 
-router.post('/set/admin', function (req, res, next) {
-  let title = req.body.title;
-  let admin = req.body.admin;
-  let yn = req.body.yn;
-
-
-});
-
 
 /*get information page*/
 
@@ -136,7 +128,7 @@ router.get('/information', function (req, res, next) {
       }
       console.log('car是:' + car);
     
-        res.render('Document', {
+        res.render('document', {
           current_user: ReqUser,
           car: car,
           car_Brand: car_Brand,
@@ -803,7 +795,7 @@ router.post('/sign', function (req, res) {
       console.log('邮箱是：' + email);
       var link = EmailLink.EmailLink(email);
       console.log(link);
-      User.addsave(username, password, email, false, function (err, user) {
+      User.addsave(username, password, email, true, function (err, user) {
         if (!err) {
           user.save(function (err) {
             res.render('notify/notify', { success: '注册成功', link: link });
@@ -829,10 +821,6 @@ router.get('/active_account', function (req, res, next) {
   var username = req.query.username;
   User.getUserByUserName(username, function (err, user) {
     if (err) {
-      return next(err);
-    }
-    if (!user) {
-      console.log('username是：' + username);
       return next(err);
     }
     if (!user || utility.md5(user.email + 'abcde邮箱验证') !== key) {

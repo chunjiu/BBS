@@ -13,8 +13,8 @@ exports.sendActiveMail = function (who,token,username) {
         to:who,//可以填写多个以逗号隔开
         subject: 'nodeclub注册激活邮件',
         html: '<p>您好</p>' +
-        '<p>我们收到你在nodeblck上的注册信息,请点击下面的链接来激活账户</p>' +
-         '<a href  =" '+'http://www.wangdong123.com' + '/active_account?key=' + token + '&username=' + username+'">激活链接</a>'//要注意用双引号包裹里面的内空，因为要使用变量
+        '<p>我们收到您在福运临的注册信息,请点击下面的链接来激活账户</p>' +
+         '<a href  =" '+'http://www.wangdong123.com' + '/active_account?key=' + token + '&username=' + username+'">激活链接</a>'//要注意用双引号包裹里面的容，因为要使用变量
     }
     transporter.sendMail(mailOptions, function (err, info) { 
         if (err) { 

@@ -324,7 +324,7 @@ exports.caseUpload = function (req, res, next) {
                     console.log('保存出错');
                     return next(err)
                 } else {
-                    res.redirect('/')
+                    res.redirect('/caseUploadShow')
                 }
             });
 

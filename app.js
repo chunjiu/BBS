@@ -22,6 +22,7 @@ var ueditor = require("ueditor");
 var easyMonitor = require('easy-monitor');//内存泄漏检查
 
 
+
 var app = express();
 //app.set('port',(process.env.PORT||80));
 
@@ -34,7 +35,9 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'views/dist')));//增加一静态文件服务，用于webpack
 
 mongoose.connect(config.mongodb);
 
@@ -127,9 +130,9 @@ app.use(bodyParser.json());
 app.listen(443, function () { 
   console.log('服务器已在443端口运行');
 });
-app.listen(80, function () {//上线要改成80
+/*app.listen(80, function () {//上线要改成80
   console.log('服务器已在300端口运行');
 })
-
+*/
 
 module.exports = app;
