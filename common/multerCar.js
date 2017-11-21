@@ -5,7 +5,7 @@ var storage = multer.diskStorage({
         cb(null,'public/uploads/carInformation');
     },
     filename: function (req, file, cb) {
-        cb(null,file.originalname+".pdf")
+        cb(null,file.originalname)
      }
     
 });

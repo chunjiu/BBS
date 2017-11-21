@@ -239,11 +239,11 @@
                         if (carModelChildren) {
                             carModelElement.empty();
                             data.car.carModel.map(function (carModel, index) {
-                                carModelElement.append('<option>' + carModel + '</option>')
+                                carModelElement.append('<option>' + carModel.carModel + '</option>')
                             })
                         } else {
                             data.car.carModel.map(function (carModel, index) {
-                                carModelElement.append('<option>' + carModel + '</option>')
+                                carModelElement.append('<option>' + carModel.carModel + '</option>')
                             })
                         }
                     })

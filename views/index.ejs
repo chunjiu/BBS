@@ -1,5 +1,4 @@
 <%-include('./includes/header')%>
-
     <!--轮播-->
     <div id="introduce_carousel" class="carousel slide" data-ride='carousel'>
         <ol class="carousel-indicators">
@@ -10,22 +9,22 @@
         <div class="carousel-inner" role='listbox'>
             <div class="item active">
                 <a href="/59def0e8f519b63104ce86f8/tid">
-                <img src="images/img5.jpg">
+                    <img src="images/img5.jpg">
                 </a>
             </div>
             <div class="item">
                 <a href="59df060b284dbc3818dff836/tid">
-                <img src="images/img2.jpg">
+                    <img src="images/img2.jpg">
                 </a>
             </div>
             <div class="item">
                 <a href="59e5591435fc183d080d2ac0/tid">
-                <img src="images/img3.jpg">
+                    <img src="images/img3.jpg">
                 </a>
             </div>
             <div class="item">
                 <a href="59b664dc416494371c501ec8/tid">
-                <img src="images/img4.jpg">
+                    <img src="images/img4.jpg">
                 </a>
             </div>
         </div>
@@ -63,90 +62,32 @@
             </ol>
             <div class="carousel-inner" role='listbox'>
                 <div class="item active">
-
                     <!--案例-->
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img class="max-width-no" src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
+                    <%if(caseTopic.length){%>
+                        <%caseTopic.forEach(function(caseTopic){%>
+                            <div class="col-sm-6 col-md-2">
+                                <div class="thumbnail">
+                                    <a href="<%=caseTopic.id%>/datails">
+                                        <img style='max-width:none;width:100%;height:110px;' src="<%=caseTopic.PhenomenonImg%>">
+                                        <div class="caption">
+                                            <h3>
+                                                <%=caseTopic.title%>
+                                            </h3>
+                                            <p>
+                                                <%=caseTopic.FaultPhenomenon%>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img class="max-width-no" src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img class="max-width-no" src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3" style="padding-right:0px;">
-                        <div class="thumbnail">
-                            <img class="max-width-no" src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-
-                    <!--案例-->
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="thumbnail">
-                            <img src="images/img4.jpg">
-                            <div class="caption">
-                                <h3>宝马发动机维修</h3>
-                                <p>宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修宝马发动机维修</p>
-                            </div>
-                        </div>
-                    </div>
+                        <%})%>
+                    <%}%>
                 </div>
             </div>
             <a class="up" style="top:-30px;left:20px;" href="#introduce_carousel-2" role="button" data-slide='next'>
                 <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
                 <span class="sr-only">next</span>
-             </a>
+            </a>
             <a class="up" style="top:-30px;left:0px;" href="#introduce_carousel-2" role="button" data-slide='prev'>
                 <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
                 <span class="sr-only">Previous</span>
@@ -167,24 +108,28 @@
         <div class="row" style="margin-top:20px;">
             <div class="col-xs-8 col-sm-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="请输入问题零部件，如：宝马发动机">
-                    <a href="#" class="input-group-addon" style='background-color:antiquewhite;'>搜索</a>
+                    <input id='inputSearch' type="text" class="form-control inputSearch" placeholder="请输入关键字搜索，如：宝马发动机">
+                    <a id="true" href="" class="input-group-addon" style='background-color:antiquewhite;'>确认</a>
                 </div>
+
+                <!--搜索输入提示-->
+                <div class="input-group" style='width:75%;position: absolute;'>
+                    <select id="data_list" class="form-control" style='display:none;'>
+                    </select>
+                </div>
+
             </div>
             <a href="create" class="btn btn-warning">提问</a>
         </div>
         <a class="pull-right mainPageFont " href="/case">更多</a>
         <div class="row ask" style="margin-top:15px;">
-            
-            <p class="col-md-4"><a href="#">大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a href="#">大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a href="#">大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
-            <p class="col-md-4"><a>大众高尔夫后视镜怎么保养，如何注意</a></p>
+            <%if(topic.length){%>
+                <%topic.forEach(function(topic){%>
+                    <p class="col-md-4">
+                        <a href="<%=topic.id%>/tid"><%=topic.title%></a>
+                    </p>
+                <%})%>
+            <%}%>
         </div>
 
         <!--Looking for information-->
@@ -241,15 +186,58 @@
         </div>
     </div>
 
+    
+
+
     <%-include('./includes/footer')%>
 
     <script>
+
         $('#introduce_carousel').carousel({
             interval: 3000
 
         })
         $('#introduce_carousel-2').carousel({
-            wrap:false,
-            
+            wrap: false,
+
+        })
+        $('.inputSearch').keyup(function () {
+            $this = $(this);
+            let val = $this.val();
+            console.log('val是：' + val);
+            let action = '/topic/search';
+            let data = {
+                title: val,
+            }
+            $.post(action, data, function (data) {
+                if (data) {
+                    data.topic.map(function(topic){
+                        $('#data_list').append('<option topic_id="'+topic._id+'">'+topic.title+'</option>');
+                    })
+                    $('#data_list').show(function(){
+                        $this = $(this);
+                        $this.attr('size',data.topic.length)
+                    });
+                }
+                else {
+                    alert('查找失败');
+                }
+            })
+        })
+        $('#data_list').change(function () {
+            $this = $(this);
+            let val = $this.val();
+            console.log('val是：', val);
+            let input = $this.closest('.row').find('#inputSearch');
+            input.val(val);
+            $this.hide();
+        })
+      
+
+        $('#true').click(function(){
+            let $this = $(this);
+            let topic_id = $this.closest('.row').find('#data_list option:selected').attr('topic_id');
+            let url = '/'+topic_id+'/tid';
+            $this.attr('href',url)
         })
     </script>

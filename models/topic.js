@@ -81,5 +81,11 @@ exports.findByQuery = function (query, opt, callback) {
 
 exports.findNoReply_topic = function (query, opt, callback) {//查找无人回复的话题
     Topic.find(query, {},opt,callback)
- }
+}
  
+//模糊查找
+exports.FuzzySearchByTitle = function (title) {
+    var reg = new RegExp(title, 'i');
+    console.log('模糊查找',reg)
+    Topic.find({ "title": reg},callback)
+ } 

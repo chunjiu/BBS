@@ -1,3 +1,4 @@
+
 var fs = require('fs');
 var path = require('path');
 
@@ -11,7 +12,7 @@ var CaseTopic = require('../models/maintenanceCase');
 exports.carbrand = function (req, res, next) {
     res.render('siteBG/CarBrand', {
         current_user: req.session.user ? req.session.user.username : '',
-        edit:false
+        edit: false
     });
 }
 
@@ -21,8 +22,9 @@ exports.carbrandAdd = function (req, res, next) {
     var carFisrtWord = req.body.carFisrtWord;
     var carBrand = req.body.carBrand;
     var carModel = req.body.carModel;
+    var newCarModel = { carModel: carModel, carModelImg: '' }
     var carYear = [];
-    for (let i = 0; i < 20; i++) { 
+    for (let i = 0; i < 20; i++) {
         carYear.push(2000 + i);
     }
     var carAvatars = '';
@@ -31,7 +33,7 @@ exports.carbrandAdd = function (req, res, next) {
             return next(err)
         }
         if (!car) {
-            Car.addsave(carFisrtWord, carBrand, carModel, carYear, carAvatars, function (err, car) {
+            Car.addsave(carFisrtWord, carBrand, carYear, carAvatars, function (err, car) {
                 if (err) {
                     throw (err)
                 } else {
@@ -39,48 +41,51 @@ exports.carbrandAdd = function (req, res, next) {
                     res.redirect('/carbrand');
                 }
             })
-        } else {
+        } else { 
+            console.log('车型与车型图片一起上传');//这里上传会因为异步，车型添加两次
+            res.redirect('/carbrand');
+        }
+        
             // car.carModel.addToSet(carModel,carYear)
             //var Year = {carYear:carYear};//这里要注意与carmodel的书写顺序
             //car.carYear.addToSet(Year);
-            car.carModel.addToSet(carModel);
-            car.save(function (err) {
+            /*car.save(function (err) {
                 if (err) {
                     return next(err)
                 }
                 console.log('品牌添加成功');
                 res.redirect('/carbrand');
-            });
-        }
+            });*/
+        
     })
 }
 
 //修改汽车品牌
-exports.carBrandEdit = function (req, res, next) { 
+exports.carBrandEdit = function (req, res, next) {
     console.log('进入车型删除');
     let carBrand = req.query.carBrand;
     let carModel = req.query.carModel;
     let FirstWord = req.query.FirstWord;
-    
+
 
     console.log('carBrand是：' + carBrand);
-    console.log('carModel是：'+carModel)
-    console.log('FirstWord是：'+FirstWord);
+    console.log('carModel是：' + carModel)
+    console.log('FirstWord是：' + FirstWord);
 
-    Car.getCarByCarBrand(carBrand, function (err, car) { 
-        if (err) { 
+    Car.getCarByCarBrand(carBrand, function (err, car) {
+        if (err) {
             return next(err);
         }
-        if (!car) { 
+        if (!car) {
             console.log('没有找到车');
             return;
         }
-        car.carModel.pull(carModel);
-        car.save(function (err, car) { 
-            if (err) { 
+        Car.updateModel(carBrand, carModel);//删除model
+        car.save(function (err, car) {
+            if (err) {
                 return next(err)
             }
-            if (!car) { 
+            if (!car) {
                 console.log('没有找到车');
                 return;
             }
@@ -91,7 +96,7 @@ exports.carBrandEdit = function (req, res, next) {
                 carModel: carModel,
                 edit: true,
             });
-            
+
         })
     })
 }
@@ -144,26 +149,89 @@ exports.uploadTrademark = function (req, res, next) {
     })
 }
 
+//上传汽车车型图片
+exports.uploadModelImg = function (req, res, next) {
+    console.log('进入汽车车型图片上传');
+
+    if (!req.body.modelImgBase) {
+        return next();
+    }
+
+    var carBrand = req.body.carBrand;
+    var carModel = req.body.carModel;
+    var img = req.body.modelImgBase.slice(22);//去掉base64的前22位字符
+    var imgBuffer = Buffer.from(img, 'base64');//转化为bufer字符
+    console.log('车型是：' + carModel);
+
+    console.log('imgBuffer是否是一个对象：' + Buffer.isBuffer(imgBuffer));
+
+    /**
+     *写入文件时必须要有public,路径+文件名
+     * @param 另：直接以用户名存储则会替换该用户所有之前的头像
+     */
+    var imgPath = 'public/uploads/carModel/' + carModel + '.jpg';
+
+    function removeMode() {
+        return new Promise((resolve, reject) => {
+            Car.updateModel(carBrand, carModel)
+        })
+    }
+    function addModel() {
+        return new Promise((resolve, reject) => {
+            Car.getCarByCarBrand(carBrand, function (err, car) {
+                if (err) {
+                    console.log('没有找到车');
+                    return next(err);
+                }
+                var model = { carModel: carModel, modelImg: imgPath.slice(6) }
+                car.carModel.addToSet(model);
+                car.save(function (err) {
+                    if (err) {
+                        reject(err);
+                        return next(err);
+                    }
+                    console.log('车型添加成功');
+                    res.send({
+                        success: true,
+                    })
+                });
+            })
+        })
+    }
+
+    fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
+        if (err) {
+            throw err;
+        }
+        removeMode().then(addModel()).catch((err) => {
+            console.log('出错', err)
+        });
+    })
+}
+
 //删除汽车品牌
-exports.carBrandRemove = function (req, res, next) { 
+exports.carBrandRemove = function (req, res, next) {
     console.log('进入品牌删除');
     let carBrand = req.body.carBrand;
-    console.log('carBrand是：'+carBrand)
+    console.log('carBrand是：' + carBrand)
     Car.remove(carBrand, function (err, car) {
         if (err) {
             console.log('删除出错')
         }
-        if (!car) { 
+        if (!car) {
             console.log('没有找到这个车');
             return next();
         }
-        console.log('删掉后的品牌：'+car);
+        console.log('删掉后的品牌：' + car);
         res.send({
             success: true,
         })
 
     })
 }
+
+
+
 
 //获取所有汽车品牌
 exports.getCar = function (req, res, next) {
@@ -259,7 +327,7 @@ exports.removeInformation = function (req, res, next) {
     console.log('carBrand是：' + carBrand);
     console.log('carInformation是：' + carInformation);
 
-    Car.removeInformation(res, carBrand, carInformation,carInformationYear, function (err, car) { })
+    Car.removeInformation(res, carBrand, carInformation, carInformationYear, function (err, car) { })
 
     carInformation = carInformation.replace(/\\/g, '/');
     var newPath = 'e:/BBS/public' + carInformation;//注意字符串间不能有空格
@@ -281,7 +349,7 @@ exports.caseUpload = function (req, res, next) {
     var carBrand = req.body.carBrand;
     console.log('carBrand是' + carBrand);
     if (carBrand) {
-        console.log('进入content保存'); 
+        console.log('进入content保存');
         let tab = req.body.tab;
         let title = req.body.title;
         let username = ReqUser;
@@ -353,7 +421,7 @@ exports.caseUpload = function (req, res, next) {
                 })
             } else {
                 console.log('找到caseTopic' + caseTopic);
-                if (typeof(newTitle)!=='undefined') {
+                if (typeof (newTitle) !== 'undefined') {
                     console.log('newTitle不是undefined');
                     caseTopic.title = newTitle;
                     caseTopic.save(function () {
@@ -361,7 +429,7 @@ exports.caseUpload = function (req, res, next) {
                             success: true
                         })
                     });
-                } else { 
+                } else {
                     console.log('不更改，直接退出');
                     return;
                 }
@@ -396,8 +464,9 @@ exports.casUploadImg = function (req, res, next) {
     /**
      *写入文件时必须要有public,路径+文件名
      * @param 另：直接以用户名存储则会替换该用户所有之前的头像
-     */ 
-    var imgPath = 'public/uploads/maintenanceCaseImg/' + title + faultType+ '.jpg';//用title命名，可替换原先上传的图片
+     */
+
+    var imgPath = 'public/uploads/maintenanceCaseImg/' + title + faultType + '.jpg';//用title命名，可替换原先上传的图片
     fs.writeFile(imgPath, imgBuffer, function (err) {//写入文件
         if (err) {
             throw err;
@@ -457,18 +526,18 @@ exports.caseUploadShow = function (req, res, next) {
         res.render('siteBG/caseUpload', {
             current_user: ReqUser,
             user: user,
-            edit:''
+            edit: ''
         });
     })
 }
 /*维修案例详情页*/
 exports.MaintenanceCaseDatails = function (req, res, next) {
-    let ReqUser = req.session.user ? req.session.user: '';
+    let ReqUser = req.session.user ? req.session.user : '';
     let id = req.params.caseTopic_id;
     console.log('id是' + id);
     CaseTopic.getCaseTopicById(id, function (err, caseTopic) {
         if (err) {
-            console.log('出错');  
+            console.log('出错');
             return next(err);
         }
         caseTopic.visit_count += 1;
@@ -486,27 +555,27 @@ exports.MaintenanceCaseDatails = function (req, res, next) {
 }
 
 //维修案例修改页面
-exports.caseTopicEdit = function (req, res, next) { 
+exports.caseTopicEdit = function (req, res, next) {
     let ReqUser = req.session.user ? req.session.user.username : '';
     let id = req.params.caseTopic_id;
-    CaseTopic.getCaseTopicById(id, function (err, caseTopic) { 
-        if (err) { 
+    CaseTopic.getCaseTopicById(id, function (err, caseTopic) {
+        if (err) {
             console.log('出错');
             return next(err);
         }
-        if (!caseTopic) { 
+        if (!caseTopic) {
             console.log('没有找到案例');
             return;
         }
-        User.getUserByUserName(ReqUser, function (err, user) { 
-            if (err) { 
+        User.getUserByUserName(ReqUser, function (err, user) {
+            if (err) {
                 return next(err);
             }
             res.render('siteBG/caseUpload', {
                 current_user: ReqUser,
-                user:user,
+                user: user,
                 caseTopic: caseTopic,
-                edit:'edit',
+                edit: 'edit',
             })
 
         })
@@ -514,38 +583,38 @@ exports.caseTopicEdit = function (req, res, next) {
 }
 
 //维修案例删除
-exports.caseTopicRemove = function (req, res, next) { 
+exports.caseTopicRemove = function (req, res, next) {
     let ReqUser = req.session.user ? req.session.user.username : '';
     let id = req.params.caseTopic_id;
-    CaseTopic.getCaseTopicById(id, function (err, caseTopic) { 
-        if (err) { 
+    CaseTopic.getCaseTopicById(id, function (err, caseTopic) {
+        if (err) {
             return next(err);
         }
         caseTopic.delete = true;
-        caseTopic.save(function () { 
+        caseTopic.save(function () {
             res.redirect('/maintenanceCase');
         });
     })
 }
 
 /*求贤纳才*/
-exports.job = function (req, res, next) { 
+exports.job = function (req, res, next) {
     let ReqUser = req.session.user ? req.session.user.username : '';
-    Topic.findByQuery({ 'tab': '招聘','deleted':false }, '', function (err, topic) { 
-        if (err) { 
+    Topic.findByQuery({ 'tab': '招聘', 'deleted': false }, '', function (err, topic) {
+        if (err) {
             return next(err);
         }
-        if (!topic) { 
+        if (!topic) {
             console.log('没有找到topic');
             return;
         }
-        console.log('topc是：'+topic);
+        console.log('topc是：' + topic);
         res.render('job/job', {
             topic: topic,
-            current_user:ReqUser,
+            current_user: ReqUser,
         })
 
     })
 
-    
+
 }

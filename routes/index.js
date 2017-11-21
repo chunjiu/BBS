@@ -1,3 +1,4 @@
+
 var express = require('express');
 var router = express.Router();
 var path = require('path');
@@ -102,7 +103,7 @@ router.post('/chekYear', function (req, res, next) {
 /*get information page*/
 
 router.get('/information', function (req, res, next) {
-  var ReqUser = req.session.user ? req.session.user: '';
+  var ReqUser = req.session.user ? req.session.user : '';
 
   var carBrand = req.query.carBrand || '奥迪';
   var carModel = req.query.carModel || 'A6L';
@@ -127,14 +128,14 @@ router.get('/information', function (req, res, next) {
         return next(err);
       }
       console.log('car是:' + car);
-    
-        res.render('Document', {
-          current_user: ReqUser,
-          car: car,
-          car_Brand: car_Brand,
-          carModelURL: carModel,
-          ChooseModel: true,
-        })
+
+      res.render('Document', {
+        current_user: ReqUser,
+        car: car,
+        car_Brand: car_Brand,
+        carModelURL: carModel,
+        ChooseModel: true,
+      })
     })
 
   })
@@ -143,7 +144,7 @@ router.get('/information', function (req, res, next) {
 
 /*get MaintenaceCase page*/
 router.get('/MaintenanceCase', function (req, res, next) {
-  var ReqUser = req.session.user ? req.session.user: '';
+  var ReqUser = req.session.user ? req.session.user : '';
   var tab = req.query.tab;
   var carModel = req.query.carModel;
 
@@ -172,15 +173,15 @@ router.get('/MaintenanceCase', function (req, res, next) {
         console.log('没有找到维修案例');
         return;
       }
-        console.log('caseTopic是：' + caseTopic);
-        res.render('MaintenanceCase', {
-          current_user: ReqUser,
-          car: car,
-          caseTopic: caseTopic,
-          ChooseModel: true,
-          carModelURL: carModel
-        })
+      console.log('caseTopic是：' + caseTopic);
+      res.render('MaintenanceCase', {
+        current_user: ReqUser,
+        car: car,
+        caseTopic: caseTopic,
+        ChooseModel: true,
+        carModelURL: carModel
       })
+    })
   })
 })
 
@@ -189,11 +190,48 @@ router.get('/MaintenanceCase', function (req, res, next) {
 
 router.get('/', function (req, res, next) {
   console.log('进入主页');
-  var ReqUser = req.session.user ? req.session.user: '';
-  console.log('reqUser是：' + ReqUser);
-  res.render('index', {
-    current_user: ReqUser,
-  });
+  var ReqUser = req.session.user ? req.session.user : '';
+
+  function carCase() {
+    return new Promise(function (resolve, reject) {
+      var carTopic = { limit: 8, sort: '-creat_at -updated_at' };
+      let query = {};
+      query.delete = false;
+      MaintenaceCase.getCaseTopicByQuery(query, carTopic, function (err, caseTopic) {
+        if (err) {
+          console.log('出错');
+          return next(err);
+        } else {
+          resolve(caseTopic);
+
+        }
+      })
+    })
+  }
+  function carTopic() {
+    return new Promise(function (resolve, reject) {
+      var helpOption = { limit: 9, sort: '-create_at -last_reply_at' };
+      Topic.findByQuery('', helpOption, function (err, helpTopic) {
+        if (err) {
+          console.log('出错');
+          return next(err);
+        } else { 
+          resolve(helpTopic)
+        }
+      })
+    })
+  }
+  Promise.all([carCase(), carTopic()]).then(values => { 
+    res.render('index', {
+      current_user: ReqUser,
+      caseTopic: values[0],
+      topic:values[1],
+    });
+    
+  })
+
+
+
 });
 
 /*get backStage page*/
@@ -284,6 +322,32 @@ router.get('/case', function (req, res, next) {
     }
   });
 });
+
+//话题查找（模糊查询）
+router.post('/topic/search', function (req, res, next) {
+  console.log('进入模糊查找');
+  let title = req.body.title;
+  console.log('title是：' + title)
+  if (title == '') {
+    title = '机'
+  }
+  let query = {};
+  query.title = new RegExp(title, 'i');//模糊查询
+  Topic.findByQuery(query, '', function (err, topic) { 
+    if (err) { 
+      console.log('查找出错');
+      return next(err);
+    }
+    if (!topic) { 
+      console.log('没有找到话题');
+      return next();
+    }
+    console.log('模糊查找到的Topic是：'+topic);
+    res.send({
+      topic:topic,
+    })
+  })
+})
 
 //进入单个话题
 router.get('/:id/tid', function (req, res, next) {
@@ -875,7 +939,7 @@ router.post('/login', function (req, res, next) {
     }
     if (!user.active) {
       mail.sendActiveMail(user.email, utility.md5(user.email + 'abcde邮箱验证'), user.username);
-      return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收',current_user:ReqUser });
+      return res.render('sign/signin', { errors: '此账号还没有被激活激活链接已发送到' + user.email + '邮箱,请查收', current_user: ReqUser });
     }
     console.log('user是' + user);
     authMiddleWare.gen_seesion(user, res, function (cb) { //登录信息保存进cookies,用数据库//req.session.user = user;//将session保存在内存中

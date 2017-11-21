@@ -44,20 +44,19 @@
 	</script>
 
 	<div class="row">
-		<p>webpack测试</p>
 			<div class="removeMSG"></div>
 		<%-include('./includes/treeNav')%>
 			<div class="col-md-10 carModelURL" carModelUrl='<%=typeof( carModelURL)!==' undefined '&& carModelURL||' '%>'>
 				<%car_Brand.map(function(car){%>
 					<%car.carModel.map(function(carModel){%>
-						<div class="panel panel-default" carModel=<%=carModel%> style='display:none'>
+						<div class="panel panel-default" style='display:none' carModel=<%=carModel.carModel%>>
 							<div class="panel-heading" style='background-color:#EBE6E6;'>
 								<span style='font-weight:900;'>当前车型</span>
 							</div>
 							<div>
 								<div class="media">
 									<div class="media-left">
-										<img style='max-width:none;width:100px;height:100px;' src="/uploads/carModel/car.jpg">
+										<img style='max-width:none;width:100px;height:100px;' src="<%=carModel.modelImg%>">
 									</div>
 									<div class="media-body">
 										<h4>厂家：
@@ -67,14 +66,14 @@
 										</h4>
 										<h4>车型：
 											<span>
-												<%=carModel%>
+												<%=carModel.carModel%>
 											</span>
 										</h4>
 									</div>
 
 									<div class="col-sm-10 father">
 										<div class="msg" style='margin-top:10px;'></div>
-										<h3 style="font-weight:900;"><%=carModel%>&nbsp;
+										<h3 style="font-weight:900;"><%=carModel.carModel%>&nbsp;
 											年份:
 												<%if(current_user&&current_user.attr.admin){%>
 													<select class="chooseYear" style='width:150px;'><!--上传选择年份-->
@@ -88,39 +87,41 @@
 												<%}%>
 											
 											
-													
-												<select class="ChooseCarInformationYear" style='width:150px;'><!--查看资料时选择年份-->
+												<!--查看资料按年份选择-->
+												<select class="ChooseCarInformationYear" style='width:150px;'>
 
 													<!--对比两个对象的键值是否有相同，取相同值存进另一数组-->
 													<%var carInformationYear = [];%>
-
+									
 													<%var le = car.carYear[0].carYear.length%>
 													<%var lf =car.carInformation.length%>
+
 													<%for(let i=0;i<le;i++){%>
 														<%for(let j=0;j<lf;j++){%>
 															<%var leYear=car.carYear[0].carYear[i]%>
-															<%var lfYear=car.carInformation[j].carYear%>
-																<%if(leYear==lfYear){%>
-																	<%carInformationYear[leYear]=leYear%><!--有同一个leYear键替换相同值-->
-																<%}%>
+															<%if(car.carInformation[j].carModel==carModel.carModel){%><!--只要该车型的年份-->
+																<%var lfYear=car.carInformation[j].carYear%>
+															<%}%>
+															
+															<%if(leYear==lfYear){%>
+																<%carInformationYear[leYear]=leYear%><!--用同一个leYear键替换相同值-->
+															<%}%>
 														<%}%>		
 													<%}%>
 
-												
-												
-													
-													<%carInformationYear.map(function(year){%>
-														<option><%=year%></option>
-													<%})%>
 
-												
+													<%carInformationYear.map(function(year){%>
+														<option>
+															<%=year%>
+														</option>
+													<%})%>
 												</select>
 										</h3>
 
 										<ul style="margin-bottom:30px;">
 
 											<% car.carInformation.map(function(carInformation){%>
-												<% if(carInformation.carModel==carModel){%>
+												<% if(carInformation.carModel==carModel.carModel){%>
 													<li class="infoData" style='font-weight:900;font-size:15px;' carInformationYear='<%=carInformation.carYear%>'>
 														<a href="<%=carInformation.carInformation%>" target="pdfContainer" onclick="showPdf(true)">
 															<span class="glyphicon glyphicon-file"></span>
@@ -138,7 +139,7 @@
 																
 																<form class="from" method="post" action="/uploadInformation" enctype="multipart/form-data">
 																	<input class="upfile" id="upInformation" name="upInformation" type="file" value="上传">
-																	<p style='margin-top:10px;' class="btn btn-default upLoadData" id='upLoadInformation' carModel='<%=carModel%>' carBrand='<%=car.carBrand%>'>上传资料</p>
+																	<p style='margin-top:10px;' class="btn btn-default upLoadData" id='upLoadInformation' carModel='<%=carModel.carModel%>' carBrand='<%=car.carBrand%>'>上传资料</p>
 																</form>
 															</li>
 
@@ -458,11 +459,6 @@
 					}
 				}
 
-			})
-
-			$('.en').click(function () {
-				console.log('点击');
-				console.log(encodeURI('http://localhost:3000/uploads/carInformation/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BANode.js.www.java1234.com.pdf.pdf'))
 			})
 		})
 

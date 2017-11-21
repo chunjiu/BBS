@@ -24,13 +24,12 @@ var Car = mongoose.model('Car', CarSchema);
 
 
 
-exports.addsave = function (carFisrtWord, carBrand,carModel,carYear, carAvatars, callback) {
+exports.addsave = function (carFisrtWord, carBrand,carYear, carAvatars, callback) {
 
 
     var car = new Car();//实例化Car模型
     car.carFisrtWord = carFisrtWord;
     car.carBrand = carBrand;
-    car.carModel.addToSet(carModel);
     car.carYear = {carYear:carYear}//这里要注意书写顺序
     car.carAvatars = carAvatars;
 
@@ -79,6 +78,18 @@ exports.removeInformation = function (res,carBrand, carInformation,carYear, call
             console.log('资料路径删除成功');
         }
     })
+}
+exports.updateModel = function (carBrand,carModel) { 
+    console.log('删除旧的车型信息');
+    Car.update({ 'carBrand': carBrand }, { $pull: { 'carModel': { 'carModel': carModel } } }, function (err) { 
+        if (err) {
+            console.log('出错');
+            return next(err);
+        }
+        else { 
+            console.log('车型删除成功');
+        }
+    })   
 }
 /*
 exports.getCarByCarBrand = function (query, opt, callback) { 
