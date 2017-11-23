@@ -194,7 +194,7 @@ router.get('/', function (req, res, next) {
 
   function carCase() {
     return new Promise(function (resolve, reject) {
-      var carTopic = { limit: 8, sort: '-creat_at -updated_at' };
+      var carTopic = { limit: 12, sort: '-creat_at -updated_at' };
       let query = {};
       query.delete = false;
       MaintenaceCase.getCaseTopicByQuery(query, carTopic, function (err, caseTopic) {
@@ -203,7 +203,6 @@ router.get('/', function (req, res, next) {
           return next(err);
         } else {
           resolve(caseTopic);
-
         }
       })
     })

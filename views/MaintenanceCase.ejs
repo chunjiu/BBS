@@ -2,32 +2,32 @@
 
     <div class="row">
         <%-include('./includes/treeNav')%>
-            <div class="col-md-8">
+            <div class="col-md-8 col-xs-12 maintenanceCase">
                 <div class="panel noborder topcinav" style="border-style:none">
                     <div class="panel-heading">
                         <ul class="nav nav-pills">
                             <li>
-                                <a class="tabURL" href="/maintenanceCase/?tab=机电维修案例" carModelUrl='<%=typeof( carModelURL)!==' undefined'&& carModelURL||' '%>'>机电维修案例</a>
+                                <a class="tabURL" href="/maintenanceCase/?tab=机电维修案例" carModelUrl='<%=typeof( carModelURL)!=='undefined'&& carModelURL||' '%>'>机电维修案例</a>
                                 <!--这里格式调试，换行了会报错-->
                             </li>
                             <li>
-                                <a class="tabURL" href='/maintenanceCase/?tab=电子维修案例' carModelUrl='<%=typeof(carModelURL)!==' undefined'&& carModelURL||' '%>'>电子维修案例</a>
+                                <a class="tabURL" href='/maintenanceCase/?tab=电子维修案例' carModelUrl='<%=typeof(carModelURL)!=='undefined'&& carModelURL||' '%>'>电子维修案例</a>
                             </li>
                         </ul>
                     </div>
+    
                     <div class="" style="background-color:white;">
+                        <span class="btn btn-default choose pull-right" style='margin-top:5px;'>车型选择</span>
                         <%if(caseTopic.length){%>
                             <p style='font-weight:900;font-size:18px;border-bottom:1px solid #CCCCCC;padding-top:15px;'>当前车型:
                                 <%=typeof(carModelURL)!==' undefined '&& carModelURL||'全部 '%>
-                                    <span>(
-                                        <%=caseTopic.length%>篇)</span>
+                                <span>(<%=caseTopic.length%>篇)</span>
                             </p>
-
                             <%caseTopic.forEach(function(caseTopic){%>
                                 <div class="media">
                                     <div class="media-left">
                                         <a href="/<%=caseTopic.id%>/datails">
-                                            <img style='max-width:none;width:100px;height:100px;' class="media-object" src='<%=caseTopic.PhenomenonImg%>' alt='加载中...'>
+                                            <img class="media-object caseTopicImg" src='<%=caseTopic.PhenomenonImg%>' alt='加载中...'>
                                         </a>
                                     </div>
                                     <div class="media-body">
@@ -41,12 +41,14 @@
                                         </p>
                                     </div>
                                 </div>
-                                <%})%>
-
-                                    <%}else{%>
-                                        <span>无</span>
-                                        <%}%>
-
+                            <%})%>
+    
+                        <%}else{%>
+                            <div style='height:50px;'>
+                                <p style='padding:10px;'>无</p>
+                            <div>
+                        <%}%>
+    
                     </div>
                 </div>
             </div>
@@ -139,5 +141,14 @@
                                 $('.tree').offset({ top: headHeight + navHeight + 2 })
                             }
                         }
+                    })
+
+                    $('.choose').click(function () {
+                        let $this = $(this);
+                        let carModelURL = $this.closest('.maintenanceCase');
+                        let tree = carModelURL.prev();
+                        tree.show();
+                        carModelURL.attr('class', 'col-md-10 col-xs-7 maintenanceCase');
+                        $this.hide();
                     })
                 </script>

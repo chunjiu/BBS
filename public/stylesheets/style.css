@@ -1,4 +1,3 @@
-
 body {
   margin: 0 auto;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -40,7 +39,6 @@ top:70px;
   font-weight: bold;
   font-size: 15px;
   font-style: italic;
-
 }
 .mainPageFont1{
   visibility: hidden;
@@ -62,6 +60,19 @@ top:70px;
 .logo{
   width:50px;width:50px;
   border-radius: 15px;
+}
+.thumbnail{
+  height:300px;
+}
+.carCase{
+  height:35px;
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+.caption::after{
+  content: '......';
+  margin: 0px;
+  padding:0;
 }
 /*首页结束*/
 
@@ -89,26 +100,44 @@ top:70px;
 
 /*问诊*/
 .ask p{
-  text-align: center;
+  text-align: left;
   list-style-type: none;
   margin-top:15px;
   font-family: "Arial";
   color: #8C9ECF;
+  
   
 }
 .ask p a{
   text-decoration: none;
   cursor: pointer;
 }
-/*首页结束*/
+.usrInformation{
+  display: none;
+}
+
+
+/*话题发布*/
+.editHead{
+  width:800px;
+}
+.navpath_a:visited{
+  color:black;
+}
 
 /*treeNav*/
+.tree{
+  display: none;
+}
+.carModel{
+  display: none;
+}
 .carModel li{
   list-style-type: none;
 }
 .treeNavFont{
   background-color:#f7f7f7;
-  font-size:15px;font-weight:bold;
+  font-size:15px;
   color:#333;
   height:40px;
   line-height:40px;
@@ -118,10 +147,17 @@ top:70px;
   z-index: 1033;
   top:100px;
 }
+.carBrandEdit,.glyphicon-trash{
+  display: none;
+}
 /*treeNav 结束*/
 
+/*案例页*/
+.caseTopicImg{
+  max-width:none;width:40px;height:40px;
+}
 
-/*案例编辑*/
+/*案例编辑页*/
 .select-control{
 display: block;
 height: 34px;
@@ -147,11 +183,50 @@ font-size: 18px;
 .fault div{
 margin-bottom: 25px;
 }
+.fault textarea{
+  width:100%;height:80px;
+}
+.fault #title{
+  margin-top:20px;
+}
+/*job页*/
+.jd{
+  margin-bottom:35px;width:100%;
+}
+
+.textHidden{
+  height: 400px;
+  overflow:hidden;
+  margin-bottom:0px;
+  
+}
+/*资料页*/
+.ChooseCarInformationYear{
+  margin-top:10px;
+}
+.information_li{
+  
+}
+
+/*管理员用户设置*/
+.adminSetting{
+  width: 100%;
+  margin-top:20px;
+}
+
+
 /*登录界面*/
 .aboutTitle{
  .mainPageFont;
 }
-.about li{}
+
+/**/
+
+/*维修案例详情页*/
+.ddWidth{
+  margin-bottom: 7px;
+  text-indent: 1cm;
+}
 
 .culture p{
   font-size:10px;font-weight:bolder
@@ -163,6 +238,7 @@ margin-bottom: 25px;
 .carousel-caption a{
   font-size:10px;
   color: red;
+  
 }
 .img_avatars{
   -moz-border-radius:25px;	/* Firefox */
@@ -182,54 +258,89 @@ margin-bottom: 25px;
 } 
 
 @media(min-width:768px){/*媒体查询需放在正常样式的下面，才能起来移动设备和桌面设备各自展现自成己样式*/
-  .headFont{
+.headFont{
     font-size: 20px;
-  }
-  .headLeft{
+}
+.headLeft{
     margin-left:100px;
-    display: inline;
-  }
-  .headHidden{
+    display: inline;;
+}
+.headHidden{
     visibility: hidden;
-  }
-  .body-weidth{
+}
+.body-weidth{
     width:80%;
-  }
-  .mainPageFont{
+}
+.mainPageFont{
     font-size:14px;font-style:normal;font-weight:900;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color:rgb(119,119,119);
-  }
-  .carousel-caption{
+}
+.carousel-caption{
     bottom:20px;
-  }
-  .carousel-caption a{
+}
+.carousel-caption a{
     font-size:15px;font-weight: bold;
     color: red;
-  }
-  .img_avatars{
+}
+.img_avatars{
     width:30px;height:30px;border-radius:25%;
     display:inline-block;
-  }
-  .page_li{
+}
+.page_li{
     width: 18%;
-  }
-  .side{
+}
+.side{
     display: block;
-  }
-  .time_ago{
+}
+.time_ago{
    display: inline-block;
-  }
-  .footer{
+}
+.footer{
     width: 70%;
-  }
-  .page_jump{
+}
+.page_jump{
     width: 20%;
+}
+.topicIndex{
+  width:90%;margin-left:auto;margin-right:auto;margin-top:20px;
+}
+.adminSetting{
+  width: 25%;}
+.treeNavFont{
+  background-color:#f7f7f7;
+  font-size:15px;font-weight:bold;
+  color:#333;
+  height:40px;
+  line-height:40px;}
+  .ddWidth{
+      width:70%;
   }
-  .topicIndex{
-    width:80%;margin-left:auto;margin-right:auto;
-    margin-top:20px;
+  .ask{
+      margin-left:50px;
   }
+  .caseTopicImg{
+      max-width:none;width:100px;height:100px;
+  }
+  .usrInformation{
+      display: block;
+  }
+  .reply_count,.click_count,.Delimiter{
+      display:inline;
+  }
+  .carBrandEdit,.glyphicon-trash{
+      display: inline;
+  }
+  .fault textarea{
+      width:50%;height:80px;
+  }
+  .tree{
+      display:block;
+  }
+  .choose{
+    display: none;
+  }
+
 }
 
 .foo{
@@ -245,6 +356,7 @@ margin-bottom: 25px;
   line-height: 50px;
   font-size: 18px;
   font-weight: bold;
+  
 }
 .nav li a{
   font-weight: 900;
@@ -297,12 +409,8 @@ a:hover{
   margin: 5px;
 }
 
-.navpath{
-  width: 25%;
-}
-.navpath_a:visited{
-  color:black;
-}
+
+
 .ReplyTitle{
   color: #008080;
 }
@@ -348,4 +456,3 @@ a:hover{
   display: none;
 
 }
-

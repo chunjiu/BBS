@@ -1,5 +1,4 @@
-
-<div  class="col-md-2 tree " style="padding-left:18px;overflow-y:scroll;height:700px;">
+<div  class="col-md-2 col-xs-5 tree " style="padding-left:18px;overflow-y:scroll;height:700px;">
     <div class="row" >
         <div class="col-xs-3" id="myScrollspy">
             <ul class="nav nav-pills nav-stacked navscroll" ><!---->
@@ -22,7 +21,7 @@
                 <ul class="alphabet" style='padding:0px;'>
                    <% car.forEach(function(car){%> 
                    <% if(car.carFisrtWord==alphabet){%>
-                    <p class="carBrand" style='cursor: pointer;'>
+                    <p class="carBrand" style='cursor: pointer;margin:0px;'>
                       <span class="carTrademark"><img style='width:35px;height:35px;' src='<%=car.carAvatars%>'></img><span>
                       <span class="treeNavFont"><%=car.carBrand%>(<%=car.carModel.length%>)</span>
                       <span class="glyphicon glyphicon-trash removeCar" carBrand='<%=car.carBrand%>'></span>

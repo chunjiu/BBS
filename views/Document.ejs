@@ -46,7 +46,7 @@
 	<div class="row">
 			<div class="removeMSG"></div>
 		<%-include('./includes/treeNav')%>
-			<div class="col-md-10 carModelURL" carModelUrl='<%=typeof( carModelURL)!==' undefined '&& carModelURL||' '%>'>
+			<div class="col-md-10 col-xs-12 carModelURL" carModelUrl='<%=typeof( carModelURL)!==' undefined '&& carModelURL||' '%>'>
 				<%car_Brand.map(function(car){%>
 					<%car.carModel.map(function(carModel){%>
 						<div class="panel panel-default" style='display:none' carModel=<%=carModel.carModel%>>
@@ -56,14 +56,17 @@
 							<div>
 								<div class="media">
 									<div class="media-left">
-										<img style='max-width:none;width:100px;height:100px;' src="<%=carModel.modelImg%>">
+										<img class="caseTopicImg" src="<%=carModel.modelImg%>">
 									</div>
 									<div class="media-body">
+											
 										<h4>厂家：
 											<span>
 												<%=car.carBrand%>
 											</span>
+											<span class="btn btn-default pull-right choose">车型选择</span>
 										</h4>
+										
 										<h4>车型：
 											<span>
 												<%=carModel.carModel%>
@@ -73,7 +76,7 @@
 
 									<div class="col-sm-10 father">
 										<div class="msg" style='margin-top:10px;'></div>
-										<h3 style="font-weight:900;"><%=carModel.carModel%>&nbsp;
+										<h3 style="font-weight:500;"><%=carModel.carModel%>&nbsp;
 											年份:
 												<%if(current_user&&current_user.attr.admin){%>
 													<select class="chooseYear" style='width:150px;'><!--上传选择年份-->
@@ -135,7 +138,7 @@
 													<% }%>
 														<% })%>
 														<%if(current_user&&current_user.attr.admin){%>
-															<li style='list-style-type: none;font-weight:900;margin-top:30px;'>
+															<li class="information_li" style='list-style-type: none;font-weight:900;margin-top:30px;'>
 																
 																<form class="from" method="post" action="/uploadInformation" enctype="multipart/form-data">
 																	<input class="upfile" id="upInformation" name="upInformation" type="file" value="上传">
@@ -459,6 +462,14 @@
 					}
 				}
 
+			})
+			$('.choose').click(function(){
+				let $this = $(this);
+				let carModelURL = $this.closest('.carModelURL');
+				let tree = carModelURL.prev();
+				tree.show();
+				carModelURL.attr('class','col-md-10 col-xs-7 carModelURL');
+				$this.hide();
 			})
 		})
 

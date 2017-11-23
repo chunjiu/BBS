@@ -1,7 +1,8 @@
+<body onload="hide();">
 <%-include('../includes/header')%>
   <div class="row">
     <%-include('../includes/treeNav')%>
-      <div class='col-md-8'>
+      <div class='col-md-8 col-xs-12 Interrogation'>
         <div class="panel noborder topcinav" style="border-style:none">
           <div class="panel-heading">
             <ul class="nav nav-pills">
@@ -17,22 +18,30 @@
                           <img title='清空车型选项' style='width:20px;height:20px;' src='/images/clear.png'>
                         </a>
                       </li>
+                      <li id="choose" class="choose">
+                        <a href='#' >
+                          车型选择
+                        </a>
+                      </li>
             </ul>
           </div>
           <div style="background-color:white">
             <div class="list-group">
               <%if(topic.length){%>
                 <%topic.forEach(function(topic){%>
-                  <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid">
+                  <a class="list-group-item" style="height:60px;line-height:40px;" href="/<%=topic.id%>/tid" title="<%=topic.title%>">
                     <span>
                       <img src="<%=topic.topic_avatars?topic.topic_avatars:'/images/123.jpg'%>" style="height:30px;width:30px;border-radius:25%">
                     </span>
-                    <span title="回复数">
-                      <%=topic.reply_count%>
-                    </span>/
-                    <span title="点击数">
-                      <%=topic.visit_count%>
-                    </span>
+                    
+                      <span class="reply_count" title="回复数">
+                        <%=topic.reply_count%>
+                      </span>
+                      <span class="Delimiter">/</span>
+                      <span class="click_count" title="点击数">
+                        <%=topic.visit_count%>
+                      </span>
+                    
                     <%if(topic.top){%>
                       <span class="TopicGood">置项</span>
                       <!--置顶贴优先，因为置顶贴也是精华贴-->
@@ -133,7 +142,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-2" style="padding-left:18px;">
+      <div class="col-md-2 usrInformation" style="padding-left:18px;">
         <%if(current_user){%>
           <div class="panel panel-default panelBorderNone">
             <div style="background-color:#EBE6E6" class="panel-heading">个人信息</div>
@@ -151,6 +160,17 @@
       </div>
   </div>
   <!--row-->
+  <script>
+      function hide() {
+        let documentWidth = document.body.clientWidth;
+        console.log('body宽度是：',documentWidth)
+        if (documentWidth > 700) {
+          let choose = document.getElementById('choose');
+          choose.style.display = 'none';
+        }
+      
+      }
+  </script>
   <%-include('../includes/end')%>
     <script>
       $(document).ready(function () {
@@ -277,5 +297,14 @@
             }
           }
         })
+
+        $('.choose').click(function(){
+				let $this = $(this);
+				let carModelURL = $this.closest('.Interrogation');
+				let tree = carModelURL.prev();
+				tree.show();
+				carModelURL.attr('class','col-md-10 col-xs-7 Interrogation');
+				$this.hide();
+			})
       })
     </script>
