@@ -131,20 +131,22 @@ exports.uploadTrademark = function (req, res, next) {
                 throw err;
             }
             if (!car) {
-                console.log('没有查到这个品牌')
-            }
-            console.log('car是' + car)
-            car.carAvatars = imgPath.slice(6);//去掉public
-            car.save(function (err) {
-                if (err) {
-                    console.log('保存出错');
-                    return next(err);
-                }
-                res.send({
-                    success: true,
+                console.log('没有查到这个品牌');//在这里停止时，会在添加品牌路由出去
+            } else { 
+                console.log('car是' + car)
+                car.carAvatars = imgPath.slice(6);//去掉public
+                car.save(function (err) {
+                    if (err) {
+                        console.log('保存出错');
+                        return next(err);
+                    }
+                    res.send({
+                        success: true,
+                    });
+                    console.log('the file has been saved');
                 });
-                console.log('the file has been saved');
-            });
+            }
+            
         });
     })
 }
@@ -183,18 +185,23 @@ exports.uploadModelImg = function (req, res, next) {
                     console.log('没有找到车');
                     return next(err);
                 }
-                var model = { carModel: carModel, modelImg: imgPath.slice(6) }
-                car.carModel.addToSet(model);
-                car.save(function (err) {
-                    if (err) {
-                        reject(err);
-                        return next(err);
-                    }
-                    console.log('车型添加成功');
-                    res.send({
-                        success: true,
-                    })
-                });
+                if (!car) { 
+                    console.log('没有找到车')
+                }else { 
+                    var model = { carModel: carModel, modelImg: imgPath.slice(6) }
+                    car.carModel.addToSet(model);
+                    car.save(function (err) {
+                        if (err) {
+                            reject(err);
+                            return next(err);
+                        }
+                        console.log('车型添加成功');
+                        res.send({
+                            success: true,
+                        })
+                    });
+                }
+               
             })
         })
     }

@@ -145,7 +145,7 @@
                     });
 
                     //此处注意事件顺序
-                    $('#addCar').click(function () {
+                    $('#carbrandAddForm').submit(function () {
                         new Promise(function (resolve, reject) {
                             var img = $('#input_modelImg').get(0).files[0];
                             console.log('img是：' + img)
